@@ -24,10 +24,12 @@ namespace Toybox.maps {
 			Texture = t;
 		}
 
+		/// <summary> Unscaled width of tiles. </summary>
 		public int TileWidth {
 			get { return Texture.CellWidth; }
 		}
 
+		/// <summary> Unscaled height of tiles. </summary>
 		public int TileHeight {
 			get { return Texture.CellHeight; }
 		}

@@ -83,7 +83,7 @@ namespace Toybox {
 			Resources.MouseInput.UpdateControlStates(Mouse.GetState());
 
 			//if (Resources.Console == null || !Resources.Console.Active) {
-				DoUpdate();
+				DoUpdate(); //TODO can prob combine these? not sure why they're seperated in the first place...
 				UpdateScene();
 				foreach (Camera c in Cameras) {
 					c.Update();
@@ -111,9 +111,9 @@ namespace Toybox {
 			DoDraw();
 
 			//Draw dev tools
-			S.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
+			//S.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
 			//Resources.Console?.Draw(S);
-			S.End();
+			//S.End();
 
 			base.Draw(gameTime);
 		}
