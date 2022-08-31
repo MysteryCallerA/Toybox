@@ -182,9 +182,9 @@ namespace Toybox {
 		/// <summary> The different spaces you can project points between. </summary>
 		public enum Space {
 			/// <summary> Game logic space. Cooresponds to texture pixel size. </summary>
-			Game,
+			Pixel,
 			/// <summary> Subpixel game logic space. This is the true pixel size. Project here for static renders. </summary>
-			World,
+			Subpixel,
 			/// <summary> Space that you render to. Project mouse from screen to here for interaction with static elements. </summary>
 			Render,
 			/// <summary> Space on the screen. </summary>
@@ -195,12 +195,12 @@ namespace Toybox {
 			if (from == to) return p;
 
 			if ((int)from < (int)to) {
-				if (from == Space.Game) {
+				if (from == Space.Pixel) {
 					p = GameToWorld(p);
-					from = Space.World;
-					if (to == Space.World) return p;
+					from = Space.Subpixel;
+					if (to == Space.Subpixel) return p;
 				}
-				if (from == Space.World) {
+				if (from == Space.Subpixel) {
 					p = WorldToRender(p);
 					if (to == Space.Render) return p;
 				}
@@ -214,7 +214,7 @@ namespace Toybox {
 			}
 			if (from == Space.Render) {
 				p = RenderToWorld(p);
-				if (to == Space.World) return p;
+				if (to == Space.Subpixel) return p;
 			}
 			return WorldToGame(p);
 		}
@@ -223,12 +223,12 @@ namespace Toybox {
 			if (from == to) return r;
 
 			if ((int)from < (int)to) {
-				if (from == Space.Game) {
+				if (from == Space.Pixel) {
 					r = GameToWorld(r);
-					from = Space.World;
-					if (to == Space.World) return r;
+					from = Space.Subpixel;
+					if (to == Space.Subpixel) return r;
 				}
-				if (from == Space.World) {
+				if (from == Space.Subpixel) {
 					r = WorldToRender(r);
 					if (to == Space.Render) return r;
 				}
@@ -242,7 +242,7 @@ namespace Toybox {
 			}
 			if (from == Space.Render) {
 				r = RenderToWorld(r);
-				if (to == Space.World) return r;
+				if (to == Space.Subpixel) return r;
 			}
 			return WorldToGame(r);
 		}
