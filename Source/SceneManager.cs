@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Toybox {
+
 	public abstract class SceneManager<T> where T : Scene {
 
 		public bool AlwaysKeepScenesInMemory = false;
