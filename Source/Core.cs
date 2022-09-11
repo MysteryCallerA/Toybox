@@ -118,7 +118,7 @@ namespace Toybox {
 			base.Draw(gameTime);
 		}
 
-		/// <summary> Uses Cameras to draw the Scene. </summary>
+		/// <summary> Uses Cameras to draw the Scene. Recommended to do drawing in Scene objects instead so Camera transforms are applied. </summary>
 		protected virtual void DoDraw() {
 			Scene s = GetActiveScene();
 			if (s == null) return;

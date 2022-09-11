@@ -100,7 +100,7 @@ namespace Toybox {
 		}
 
 		public void DrawToScreen(SpriteBatch s, Scene scene, GraphicsDevice g) {
-			DrawToBuffer(s, scene, g);
+			DrawToBuffer(s, scene, g); //needs to draw to a buffer first still to apply screen fitting/scaling
 
 			g.SetRenderTarget(null);
 			s.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
