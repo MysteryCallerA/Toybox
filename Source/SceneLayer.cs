@@ -19,9 +19,9 @@ namespace Toybox {
 			Name = name;
 		}
 
-		public void Draw(SpriteBatch s, Camera c) {
+		public void Draw(Renderer r, Camera c) {
 			if (!Visible) return;
-			DoDraw(s, c);
+			DoDraw(r, c);
 		}
 
 		public void Update() {
@@ -29,7 +29,7 @@ namespace Toybox {
 			DoUpdate();
 		}
 
-		protected abstract void DoDraw(SpriteBatch s, Camera c);
+		protected abstract void DoDraw(Renderer r, Camera c);
 
 		protected abstract void DoUpdate();
 

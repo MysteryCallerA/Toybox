@@ -28,9 +28,9 @@ namespace Toybox {
 			}
 		}
 
-		public virtual void Draw(SpriteBatch s, Camera c) {
+		public virtual void Draw(Renderer r, Camera c) {
 			foreach (var layer in Layers) {
-				layer.Draw(s, c);
+				layer.Draw(r, c);
 			}
 		}
 

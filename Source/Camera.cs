@@ -90,22 +90,22 @@ namespace Toybox {
 			RenderModel.Apply(g, this);
 		}
 
-		public void DrawToBuffer(SpriteBatch s, Scene scene, GraphicsDevice g) {
+		public void DrawToBuffer(Renderer r, Scene scene, GraphicsDevice g) {
 			g.SetRenderTarget(Render);
 			g.Clear(ClearColor);
 
-			s.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
-			scene.Draw(s, this);
-			s.End();
+			r.Batch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
+			scene.Draw(r, this);
+			r.Batch.End();
 		}
 
-		public void DrawToScreen(SpriteBatch s, Scene scene, GraphicsDevice g) {
-			DrawToBuffer(s, scene, g); //needs to draw to a buffer first still to apply screen fitting/scaling
+		public void DrawToScreen(Renderer r, Scene scene, GraphicsDevice g) {
+			DrawToBuffer(r, scene, g); //needs to draw to a buffer first still to apply screen fitting/scaling
 
 			g.SetRenderTarget(null);
-			s.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
-			s.Draw(Render, GetScreenBounds(), Color.White);
-			s.End();
+			r.Batch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
+			r.Batch.Draw(Render, GetScreenBounds(), Color.White);
+			r.Batch.End();
 		}
 
 		public int ScreenWidth {

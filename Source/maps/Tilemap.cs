@@ -11,7 +11,7 @@ using Utils.graphic;
 using Utils.save;
 
 namespace Toybox.maps {
-	public class Tilemap:IXmlSaveable {
+	public class Tilemap/*:IXmlSaveable*/ {
 
 		public int X;
 		public int Y;
@@ -62,7 +62,7 @@ namespace Toybox.maps {
 			return null;
 		}
 
-		public void Draw(SpriteBatch s, Camera c) {
+		public void Draw(Renderer r, Camera c) {
 			if (Map.IsEmpty) return;
 			var bounds = c.GetGameBounds();
 			var topleft = WorldToTile(bounds.Left, bounds.Top);
@@ -86,7 +86,7 @@ namespace Toybox.maps {
 				for (int row = topleft.Y; row < botright.Y; row++) {
 					if (Map.TryGet(col, row, out Point? tile)) {
 						if (tile.HasValue) {
-							Texture.Draw(s, dest, tile.Value);
+							r.Draw(Texture.Texture, dest, Texture.GetCell(tile.Value), Color.White, c, Camera.Space.Pixel);
 						}
 					}
 					dest.Y += dest.Height;
@@ -124,7 +124,7 @@ namespace Toybox.maps {
 			return new Point((int)Math.Floor((float)x / TileWidth) * TileWidth, (int)Math.Floor((float)y / TileHeight) * TileHeight);
 		}
 
-		public void Save(XmlWriter writer) {
+		/*public void Save(XmlWriter writer) {
 			writer.WriteStartElement("tilemap");
 			writer.WriteAttributeString("x", X.ToString());
 			writer.WriteAttributeString("y", Y.ToString());
@@ -151,7 +151,7 @@ namespace Toybox.maps {
 			writer.WriteEndElement();
 
 			writer.WriteEndElement();
-		}
+		}*/
 
 		public int TileToFrame(Point? tile) {
 			if (!tile.HasValue) return -1;

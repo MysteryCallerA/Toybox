@@ -17,8 +17,8 @@ namespace Toybox.layers {
 			Map = map;
 		}
 
-		protected override void DoDraw(SpriteBatch s, Camera c) {
-			Map.Draw(s, c);
+		protected override void DoDraw(Renderer r, Camera c) {
+			Map.Draw(r.Batch, c);
 		}
 
 		protected override void DoUpdate() {

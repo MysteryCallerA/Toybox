@@ -22,8 +22,8 @@ namespace Toybox {
 			ActiveScene.Update();
 		}
 
-		public void Draw(SpriteBatch s, Camera c) {
-			ActiveScene.Draw(s, c);
+		public void Draw(Renderer r, Camera c) {
+			ActiveScene.Draw(r, c);
 		}
 
 		public abstract T Load(string sceneName);

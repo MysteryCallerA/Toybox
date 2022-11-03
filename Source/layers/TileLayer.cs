@@ -17,8 +17,8 @@ namespace Toybox.layers {
 			Map = map;
 		}
 
-		protected override void DoDraw(SpriteBatch s, Camera c) {
-			Map.Draw(s, c);
+		protected override void DoDraw(Renderer r, Camera c) {
+			Map.Draw(r, c);
 		}
 
 		protected override void DoUpdate() {
@@ -32,7 +32,7 @@ namespace Toybox.layers {
 			writer.WriteStartElement("tilelayer");
 			writer.WriteAttributeString("name", Name);
 			writer.WriteAttributeString("visible", Visible.ToString());
-			Map.Save(writer);
+			//Map.Save(writer);
 			writer.WriteEndElement();
 		}
 

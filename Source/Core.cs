@@ -16,7 +16,7 @@ namespace Toybox {
 	public abstract class Core:Game {
 
 		protected GraphicsDeviceManager Graphics;
-		protected SpriteBatch S;
+		protected Renderer Renderer;
 
 		public List<Camera> Cameras = new List<Camera>();
 
@@ -52,9 +52,6 @@ namespace Toybox {
 			Resources.Content = Content;
 			ContentLoader.GraphicsDevice = GraphicsDevice;
 
-			Resources.Blank = new Texture2D(GraphicsDevice, 1, 1);
-			Resources.Blank.SetData(new Color[] { Color.White });
-
 			base.Initialize();
 
 			Init();
@@ -66,7 +63,10 @@ namespace Toybox {
 		protected override void LoadContent() {
 			base.LoadContent();
 
-			S = new SpriteBatch(GraphicsDevice);
+			Resources.Blank = new Texture2D(GraphicsDevice, 1, 1);
+			Resources.Blank.SetData(new Color[] { Color.White });
+
+			Renderer = new Renderer(new SpriteBatch(GraphicsDevice), Resources.Blank);
 		}
 
 		/// <summary> Internal Update logic. Override DoUpdate() instead </summary>
@@ -124,15 +124,15 @@ namespace Toybox {
 			if (s == null) return;
 
 			foreach (var camera in Cameras) {
-				camera.DrawToBuffer(S, s, GraphicsDevice);
+				camera.DrawToBuffer(Renderer, s, GraphicsDevice);
 			}
 			GraphicsDevice.SetRenderTarget(null);
 			GraphicsDevice.Clear(ClearColor);
-			S.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
+			Renderer.Batch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
 			foreach (var camera in Cameras) {
-				S.Draw(camera.Render, camera.GetScreenBounds(), Color.White);
+				Renderer.Batch.Draw(camera.Render, camera.GetScreenBounds(), Color.White);
 			}
-			S.End();
+			Renderer.Batch.End();
 		}
 
 		/// <summary> Gets Cameras[0] </summary>
