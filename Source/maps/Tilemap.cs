@@ -100,7 +100,7 @@ namespace Toybox.maps {
 
 			var start = TileToWorld(topleft.X, topleft.Y);
 			var dest = GetTileBounds(start.X, start.Y);
-			dest = new Rectangle(dest.X * c.GameScale, dest.Y * c.GameScale, dest.Width * c.GameScale, dest.Height * c.GameScale);
+			dest = new Rectangle(dest.X, dest.Y, dest.Width, dest.Height);
 			dest.X -= c.WorldX;
 			dest.Y -= c.WorldY;
 
