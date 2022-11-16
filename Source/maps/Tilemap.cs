@@ -53,6 +53,29 @@ namespace Toybox.maps {
 			Map.Set(WorldToTile(x, y), tile);
 		}
 
+		/// <summary> Accepts unaligned points in world space. </summary>
+		public void FillRect(Rectangle bounds, Point? tile) {
+			var topleft = GetGridPosition(bounds.X, bounds.Y);
+			var botright = GetGridPosition(bounds.Right, bounds.Bottom);
+
+			for (int x = topleft.X; x < botright.X; x += TileWidth) {
+				for (int y = topleft.Y; y < botright.Y; y += TileHeight) {
+					Set(x, y, tile);
+				}
+			}
+		}
+
+		public void FillRect(Rectangle bounds, Func<int, int, Point?> gettile) {
+			var topleft = GetGridPosition(bounds.X, bounds.Y);
+			var botright = GetGridPosition(bounds.Right, bounds.Bottom);
+
+			for (int x = topleft.X; x < botright.X; x += TileWidth) {
+				for (int y = topleft.Y; y < botright.Y; y += TileHeight) {
+					Set(x, y, gettile.Invoke(x, y));
+				}
+			}
+		}
+
 		/// <summary> Gets the tile at a position in unaligned game space. Returns null if no tile. </summary>
 		public Point? Get(int x, int y) {
 			var tile = WorldToTile(x, y);
@@ -168,5 +191,7 @@ namespace Toybox.maps {
 			var botright = TileToWorld(Map.Right, Map.Bottom);
 			return new Rectangle(topleft.X, topleft.Y, botright.X + TileWidth, botright.Y + TileHeight);
 		}
+
+		
 	}
 }
