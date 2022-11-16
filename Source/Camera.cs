@@ -46,7 +46,7 @@ namespace Toybox {
 		/// <summary> Scale individually applied to everything that's drawn. </summary>
 		public int GameScale { //TODO change this so ZoomFocus is only used in a seperate function SetGameScale(Point focus)
 			get { return _GameScale; }
-			set {
+			set { //TODO need t a way to set more easily without using focus
 				if (value < 1) value = 1;
 
 				var gamebounds = GetGameBounds();
