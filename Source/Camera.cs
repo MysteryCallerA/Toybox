@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using Toybox.components;
 using Toybox.rendermodels;
 
 namespace Toybox {
@@ -75,6 +77,8 @@ namespace Toybox {
 		public FocusModes FocusMode = FocusModes.Center;
 		public Vector2 ZoomFocus = new Vector2(0.5f, 0.5f);
 
+		public List<CameraComponent> Components = new List<CameraComponent>();
+
 		public enum FocusModes {
 			TopLeft, Center
 		}
@@ -137,6 +141,9 @@ namespace Toybox {
 		}
 
 		public virtual void Update() {
+			foreach (var c in Components) {
+				c.Apply(this);
+			}
 		}
 
 		/// <summary> Set the ZoomFocus using a point on the screen. </summary>
