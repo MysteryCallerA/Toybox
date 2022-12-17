@@ -28,8 +28,8 @@ namespace Toybox.components.control {
 		public void Apply(Camera c) {
 			if (Dragging) {
 				var movecam = MousePos.Invoke() - MouseDragOffset;
-				movecam /= new Point(c.ScreenPixelSize, c.ScreenPixelSize);
-				c.GamePosition = MouseDragStartPos - movecam;
+				movecam /= new Point(c.ScreenPixelSize / c.GameScale, c.ScreenPixelSize / c.GameScale); //TODO add a way to get just RenderScale from camera
+				c.WorldPosition = MouseDragStartPos - movecam;
 				if (!Key.Down) {
 					Dragging = false;
 				}
@@ -41,7 +41,7 @@ namespace Toybox.components.control {
 
 			if (Key.Pressed) {
 				MouseDragOffset = MousePos.Invoke();
-				MouseDragStartPos = c.GamePosition;
+				MouseDragStartPos = c.WorldPosition;
 				Dragging = true;
 			}
 		}
