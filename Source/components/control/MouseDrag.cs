@@ -28,7 +28,7 @@ namespace Toybox.components.control {
 		public void Apply(Camera c) {
 			if (Dragging) {
 				var movecam = MousePos.Invoke() - MouseDragOffset;
-				movecam /= new Point(c.ScreenPixelSize * 3, c.ScreenPixelSize * 3);
+				movecam /= new Point(c.ScreenPixelSize, c.ScreenPixelSize);
 				c.GamePosition = MouseDragStartPos - movecam;
 				if (!Key.Down) {
 					Dragging = false;

@@ -100,9 +100,6 @@ namespace Toybox.maps {
 
 			var start = TileToWorld(topleft.X, topleft.Y);
 			var dest = GetTileBounds(start.X, start.Y);
-			dest = new Rectangle(dest.X, dest.Y, dest.Width, dest.Height);
-			dest.X -= c.WorldX;
-			dest.Y -= c.WorldY;
 
 			int starty = dest.Y;
 			for (int col = topleft.X; col < botright.X; col++) {
