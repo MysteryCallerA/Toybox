@@ -19,8 +19,8 @@ namespace Toybox {
 
 		public static float DeltaTime = 0;
 
-		public static Camera MainCamera {
-			get { return Game.Cameras[0]; }
+		public static Camera Camera {
+			get { return Game.Camera; }
 		}
 
 	}

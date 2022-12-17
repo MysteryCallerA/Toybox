@@ -18,7 +18,7 @@ namespace Toybox {
 		protected GraphicsDeviceManager Graphics;
 		protected Renderer Renderer;
 
-		public List<Camera> Cameras = new List<Camera>();
+		public Camera Camera;
 
 		/// <summary> Sets the screen to this color every frame before drawing the Scene.
 		/// <br></br>This is only for space outside the camera bounds. Use Camera.ClearColor instead for world background color.</summary>
@@ -39,9 +39,7 @@ namespace Toybox {
 		}
 
 		protected virtual void WindowSizeChanged(object o, EventArgs e) {
-			foreach (var camera in Cameras) {
-				camera.ApplyChanges(GraphicsDevice);
-			}
+			Camera.ApplyChanges(GraphicsDevice);
 			//if (Resources.Console != null) {
 			//	Resources.Console.UpdateBounds(GraphicsDevice.Viewport.Bounds);
 			//}
@@ -85,9 +83,7 @@ namespace Toybox {
 			//if (Resources.Console == null || !Resources.Console.Active) {
 				DoUpdate(); //TODO can prob combine these? not sure why they're seperated in the first place...
 				UpdateScene();
-				foreach (Camera c in Cameras) {
-					c.Update();
-				}
+				Camera.Update();
 			//}
 
 			//Resources.Console?.Update(Resources.TextInput, Resources.MouseInput);
@@ -123,21 +119,13 @@ namespace Toybox {
 			Scene s = GetActiveScene();
 			if (s == null) return;
 
-			foreach (var camera in Cameras) {
-				camera.DrawToBuffer(Renderer, s, GraphicsDevice);
-			}
+			Camera.DrawToBuffer(Renderer, s, GraphicsDevice);
+			
 			GraphicsDevice.SetRenderTarget(null);
 			GraphicsDevice.Clear(ClearColor);
 			Renderer.Batch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
-			foreach (var camera in Cameras) {
-				Renderer.Batch.Draw(camera.Render, camera.GetScreenBounds(), Color.White);
-			}
+			Renderer.Batch.Draw(Camera.Render, Camera.GetScreenBounds(), Color.White);
 			Renderer.Batch.End();
-		}
-
-		/// <summary> Gets Cameras[0] </summary>
-		public Camera MainCamera {
-			get { return Cameras[0]; }
 		}
 
 		private void CamPosCommand(string[] args) {
@@ -145,24 +133,24 @@ namespace Toybox {
 			var x = int.Parse(args[2]);
 			var y = int.Parse(args[3]);
 			if (gamespace) {
-				MainCamera.GameX = x;
-				MainCamera.GameY = y;
+				Camera.GameX = x;
+				Camera.GameY = y;
 			} else {
-				MainCamera.WorldX = x;
-				MainCamera.WorldY = y;
+				Camera.WorldX = x;
+				Camera.WorldY = y;
 			}
 		}
 
 		private string GetCamInfo() {
 			var output = new StringBuilder();
-			output.Append("Game: " + MainCamera.GameX.ToString() + ", " + MainCamera.GameY.ToString() + ", " + MainCamera.GameWidth.ToString() + ", " + MainCamera.GameHeight.ToString());
+			output.Append("Game: " + Camera.GameX.ToString() + ", " + Camera.GameY.ToString() + ", " + Camera.GameWidth.ToString() + ", " + Camera.GameHeight.ToString());
 			output.Append(Font.Newline);
-			output.Append("World: " + MainCamera.WorldX.ToString() + ", " + MainCamera.WorldY.ToString() + ", " + MainCamera.WorldWidth.ToString() + ", " + MainCamera.WorldHeight.ToString());
+			output.Append("World: " + Camera.WorldX.ToString() + ", " + Camera.WorldY.ToString() + ", " + Camera.WorldWidth.ToString() + ", " + Camera.WorldHeight.ToString());
 			output.Append(Font.Newline);
 			output.Append("Screen: " + GraphicsDevice.Viewport.Bounds.Width.ToString() + ", " + GraphicsDevice.Viewport.Bounds.Height.ToString());
 			output.Append(Font.Newline);
-			var renderscale = MainCamera.GetScreenBounds().Width / MainCamera.Render.Width;
-			output.Append("GS: " + MainCamera.GameScale.ToString() + ", RS: " + renderscale.ToString());
+			var renderscale = Camera.GetScreenBounds().Width / Camera.Render.Width;
+			output.Append("GS: " + Camera.GameScale.ToString() + ", RS: " + renderscale.ToString());
 			return output.ToString();
 		}
 
