@@ -10,7 +10,7 @@ using Toybox.components;
 using Toybox.rendermodels;
 
 namespace Toybox {
-	public class Camera {
+	public class Camera { //TODO rename world and game and SubPixelPosition to use updated terminology
 
 		public float TrueWorldX, TrueWorldY;
 

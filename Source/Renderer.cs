@@ -47,6 +47,10 @@ namespace Toybox {
 			dest = cam.Project(fromSpace, Camera.Space.Subpixel, dest);
 			Batch.Draw(t, dest, source, c);
 		}
+
+		//TODO -HARD- Currently when using GameScale, you can still draw at subpixel positions to allow for smoother movement
+		//I want to somehow add a way to do this with RenderScale also
+		//Using a RenderModel could mabye work if you remember to take GameScale into account for any in-game spatial math.
 	
 	}
 }
