@@ -38,5 +38,7 @@ namespace Toybox.rendermodels {
 
 		public abstract int GetScreenPixelSize(Camera c);
 
+		public abstract int GetRenderScale();
+
 	}
 }

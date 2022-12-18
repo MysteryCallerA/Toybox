@@ -59,6 +59,10 @@ namespace Toybox {
 			}
 		}
 
+		public int RenderScale {
+			get { return RenderModel.GetRenderScale(); }
+		}
+
 		/// <summary> The size of the screen in world space using render pixels. </summary>
 		public int WorldWidth, WorldHeight;
 

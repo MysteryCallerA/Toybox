@@ -56,5 +56,9 @@ namespace Toybox.rendermodels {
 		public override Rectangle ScreenToWorld(Rectangle r, Camera c) {
 			return new Rectangle(ScreenToWorld(r.Location, c), new Point(r.Width / RenderScale, r.Height / RenderScale));
 		}
+
+		public override int GetRenderScale() {
+			return RenderScale;
+		}
 	}
 }
