@@ -39,6 +39,19 @@ namespace Toybox {
 		}
 
 		protected virtual void WindowSizeChanged(object o, EventArgs e) {
+			bool needApply = false;
+			if (Window.ClientBounds.Width > 4000) {
+				Graphics.PreferredBackBufferWidth = 4000;
+				needApply = true;
+			}
+			if (Window.ClientBounds.Height > 4000) {
+				Graphics.PreferredBackBufferHeight = 4000;
+				needApply = true;
+			}
+			if (needApply) {
+				Graphics.ApplyChanges();
+			}
+
 			Camera.ApplyChanges(GraphicsDevice);
 			//if (Resources.Console != null) {
 			//	Resources.Console.UpdateBounds(GraphicsDevice.Viewport.Bounds);
