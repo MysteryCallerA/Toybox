@@ -36,6 +36,7 @@ namespace Toybox {
 
 			Resources.TextInput = new KeyboardInputManager() { AllowHoldRepeats = true };
 			Resources.MouseInput = new MouseInputManager();
+			Resources.Random = new Random();
 		}
 
 		protected virtual void WindowSizeChanged(object o, EventArgs e) {

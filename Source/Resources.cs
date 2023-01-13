@@ -16,6 +16,7 @@ namespace Toybox {
 		public static Texture2D Blank;
 		public static KeyboardInputManager TextInput;
 		public static MouseInputManager MouseInput;
+		public static Random Random;
 
 		public static float DeltaTime = 0;
 
