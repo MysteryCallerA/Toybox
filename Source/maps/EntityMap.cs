@@ -10,7 +10,7 @@ using Utils.data;
 using Utils.save;
 
 namespace Toybox.maps {
-	public class EntityMap<T>:IXmlSaveable where T:Entity {
+	public class EntityMap<T> where T:Entity {
 
 		private Dictionary<Point, LinkedList<int>> Map = new Dictionary<Point, LinkedList<int>>();
 		private StableList<T> Entities = new StableList<T>();
@@ -185,9 +185,6 @@ namespace Toybox.maps {
 				if (box.Width > CellWidth || box.Height > CellHeight) return false;
 			}
 			return true;
-		}
-
-		public void Save(XmlWriter writer) {
 		}
 
 		private List<Point> GetCellsNearBounds(Rectangle bounds) {

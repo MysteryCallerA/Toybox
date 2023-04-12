@@ -10,7 +10,7 @@ using System.Xml;
 using Utils.save;
 
 namespace Toybox {
-	public abstract class Entity:IXmlSaveable, IComparable<Entity> {
+	public abstract class Entity: IComparable<Entity> {
 
 		public int Id = -1;
 		public Point MapCell;
@@ -21,9 +21,6 @@ namespace Toybox {
 		}
 
 		public virtual void Draw(Renderer r, Camera c) {
-		}
-
-		public virtual void Save(XmlWriter writer) {
 		}
 
 		public float TrueX;

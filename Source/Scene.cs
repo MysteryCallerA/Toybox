@@ -9,7 +9,7 @@ using System.Xml;
 using Utils.save;
 
 namespace Toybox {
-	public class Scene:IXmlSaveable {
+	public class Scene {
 
 		public bool KeepSceneInMemory = false;
 		public string Name;
@@ -21,9 +21,6 @@ namespace Toybox {
 		}
 
 		public virtual void Draw(Renderer r, Camera c) {
-		}
-
-		public void Save(XmlWriter writer) {
 		}
 	}
 }
