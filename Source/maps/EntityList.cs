@@ -20,9 +20,9 @@ namespace Toybox.maps {
 			}
 		}
 
-		public void Draw(SpriteBatch s, Camera c) {
+		public void Draw(Renderer r, Camera c) {
 			foreach (var e in Content) {
-				e.Draw(s, c);
+				e.Draw(r, c);
 			}
 		}
 
