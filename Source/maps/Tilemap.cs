@@ -2,112 +2,69 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
-using Utils.data;
 using Utils.graphic;
-using Utils.save;
 
 namespace Toybox.maps {
-	public class Tilemap/*:IXmlSaveable*/ {
+	public class Tilemap {
 
 		public int X;
 		public int Y;
-		public TextureGrid Texture;
+		public TextureGrid Tileset;
 
-		private BiList2d<Point?> Map;
+		protected List<List<Tile>> Map = new List<List<Tile>>();//x,y
 
 		public Tilemap(TextureGrid t) {
-			Map = new BiList2d<Point?>();
-			Texture = t;
+			Tileset = t;
 		}
 
-		/// <summary> Unscaled width of tiles. </summary>
+		public struct Tile {
+			public Point Id;
+			public SpriteEffects Effect;
+
+			public Tile() {
+				Id = new Point(-1, -1);
+				Effect = SpriteEffects.None;
+			}
+
+			public Tile(Point id, SpriteEffects effect) {
+				Id = id;
+				Effect = effect;
+			}
+
+			public bool IsEmpty {
+				get { return Id.X < 0; }
+			}
+		}
+
 		public int TileWidth {
-			get { return Texture.CellWidth; }
+			get { return Tileset.CellWidth; }
 		}
 
-		/// <summary> Unscaled height of tiles. </summary>
 		public int TileHeight {
-			get { return Texture.CellHeight; }
+			get { return Tileset.CellHeight; }
 		}
 
 		public Point TileSize {
 			get { return new Point(TileWidth, TileHeight); }
 		}
 
-		public void SetData(BiList2d<Point?> data) {
-			Map = data;
-		}
-
-		/// <summary> Accepts unaligned points in world space. </summary>
-		public void Set(int x, int y, Point? tile) {
-			if (Map.IsEmpty) {
-				var p = GetGridPosition(x, y);
-				X = p.X;
-				Y = p.Y;
-			}
-
-			Map.Set(WorldToTile(x, y), tile);
-		}
-
-		/// <summary> Accepts unaligned points in world space. </summary>
-		public void FillRect(Rectangle bounds, Point? tile) {
-			var topleft = GetGridPosition(bounds.X, bounds.Y);
-			var botright = GetGridPosition(bounds.Right, bounds.Bottom);
-
-			for (int x = topleft.X; x < botright.X; x += TileWidth) {
-				for (int y = topleft.Y; y < botright.Y; y += TileHeight) {
-					Set(x, y, tile);
-				}
-			}
-		}
-
-		public void FillRect(Rectangle bounds, Func<int, int, Point?> gettile) {
-			var topleft = GetGridPosition(bounds.X, bounds.Y);
-			var botright = GetGridPosition(bounds.Right, bounds.Bottom);
-
-			for (int x = topleft.X; x < botright.X; x += TileWidth) {
-				for (int y = topleft.Y; y < botright.Y; y += TileHeight) {
-					Set(x, y, gettile.Invoke(x, y));
-				}
-			}
-		}
-
-		/// <summary> Gets the tile at a position in unaligned game space. Returns null if no tile. </summary>
-		public Point? Get(int x, int y) {
-			var tile = WorldToTile(x, y);
-			if (Map.TryGet(tile.X, tile.Y, out Point? output)) {
-				return output;
-			}
-			return null;
-		}
-
 		public void Draw(Renderer r, Camera c) {
-			if (Map.IsEmpty) return;
+			if (Map.Count == 0) return;
 			var bounds = c.GetGameBounds();
-			var topleft = WorldToTile(bounds.Left, bounds.Top);
-			var botright = WorldToTile(bounds.Right, bounds.Bottom);
-			botright.X += 1;
-			botright.Y += 1;
+			var topleft = PixelToMap(bounds.Left, bounds.Top);
+			var botright = PixelToMap(bounds.Right, bounds.Bottom) + new Point(1, 1);
 
-			if (topleft.X < Map.Left) topleft.X = Map.Left;
-			if (topleft.Y < Map.Top) topleft.Y = Map.Top;
-			if (botright.X > Map.Cols) botright.X = Map.Cols;
-			if (botright.Y > Map.Rows) botright.Y = Map.Rows;
+			if (topleft.X < 0) topleft.X = 0;
+			if (topleft.Y < 0) topleft.Y = 0;
 
-			var start = TileToWorld(topleft.X, topleft.Y);
-			var dest = GetTileBounds(start.X, start.Y);
-
+			var dest = new Rectangle(MapToPixel(topleft.X, topleft.Y), TileSize);
 			int starty = dest.Y;
-			for (int col = topleft.X; col < botright.X; col++) {
-				for (int row = topleft.Y; row < botright.Y; row++) {
-					if (Map.TryGet(col, row, out Point? tile)) {
-						if (tile.HasValue) {
-							r.Draw(Texture.Texture, dest, Texture.GetCell(tile.Value), Color.White, c, Camera.Space.Pixel);
-						}
+
+			for (int col = topleft.X; col < botright.X && col < Map.Count; col++) {
+				for (int row = topleft.Y; row < botright.Y && row < Map[col].Count; row++) {
+					var tile = Map[col][row];
+					if (!tile.IsEmpty) {
+						r.Draw(Tileset.Texture, dest, Tileset.GetCell(tile.Id), Color.White, c, Camera.Space.Pixel, tile.Effect);
 					}
 					dest.Y += dest.Height;
 				}
@@ -116,79 +73,27 @@ namespace Toybox.maps {
 			}
 		}
 
-		/// <summary> Returns the bounds of the tile at the given world position. </summary>
-		public Rectangle GetTileBounds(int x, int y) {
-			var location = GetGridPosition(x, y);
-			return new Rectangle(location.X, location.Y, TileWidth, TileHeight);
+		public Tile? Get(int x, int y) {
+			var mappos = PixelToMap(x, y);
+			if (mappos.X < 0 || mappos.Y < 0 || mappos.X >= Map.Count || mappos.Y >= Map[mappos.X].Count) {
+				return null;
+			}
+			var tile = Map[mappos.X][mappos.Y];
+			if (tile.IsEmpty) return null;
+			return tile;
 		}
 
-		/// <summary> Returns the bounds of the tile at the given world position. </summary>
-		public Rectangle GetTileBounds(Point p) {
-			return GetTileBounds(p.X, p.Y);
-		}
-
-		/// <summary> Returns position in the map cooresponding to world coords. </summary>
-		private Point WorldToTile(int x, int y) {
+		/// <summary> Converts PixelSpace coords to Column and Row in the Map </summary>
+		protected Point PixelToMap(int x, int y) {
 			x -= X;
 			y -= Y;
 			return new Point((int)Math.Floor((float)x / TileWidth), (int)Math.Floor((float)y / TileHeight));
 		}
 
-		/// <summary> Returns position in world cooresponding to tile column and row. </summary>
-		private Point TileToWorld(int col, int row) {
-			return new Point((int)(col * Texture.CellWidth) + X, (int)(row * Texture.CellHeight) + Y);
+		/// <summary> Converts Map Column and Row to PixelSpace coords </summary>
+		protected Point MapToPixel(int col, int row) {
+			return new Point(col * Tileset.CellWidth + X, row * Tileset.CellHeight + Y);
 		}
 
-		/// <summary> Rounds the position down to match the tilemap grid. </summary>
-		public Point GetGridPosition(int x, int y) {
-			return new Point((int)Math.Floor((float)x / TileWidth) * TileWidth, (int)Math.Floor((float)y / TileHeight) * TileHeight);
-		}
-
-		/*public void Save(XmlWriter writer) {
-			writer.WriteStartElement("tilemap");
-			writer.WriteAttributeString("x", X.ToString());
-			writer.WriteAttributeString("y", Y.ToString());
-
-			Texture.Save(writer);
-
-			writer.WriteStartElement("data");
-			writer.WriteAttributeString("texturecols", Texture.Columns.ToString());
-			writer.WriteAttributeString("left", Map.Left.ToString());
-			writer.WriteAttributeString("top", Map.Top.ToString());
-
-			for (int row = Map.Top; row <= Map.Bottom; row++) {
-				writer.WriteStartElement("row");
-				var output = new StringBuilder();
-				output.Append(TileToFrame(Map[Map.Left, row]));
-				for (int col = Map.Left + 1; col <= Map.Right; col++) {
-					output.Append(",");
-					output.Append(TileToFrame(Map[col, row]));
-				}
-				writer.WriteString(output.ToString());
-				writer.WriteEndElement();
-			}
-
-			writer.WriteEndElement();
-
-			writer.WriteEndElement();
-		}*/
-
-		public int TileToFrame(Point? tile) {
-			if (!tile.HasValue) return -1;
-			return tile.Value.X + (tile.Value.Y * Texture.Columns);
-		}
-
-		public Point? FrameToTile(int frame, int sourceCols) {
-			if (frame == -1) return null;
-			return new Point(frame % sourceCols, (int)Math.Floor((float)frame / sourceCols));
-		}
-
-		public Rectangle GetBounds() {
-			var topleft = TileToWorld(Map.Left, Map.Top);
-			var botright = TileToWorld(Map.Right, Map.Bottom);
-			return new Rectangle(topleft.X, topleft.Y, botright.X + TileWidth, botright.Y + TileHeight);
-		}
-
-		
 	}
 }
