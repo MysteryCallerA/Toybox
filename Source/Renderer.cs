@@ -34,18 +34,18 @@ namespace Toybox {
 
 
 
-		public void DrawDirect(Texture2D t, Rectangle dest, Rectangle source, Color c) {
-			Batch.Draw(t, dest, source, c);
+		public void DrawDirect(Texture2D t, Rectangle dest, Rectangle source, Color c, SpriteEffects effect = SpriteEffects.None) {
+			Batch.Draw(t, dest, source, c, 0, Vector2.Zero, effect, 0);
 		}
 
-		public void Draw(Texture2D t, Rectangle dest, Rectangle source, Color c, Camera cam, Camera.Space fromSpace) {
+		public void Draw(Texture2D t, Rectangle dest, Rectangle source, Color c, Camera cam, Camera.Space fromSpace, SpriteEffects effect = SpriteEffects.None) {
 			dest = cam.Project(fromSpace, Camera.Space.Render, dest);
-			Batch.Draw(t, dest, source, c);
+			Batch.Draw(t, dest, source, c, 0, Vector2.Zero, effect, 0);
 		}
 
-		public void DrawStatic(Texture2D t, Rectangle dest, Rectangle source, Color c, Camera cam, Camera.Space fromSpace) {
+		public void DrawStatic(Texture2D t, Rectangle dest, Rectangle source, Color c, Camera cam, Camera.Space fromSpace, SpriteEffects effect = SpriteEffects.None) {
 			dest = cam.Project(fromSpace, Camera.Space.Subpixel, dest);
-			Batch.Draw(t, dest, source, c);
+			Batch.Draw(t, dest, source, c, 0, Vector2.Zero, effect, 0);
 		}
 
 		//TODO -HARD- Currently when using GameScale, you can still draw at subpixel positions to allow for smoother movement
