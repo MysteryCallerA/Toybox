@@ -9,16 +9,16 @@ using System.Xml;
 using Toybox.maps;
 
 namespace Toybox.layers {
-	public class EntityLayer:SceneLayer {
+	public class EntityLayer<T>:SceneLayer where T:Entity {
 
-		public EntityMap Map;
+		public EntityMap<T> Map;
 
-		public EntityLayer(string name, EntityMap map) : base(name) {
+		public EntityLayer(string name, EntityMap<T> map) : base(name) {
 			Map = map;
 		}
 
 		protected override void DoDraw(Renderer r, Camera c) {
-			Map.Draw(r.Batch, c);
+			Map.Draw(r, c);
 		}
 
 		protected override void DoUpdate() {
