@@ -9,5 +9,8 @@ namespace Toybox.components {
 
 		public void Apply(Entity e);
 
+		public void Draw(Entity e, Renderer r, Camera c) {
+		}
+
 	}
 }
