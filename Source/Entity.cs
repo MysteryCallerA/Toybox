@@ -15,25 +15,36 @@ namespace Toybox {
 		public int Id = -1;
 		public Point MapCell;
 
-		public Point Position;
 		public string Name;
 
 		public virtual void Update() {
 		}
 
-		public virtual void Draw(SpriteBatch s, Camera c) {
+		public virtual void Draw(Renderer r, Camera c) {
 		}
 
-		public abstract void Save(XmlWriter writer);
+		public virtual void Save(XmlWriter writer) {
+		}
+
+		public float TrueX;
+		public float TrueY;
 
 		public int X {
-			get { return Position.X; }
-			set { Position.X = value; }
+			get { return (int)Math.Floor(TrueX); }
+			set { TrueX = value; }
 		}
 
 		public int Y {
-			get { return Position.Y; }
-			set { Position.Y = value; }
+			get { return (int)Math.Floor(TrueY); }
+			set { TrueY = value; }
+		}
+
+		public Point Position {
+			get { return new Point(X, Y); }
+			set {
+				X = value.X;
+				Y = value.Y;
+			}
 		}
 
 		public override int GetHashCode() {
