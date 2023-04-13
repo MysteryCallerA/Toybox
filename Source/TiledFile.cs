@@ -10,32 +10,43 @@ namespace Toybox {
 
 	public class TiledFile {
 
-		public List<TileLayer> TileLayers = new List<TileLayer>();
-		public List<ObjectLayer> ObjectLayers = new List<ObjectLayer>();
-		public List<Tileset> Tilesets = new List<Tileset>();
+		public Dictionary<string, TileLayer> TileLayers = new Dictionary<string, TileLayer>();
+		public Dictionary<string, ObjectLayer> ObjectLayers = new Dictionary<string, ObjectLayer>();
+		public Dictionary<string, Tileset> Tilesets = new Dictionary<string, Tileset>();
 
-		public class TileLayer {
-			public string Name;
+		public class TileLayer:NamedObject {
 			public int LayerPos;
 			public int Width;
 			public int Height;
+			/// <summary> This collection is in Y,X format!!! </summary>
 			public List<List<int>> Tiles;
 		}
 
-		public class ObjectLayer {
-			public string Name;
+		public class ObjectLayer:NamedObject {
 			public int LayerPos;
-			public List<TiledObject> Objects;
+			public List<TiledObject> Objects;//mabye convert this to a dictionary
 		}
 
-		public class TiledObject {
-			public string Name;
+		public class TiledObject:NamedObject {
 			public Point Position;
 		}
 
-		public class Tileset {
-			public string Name;
+		public class Tileset:NamedObject {
 			public int FirstGid;
+		}
+
+		public abstract class NamedObject {
+			public string Name;
+			public override bool Equals(object obj) {
+				if (obj == null || GetType() != obj.GetType()) {
+					return false;
+				}
+				NamedObject other = (NamedObject)obj;
+				return Name == other.Name;
+			}
+			public override int GetHashCode() {
+				return Name.GetHashCode();
+			}
 		}
 
 		public TiledFile(string path) {
@@ -96,7 +107,7 @@ namespace Toybox {
 			}
 			layer.Tiles = layerData;
 
-			TileLayers.Add(layer);
+			TileLayers.Add(layer.Name, layer);
 		}
 
 		private void ParseObjectLayer(XmlNode node, int layerPos) {
@@ -110,7 +121,7 @@ namespace Toybox {
 				layer.Objects.Add(o);
 			}
 
-			ObjectLayers.Add(layer);
+			ObjectLayers.Add(layer.Name, layer);
 		}
 
 		private void ParseTileset(XmlNode node) {
@@ -118,62 +129,25 @@ namespace Toybox {
 			tileset.Name = node.Attributes["source"].Value;
 			tileset.Name = tileset.Name.Substring(0, tileset.Name.Length - 4);
 			tileset.FirstGid = int.Parse(node.Attributes["firstgid"].Value);
-			Tilesets.Add(tileset);
-		}
-
-		public TileLayer FindTileLayer(string layerName) {
-			TileLayer layer = null;
-			for (int i = 0; i < TileLayers.Count; i++) {
-				if (TileLayers[i].Name == layerName) {
-					layer = TileLayers[i];
-					break;
-				}
-			}
-			return layer;
-		}
-
-		private ObjectLayer FindObjectLayer(string layerName) {
-			ObjectLayer layer = null;
-			for (int i = 0; i < ObjectLayers.Count; i++) {
-				if (ObjectLayers[i].Name == layerName) {
-					layer = ObjectLayers[i];
-					break;
-				}
-			}
-			return layer;
-		}
-
-		private Tileset FindTileset(string name) {
-			Tileset tileset = null;
-			for (int i = 0; i < Tilesets.Count; i++) {
-				if (Tilesets[i].Name == name) {
-					tileset = Tilesets[i];
-					break;
-				}
-			}
-			return tileset;
+			Tilesets.Add(tileset.Name, tileset);
 		}
 
 		public Tilemap GetTilemap(string layerName, string tilesetName, TextureGrid t) {
 			var data = new List<List<Tilemap.Tile>>();
-			Tileset tileset = null;
-			TileLayer layer = null;
-			for (int i = 0; i < Tilesets.Count; i++) {
-				if (Tilesets[i].Name == tilesetName) {
-					tileset = Tilesets[i];
-					break;
-				}
-			}
-			if (tileset == null) throw new Exception(tilesetName + " does not exist");
-			for (int i = 0; i < TileLayers.Count; i++) {
-				if (TileLayers[i].Name == layerName) {
-					layer = TileLayers[i];
-					break;
-				}
-			}
-			if (layer == null) throw new Exception(layerName + " does not exist");
+			int sub = Tilesets[tilesetName].FirstGid;
+			TileLayer layer = TileLayers[layerName];
 
+			for (int x = 0; x < layer.Width; x++) {
+				List<Tilemap.Tile> col = new List<Tilemap.Tile>();
+				for (int y = 0; y < layer.Height; y++) {
+					if (layer.Tiles[y][x] == 0) {
+						col.Add(new Tilemap.Tile());
+						continue;
+					}
 
+				}
+				data.Add(col);
+			}
 
 			return new Tilemap(t, data);
 		}
