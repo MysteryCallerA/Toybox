@@ -13,8 +13,13 @@ namespace Toybox.maps {
 
 		protected List<List<Tile>> Map = new List<List<Tile>>();//x,y
 
-		public Tilemap(TextureGrid t) {
+		protected Tilemap(TextureGrid t) {
 			Tileset = t;
+		}
+
+		public Tilemap(TextureGrid t, List<List<Tile>> data) {
+			Tileset = t;
+			Map = data;
 		}
 
 		public struct Tile {
@@ -46,6 +51,10 @@ namespace Toybox.maps {
 
 		public Point TileSize {
 			get { return new Point(TileWidth, TileHeight); }
+		}
+
+		public void SetData(List<List<Tile>> data) {
+			Map = data;
 		}
 
 		public void Draw(Renderer r, Camera c) {
