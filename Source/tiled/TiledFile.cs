@@ -31,26 +31,22 @@ namespace Toybox.tiled {
 		}
 
 		private void ParseXml(string xml) {
-			//try {
-				XmlDocument doc = new XmlDocument();
-				doc.LoadXml(xml);
-				var map = doc.SelectSingleNode("map");
+			XmlDocument doc = new XmlDocument();
+			doc.LoadXml(xml);
+			var map = doc.SelectSingleNode("map");
 
-				foreach (XmlNode node in map.ChildNodes) {
-					if (node.Name == "layer") {
-						var layer = new TiledTileLayer(node);
-						TileLayers.Add(layer.Name, layer);
-					} else if (node.Name == "objectgroup") {
-						var layer = new TiledObjectLayer(node);
-						ObjectLayers.Add(layer.Name, layer);
-					} else if (node.Name == "tileset") {
-						var tileset = new TiledTileset(node);
-						Tilesets.Add(tileset);
-					}
+			foreach (XmlNode node in map.ChildNodes) {
+				if (node.Name == "layer") {
+					var layer = new TiledTileLayer(node);
+					TileLayers.Add(layer.Name, layer);
+				} else if (node.Name == "objectgroup") {
+					var layer = new TiledObjectLayer(node);
+					ObjectLayers.Add(layer.Name, layer);
+				} else if (node.Name == "tileset") {
+					var tileset = new TiledTileset(node);
+					Tilesets.Add(tileset);
 				}
-			//} catch (Exception e) {
-			//	throw new Exception("Error occurred while parsing Tiled file:", e);
-			//}
+			}
 		}
 		
 
