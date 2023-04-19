@@ -4,14 +4,14 @@ using System;
 using System.Collections.Generic;
 using Utils.graphic;
 
-namespace Toybox.maps {
+namespace Toybox.maps.tiles {
 	public class Tilemap {
 
 		public int X;
 		public int Y;
 		public TextureGrid Tileset;
 
-		protected List<List<Tile>> Map = new List<List<Tile>>();//x,y
+		protected internal List<List<Tile>> Map = new List<List<Tile>>();//x,y
 
 		protected Tilemap(TextureGrid t) {
 			Tileset = t;
@@ -82,25 +82,29 @@ namespace Toybox.maps {
 			}
 		}
 
-		public Tile? Get(int x, int y) {
-			var mappos = PixelToMap(x, y);
-			if (mappos.X < 0 || mappos.Y < 0 || mappos.X >= Map.Count || mappos.Y >= Map[mappos.X].Count) {
+		public Tile? Get(Point pixelPos) {
+			var mapPos = PixelToMap(pixelPos.X, pixelPos.Y);
+			return Get(mapPos.X, mapPos.Y);
+		}
+
+		protected internal Tile? Get(int col, int row) {
+			if (col < 0 || row < 0 || col >= Map.Count || row >= Map[col].Count) {
 				return null;
 			}
-			var tile = Map[mappos.X][mappos.Y];
+			var tile = Map[col][row];
 			if (tile.IsEmpty) return null;
 			return tile;
 		}
 
 		/// <summary> Converts PixelSpace coords to Column and Row in the Map </summary>
-		protected Point PixelToMap(int x, int y) {
+		protected internal Point PixelToMap(int x, int y) {
 			x -= X;
 			y -= Y;
 			return new Point((int)Math.Floor((float)x / TileWidth), (int)Math.Floor((float)y / TileHeight));
 		}
 
 		/// <summary> Converts Map Column and Row to PixelSpace coords </summary>
-		protected Point MapToPixel(int col, int row) {
+		protected internal Point MapToPixel(int col, int row) {
 			return new Point(col * Tileset.CellWidth + X, row * Tileset.CellHeight + Y);
 		}
 

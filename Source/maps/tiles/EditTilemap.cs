@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Utils.graphic;
 
-namespace Toybox.maps {
+namespace Toybox.maps.tiles {
 	public class EditTilemap:Tilemap {
 
 		public EditTilemap(TextureGrid t) : base(t) {

@@ -3,12 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using Toybox.maps;
+using Toybox.maps.tiles;
 using Utils.graphic;
 
-namespace Toybox.tiled {
+namespace Toybox.tiled
+{
 
-	public class TiledFile {
+    public class TiledFile {
 
 		private Dictionary<string, TiledTileLayer> TileLayers = new Dictionary<string, TiledTileLayer>();
 		private Dictionary<string, TiledObjectLayer> ObjectLayers = new Dictionary<string, TiledObjectLayer>();

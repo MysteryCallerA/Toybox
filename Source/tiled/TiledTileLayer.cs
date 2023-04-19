@@ -9,12 +9,13 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
-using Toybox.maps;
+using Toybox.maps.tiles;
 using Utils.graphic;
 
-namespace Toybox.tiled {
-	
-	internal class TiledTileLayer {
+namespace Toybox.tiled
+{
+
+    internal class TiledTileLayer {
 
 		private const uint FlagHFlip = 0b10000000000000000000000000000000;
 		private const uint FlagVFlip = 0b01000000000000000000000000000000;
