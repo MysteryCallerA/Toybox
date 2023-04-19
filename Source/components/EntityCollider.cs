@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Toybox.components {
 	public abstract class EntityCollider {
 
-		public abstract void Move(Entity e, Point dif);
+		public abstract void Move(Entity e, Vector2 dif);
 
 	}
 }
