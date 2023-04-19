@@ -16,7 +16,7 @@ namespace Toybox.components.graphic {
 			Graphic = graphic;
 		}
 
-		public void Apply(Entity e) {
+		public void Apply(ComplexEntity e) {
 
 		}
 

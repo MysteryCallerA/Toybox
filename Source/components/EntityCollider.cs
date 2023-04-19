@@ -10,5 +10,13 @@ namespace Toybox.components {
 
 		public abstract void Move(Entity e, Vector2 dif);
 
+		public abstract bool LeftClear(Rectangle hitbox);
+
+		public abstract bool RightClear(Rectangle hitbox);
+
+		public abstract bool TopClear(Rectangle hitbox);
+
+		public abstract bool BotClear(Rectangle hitbox);
+
 	}
 }

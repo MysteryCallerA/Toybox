@@ -64,5 +64,10 @@ namespace Toybox {
 			get { return Y; }
 		}
 
+		public virtual void Move(Vector2 dif) {
+			TrueX += dif.X;
+			TrueY += dif.Y;
+		}
+
 	}
 }

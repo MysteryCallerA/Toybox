@@ -46,7 +46,7 @@ namespace Toybox.components.control {
 			}
 		}
 
-		public void Apply(Entity e) {
+		public void Apply(ComplexEntity e) {
 			throw new NotImplementedException();
 		}
 	}

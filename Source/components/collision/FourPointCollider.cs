@@ -10,6 +10,7 @@ namespace Toybox.components.collision {
 	public class FourPointCollider:EntityCollider {
 
 		public Func<Point, bool> CheckSolid;
+		private Rectangle Hitbox;
 
 		public FourPointCollider(Func<Point, bool> checkSolid) {
 			CheckSolid = checkSolid;
@@ -20,15 +21,22 @@ namespace Toybox.components.collision {
 
 			dif.X += e.TrueX % 1;
 			dif.Y += e.TrueY % 1;
-			e.TrueX = (float)Math.Truncate(e.TrueX);
-			e.TrueY = (float)Math.Truncate(e.TrueY);
 
 			var subPixels = new Vector2(dif.X % 1, dif.Y % 1);
 			var intdif = new Point((int)Math.Truncate(dif.X), (int)Math.Truncate(dif.Y));
+			Hitbox = e.GetHitbox();
 
 			if (intdif == Point.Zero) {
-				e.TrueX += subPixels.X;
-				e.TrueY += subPixels.Y;
+				if (subPixels.X > 0) {
+					if (RightClear(Hitbox)) e.TrueX += subPixels.X;
+				} else if (subPixels.X < 0) {
+					if (LeftClear(Hitbox)) e.TrueX += subPixels.X;
+				}
+				if (subPixels.Y > 0) {
+					if (BotClear(Hitbox)) e.TrueY += subPixels.Y;
+				} else if (subPixels.Y < 0) {
+					if (TopClear(Hitbox)) e.TrueY += subPixels.Y;
+				}
 				return;
 			}
 
@@ -51,22 +59,84 @@ namespace Toybox.components.collision {
 			float xsub = 0, ysub = 0;
 			for (int i = 1; i <= stepnum; i++) {
 				xsub += steps.X;
+				if (xsub >= 1) {
+					MoveRight(e);
+					xsub--;
+				} else if (xsub <= -1) {
+					MoveLeft(e);
+					xsub++;
+				}
+
+				ysub += steps.Y;
+				if (ysub >= 1) {
+					MoveDown(e);
+					ysub--;
+				} else if (ysub <= -1) {
+					MoveUp(e);
+					ysub++;
+				}
 			}
 
-
+			subPixels.X += xsub;
+			subPixels.Y += ysub;
+			if (subPixels.X > 0) {
+				if (RightClear(Hitbox)) e.TrueX += subPixels.X;
+			} else if (subPixels.X < 0) {
+				if (LeftClear(Hitbox)) e.TrueX += subPixels.X;
+			}
+			if (subPixels.Y > 0) {
+				if (BotClear(Hitbox)) e.TrueY += subPixels.Y;
+			} else if (subPixels.Y < 0) {
+				if (TopClear(Hitbox)) e.TrueY += subPixels.Y;
+			}
 		}
 
-		private Point TopLeft { 
-			get { return Hitbox.Location; } 
+		public override bool LeftClear(Rectangle hitbox) {
+			Point offset = new Point(-1, 0);
+			return !CheckSolid.Invoke(hitbox.Location + offset) && !CheckSolid.Invoke(new Point(hitbox.X, hitbox.Bottom) + offset);
 		}
-		private Point TopRight {
-			get { return new Point(Hitbox.Right, Hitbox.Y); }
+
+		public override bool RightClear(Rectangle hitbox) {
+			Point offset = new Point(1, 0);
+			return !CheckSolid.Invoke(new Point(hitbox.Right, hitbox.Top) + offset) && !CheckSolid.Invoke(new Point(hitbox.Right, hitbox.Bottom) + offset);
 		}
-		private Point BotLeft {
-			get { return new Point(Hitbox.X, Hitbox.Bottom); }
+
+		public override bool TopClear(Rectangle hitbox) {
+			Point offset = new Point(0, -1);
+			return !CheckSolid.Invoke(new Point(hitbox.Right, hitbox.Top) + offset) && !CheckSolid.Invoke(hitbox.Location + offset);
 		}
-		private Point BotRight {
-			get { return new Point(Hitbox.Right, Hitbox.Bottom); }
+
+		public override bool BotClear(Rectangle hitbox) {
+			Point offset = new Point(0, 1);
+			return !CheckSolid.Invoke(new Point(hitbox.Left, hitbox.Bottom) + offset) && !CheckSolid.Invoke(new Point(hitbox.Right, hitbox.Bottom) + offset);
+		}
+
+		private void MoveLeft(Entity e) {
+			if (LeftClear(Hitbox)) {
+				Hitbox.X--;
+				e.X--;
+			}
+		}
+
+		private void MoveRight(Entity e) {
+			if (RightClear(Hitbox)) {
+				Hitbox.X++;
+				e.X++;
+			}
+		}
+
+		private void MoveDown(Entity e) {
+			if (BotClear(Hitbox)) {
+				Hitbox.Y++;
+				e.Y++;
+			}
+		}
+
+		private void MoveUp(Entity e) {
+			if (TopClear(Hitbox)) {
+				Hitbox.Y--;
+				e.Y--;
+			}
 		}
 	}
 }

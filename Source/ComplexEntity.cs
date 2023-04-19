@@ -27,13 +27,14 @@ namespace Toybox {
 			}
 		}
 
-		public void Move(Point dif) {
+		public override void Move(Vector2 dif) {
 			if (Collider != null) {
-				Collider.Move(dif);
+				Collider.Move(this, dif);
 				return;
 			}
 
-			Position += dif;
+			TrueX += dif.X;
+			TrueY += dif.Y;
 		}
 
 	}

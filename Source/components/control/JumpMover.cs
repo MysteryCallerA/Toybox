@@ -12,40 +12,51 @@ namespace Toybox.components.control {
 		public VirtualKey LeftKey;
 		public VirtualKey RightKey;
 		public VirtualKey JumpKey;
-		public Func<Point, bool> CheckSolid;
 
-		public int Speed = 1;
-		public int FallSpeed = 1;
+		public int MaxSpeed = 1;
+		public float MoveAccel = 1f;
+		public float MoveDecel = 1f;
+		public float FallAccel = 0.1f;
+		public int JumpSpeed = -2;
 
-		public JumpMover(VirtualKey left, VirtualKey right, VirtualKey jump, Func<Point, bool> checkSolid) {
+		public Vector2 Speed = Vector2.Zero;
+
+		public JumpMover(VirtualKey left, VirtualKey right, VirtualKey jump) {
 			LeftKey = left;
 			RightKey = right;
 			JumpKey = jump;
-			CheckSolid = checkSolid;
 		}
 
-		public void Apply(Entity e) {
-			var hitbox = e.GetHitbox();
+		public void Apply(ComplexEntity e) {
 
-			int speed = 0;
-			if (LeftKey.Down) speed -= Speed;
-			if (RightKey.Down) speed += Speed;
-			e.X += speed;
+			if (LeftKey.Down) Speed.X -= MoveAccel;
+			if (RightKey.Down) Speed.X += MoveAccel;
 
-			if (speed < 0) {
+			if (Math.Abs(Speed.X) > MaxSpeed) Speed.X = MaxSpeed * Math.Sign(Speed.X);
+
+			if (!LeftKey.Down && !RightKey.Down) {
+				Speed.X -= MoveDecel * Math.Sign(Speed.X);
+			}
+
+			if (Speed.X < 0) {
 				Direction = AnimationDirection.Left;
 				State = AnimationState.Moving;
-			} else if (speed > 0) {
+			} else if (Speed.X > 0) {
 				Direction = AnimationDirection.Right;
 				State = AnimationState.Moving;
 			} else {
 				State = AnimationState.Idle;
 			}
 
-			var movingto = e.Position + new Point(0, FallSpeed);
-			if (!CheckSolid.Invoke(movingto + new Point(0, hitbox.Height))) {
-				e.Position = movingto;
+			if (!e.Collider.BotClear(e.GetHitbox())) {
+				if (JumpKey.Pressed) {
+					Speed.Y = JumpSpeed;
+				}
+			} else {
+				Speed.Y += FallAccel;
 			}
+
+			e.Move(Speed);
 		}
 
 		public enum AnimationState {

@@ -25,7 +25,7 @@ namespace Toybox.components.control {
 			throw new NotImplementedException();
 		}
 
-		public void Apply(Entity e) {
+		public void Apply(ComplexEntity e) {
 			Point move = Point.Zero;
 			if (Up.Down) move.Y -= Speed;
 			if (Down.Down) move.Y += Speed;
