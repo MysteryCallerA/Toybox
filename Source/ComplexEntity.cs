@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ namespace Toybox {
 	public abstract class ComplexEntity:Entity {
 
 		public List<EntityComponent> Components = new List<EntityComponent>();
+		public EntityCollider Collider = null;
 
 		public override void Update() {
 			base.Update();
@@ -23,6 +25,15 @@ namespace Toybox {
 			foreach (var com in Components) {
 				com.Draw(this, r, c);
 			}
+		}
+
+		public void Move(Point dif) {
+			if (Collider != null) {
+				Collider.Move(dif);
+				return;
+			}
+
+			Position += dif;
 		}
 
 	}
