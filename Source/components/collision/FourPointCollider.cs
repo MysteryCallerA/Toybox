@@ -138,5 +138,9 @@ namespace Toybox.components.collision {
 				e.Y--;
 			}
 		}
+
+		public override bool PointClear(Point p) {
+			return !CheckSolid.Invoke(p);
+		}
 	}
 }

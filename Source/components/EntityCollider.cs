@@ -18,5 +18,7 @@ namespace Toybox.components {
 
 		public abstract bool BotClear(Rectangle hitbox);
 
+		public abstract bool PointClear(Point p);
+
 	}
 }
