@@ -10,6 +10,10 @@ namespace Toybox.components.collision {
 	public class FourPointCollider:EntityCollider {
 
 		public Func<Point, bool> CheckSolid;
+		public bool SlipCorners = true;
+		public int SlipDistance = 2;
+
+		private Vector2 ToMove;
 
 		public FourPointCollider(Func<Point, bool> checkSolid) {
 			CheckSolid = checkSolid;
@@ -17,28 +21,44 @@ namespace Toybox.components.collision {
 
 		public override void Move(Entity e, Vector2 dif) {
 			if (dif == Vector2.Zero) return;
-
+			ToMove = dif;
 			var hitbox = e.GetHitbox();
-			while (dif.X >= 1 && RightClear(hitbox)) {
+
+			ResolveHMove(hitbox, e);
+			ResolveVMove(hitbox, e);
+
+			if (Math.Truncate(ToMove.X) != 0) {
+				ResolveHMove(hitbox, e);
+			}
+
+			if (!SlipCorners) return;
+
+			//NEXT somehow implement a corner slipping system???
+		}
+
+		private void ResolveHMove(Rectangle hitbox, Entity e) {
+			while (ToMove.X >= 1 && RightClear(hitbox)) {
 				hitbox.X++;
 				e.X++;
-				dif.X--;
+				ToMove.X--;
 			}
-			while (dif.X <= -1 && LeftClear(hitbox)) {
+			while (ToMove.X <= -1 && LeftClear(hitbox)) {
 				hitbox.X--;
 				e.X--;
-				dif.X++;
+				ToMove.X++;
 			}
+		}
 
-			while (dif.Y >= 1 && BotClear(hitbox)) {
+		private void ResolveVMove(Rectangle hitbox, Entity e) {
+			while (ToMove.Y >= 1 && BotClear(hitbox)) {
 				hitbox.Y++;
 				e.Y++;
-				dif.Y--;
+				ToMove.Y--;
 			}
-			while (dif.Y <= -1 && TopClear(hitbox)) {
+			while (ToMove.Y <= -1 && TopClear(hitbox)) {
 				hitbox.Y--;
 				e.Y--;
-				dif.Y++;
+				ToMove.Y++;
 			}
 		}
 
