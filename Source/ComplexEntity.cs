@@ -33,8 +33,7 @@ namespace Toybox {
 				return;
 			}
 
-			TrueX += dif.X;
-			TrueY += dif.Y;
+			base.Move(dif);
 		}
 
 	}
