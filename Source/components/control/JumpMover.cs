@@ -16,8 +16,8 @@ namespace Toybox.components.control {
 		public int MaxSpeed = 1;
 		public float MoveAccel = 1f;
 		public float MoveDecel = 1f;
-		public float FallAccel = 0.1f;
-		public int JumpSpeed = -2;
+		public float FallAccel = 0.2f;
+		public float JumpSpeed = -3.5f;
 
 		public Vector2 Speed = Vector2.Zero;
 
@@ -38,22 +38,17 @@ namespace Toybox.components.control {
 				Speed.X -= MoveDecel * Math.Sign(Speed.X);
 			}
 
-			if (Speed.X < 0) {
-				Direction = AnimationDirection.Left;
-				State = AnimationState.Moving;
-			} else if (Speed.X > 0) {
-				Direction = AnimationDirection.Right;
-				State = AnimationState.Moving;
-			} else {
-				State = AnimationState.Idle;
-			}
-
 			if (!e.Collider.BotClear(e.GetHitbox())) {
+				Speed.Y = 0;
 				if (JumpKey.Pressed) {
 					Speed.Y = JumpSpeed;
 				}
 			} else {
 				Speed.Y += FallAccel;
+			}
+
+			if (Speed.Y < 0 && !e.Collider.TopClear(e.GetHitbox())) {
+				Speed.Y = 0;
 			}
 
 			e.Move(Speed);
