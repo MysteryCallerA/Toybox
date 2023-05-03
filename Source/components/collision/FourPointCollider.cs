@@ -9,34 +9,28 @@ using System.Threading.Tasks;
 namespace Toybox.components.collision {
 	public class FourPointCollider:EntityCollider {
 
-		public Func<Point, bool> CheckSolid;
-		public bool SlipCorners = true;
-		public int SlipDistance = 2;
+		public Func<Point, Collision> CheckSolid;
 
-		private Vector2 ToMove;
+		private Point ToMove;
 
-		public FourPointCollider(Func<Point, bool> checkSolid) {
+		public FourPointCollider(Func<Point, Collision> checkSolid) {
 			CheckSolid = checkSolid;
 		}
 
-		public override void Move(Entity e, Vector2 dif) {
-			if (dif == Vector2.Zero) return;
+		public override void Move(Entity e, Point dif) {
+			if (dif == Point.Zero) return;
 			ToMove = dif;
 			var hitbox = e.GetHitbox();
 
-			ResolveHMove(hitbox, e);
-			ResolveVMove(hitbox, e);
+			ResolveHMove(ref hitbox, e);
+			ResolveVMove(ref hitbox, e);
 
-			if (Math.Truncate(ToMove.X) != 0) {
-				ResolveHMove(hitbox, e);
+			if (ToMove.X != 0) {
+				ResolveHMove(ref hitbox, e);
 			}
-
-			if (!SlipCorners) return;
-
-			//NEXT somehow implement a corner slipping system???
 		}
 
-		private void ResolveHMove(Rectangle hitbox, Entity e) {
+		private void ResolveHMove(ref Rectangle hitbox, Entity e) {
 			while (ToMove.X >= 1 && RightClear(hitbox)) {
 				hitbox.X++;
 				e.X++;
@@ -49,7 +43,7 @@ namespace Toybox.components.collision {
 			}
 		}
 
-		private void ResolveVMove(Rectangle hitbox, Entity e) {
+		private void ResolveVMove(ref Rectangle hitbox, Entity e) {
 			while (ToMove.Y >= 1 && BotClear(hitbox)) {
 				hitbox.Y++;
 				e.Y++;
@@ -63,23 +57,36 @@ namespace Toybox.components.collision {
 		}
 
 		public override bool LeftClear(Rectangle hitbox) {
-			return !CheckSolid.Invoke(new Point(hitbox.X - 1, hitbox.Y)) && !CheckSolid.Invoke(new Point(hitbox.X - 1, hitbox.Bottom - 1));
+			var c = Max(CheckSolid.Invoke(new Point(hitbox.X - 1, hitbox.Y)), CheckSolid.Invoke(new Point(hitbox.X - 1, hitbox.Bottom - 1)));
+			if (c.Type == CollisionType.Solid) return false;
+			return true;
 		}
 
 		public override bool RightClear(Rectangle hitbox) {
-			return !CheckSolid.Invoke(new Point(hitbox.Right, hitbox.Top)) && !CheckSolid.Invoke(new Point(hitbox.Right, hitbox.Bottom - 1));
+			var c = Max(CheckSolid.Invoke(new Point(hitbox.Right, hitbox.Top)), CheckSolid.Invoke(new Point(hitbox.Right, hitbox.Bottom - 1)));
+			if (c.Type == CollisionType.Solid) return false;
+			return true;
 		}
 
 		public override bool TopClear(Rectangle hitbox) {
-			return !CheckSolid.Invoke(new Point(hitbox.Left, hitbox.Top - 1)) && !CheckSolid.Invoke(new Point(hitbox.Right - 1, hitbox.Top - 1));
+			var c = Max(CheckSolid.Invoke(new Point(hitbox.Left, hitbox.Top - 1)), CheckSolid.Invoke(new Point(hitbox.Right - 1, hitbox.Top - 1)));
+			if (c.Type == CollisionType.Solid) return false;
+			return true;
 		}
 
 		public override bool BotClear(Rectangle hitbox) {
-			return !CheckSolid.Invoke(new Point(hitbox.Left, hitbox.Bottom)) && !CheckSolid.Invoke(new Point(hitbox.Right - 1, hitbox.Bottom));
+			var c = Max(CheckSolid.Invoke(new Point(hitbox.Left, hitbox.Bottom)), CheckSolid.Invoke(new Point(hitbox.Right - 1, hitbox.Bottom)));
+			if (c.Type == CollisionType.Solid) return false;
+			if (c.Type == CollisionType.SemiSolid) {
+				if (hitbox.Bottom <= c.Hitbox.Top) return false;
+			}
+			return true;
 		}
 
 		public override bool PointClear(Point p) {
-			return !CheckSolid.Invoke(p);
+			var c = CheckSolid.Invoke(p);
+			if (c.Type == CollisionType.Solid) return false;
+			return true;
 		}
 	}
 }

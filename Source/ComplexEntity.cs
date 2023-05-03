@@ -27,7 +27,7 @@ namespace Toybox {
 			}
 		}
 
-		public override void Move(Vector2 dif) {
+		public override void Move(Point dif) {
 			if (Collider != null) {
 				Collider.Move(this, dif);
 				return;

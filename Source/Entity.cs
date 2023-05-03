@@ -23,18 +23,8 @@ namespace Toybox {
 		public virtual void Draw(Renderer r, Camera c) {
 		}
 
-		public float TrueX;
-		public float TrueY;
-
-		public int X {
-			get { return (int)Math.Floor(TrueX); }
-			set { TrueX = value; }
-		}
-
-		public int Y {
-			get { return (int)Math.Floor(TrueY); }
-			set { TrueY = value; }
-		}
+		public int X;
+		public int Y;
 
 		public Point Position {
 			get { return new Point(X, Y); }
@@ -64,9 +54,9 @@ namespace Toybox {
 			get { return Y; }
 		}
 
-		public virtual void Move(Vector2 dif) {
-			TrueX += dif.X;
-			TrueY += dif.Y;
+		public virtual void Move(Point dif) {
+			X += dif.X;
+			Y += dif.Y;
 		}
 
 	}
