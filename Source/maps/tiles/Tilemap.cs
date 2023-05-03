@@ -87,6 +87,12 @@ namespace Toybox.maps.tiles {
 			return Get(mapPos.X, mapPos.Y);
 		}
 
+		public Tile? Get(Point pixelPos, out Rectangle hitbox) {
+			var mapPos = PixelToMap(pixelPos.X, pixelPos.Y);
+			hitbox = new Rectangle(MapToPixel(mapPos.X, mapPos.Y), TileSize);
+			return Get(mapPos.X, mapPos.Y);
+		}
+
 		protected internal Tile? Get(int col, int row) {
 			if (col < 0 || row < 0 || col >= Map.Count || row >= Map[col].Count) {
 				return null;
