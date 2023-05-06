@@ -8,6 +8,7 @@ namespace Toybox.components.control {
 		public VirtualKey LeftKey;
 		public VirtualKey RightKey;
 		public VirtualKey JumpKey;
+		public string FrontAnchorName = "front";
 
 		public int MaxMoveSpeed = 2;
 		public float MoveStartup = 1f;
@@ -119,6 +120,29 @@ namespace Toybox.components.control {
 			if (JumpBufferTimer > 0) JumpBufferTimer--;
 
 			e.Move(Speed.ToPoint());
+
+			UpdateState(e);
+			UpdateAnchor(e);
+		}
+
+		protected virtual void UpdateState(ComplexEntity e) {
+			if (Speed.X < 0) Direction = AnimationDirection.Left;
+			else if (Speed.X > 0) Direction = AnimationDirection.Right;
+		}
+
+		protected virtual void UpdateAnchor(ComplexEntity e) {
+			Point start;
+			Point end;
+			if (Direction == AnimationDirection.Left) {
+				start = e.GetHitbox().Location;
+				end = new Point(start.X - 1, start.Y);
+			} else {
+				var hitbox = e.GetHitbox();
+				start = new Point(hitbox.Right, hitbox.Y);
+				end = new Point(start.X + 1, start.Y);
+			}
+
+			e.Anchors[FrontAnchorName] = new PointRay(start, end);
 		}
 
 		public enum AnimationState {

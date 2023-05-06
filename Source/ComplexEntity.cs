@@ -11,6 +11,7 @@ namespace Toybox {
 	public abstract class ComplexEntity:Entity {
 
 		public List<EntityComponent> Components = new List<EntityComponent>();
+		public Dictionary<string, PointRay> Anchors = new Dictionary<string, PointRay>();
 		public EntityCollider Collider = null;
 
 		public override void Update() {
