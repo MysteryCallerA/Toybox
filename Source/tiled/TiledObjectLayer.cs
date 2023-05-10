@@ -11,14 +11,14 @@ namespace Toybox.tiled {
 	internal class TiledObjectLayer {
 
 		public string Name;
-		public Dictionary<string, TiledObject> Content = new Dictionary<string, TiledObject>();
+		public List<TiledObject> Content = new List<TiledObject>();
 
 		public TiledObjectLayer(XmlNode data) {
 			Name = data.Attributes["name"].Value;
 
 			foreach (XmlNode child in data.ChildNodes) {
 				var o = new TiledObject(child);
-				Content.Add(o.Name, o);
+				Content.Add(o);
 			}
 		}
 

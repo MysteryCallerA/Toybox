@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Xml;
 
 namespace Toybox.tiled {
-	internal class TiledObject {
+	public class TiledObject {
 
 		public string Name;
 		public Point Position;

@@ -55,5 +55,9 @@ namespace Toybox.tiled
 			return TileLayers[layerName].GetTilemap(Tilesets, t);
 		}
 
+		public List<TiledObject> GetObjects(string layerName) {
+			return ObjectLayers[layerName].Content;
+		}
+
 	}
 }
