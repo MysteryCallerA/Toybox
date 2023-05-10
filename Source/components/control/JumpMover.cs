@@ -9,6 +9,7 @@ namespace Toybox.components.control {
 		public VirtualKey RightKey;
 		public VirtualKey JumpKey;
 		public string FrontAnchorName = "front";
+		public Func<bool> IsDirectionLocked;
 
 		public int MaxMoveSpeed = 2;
 		public float MoveStartup = 1f;
@@ -126,8 +127,13 @@ namespace Toybox.components.control {
 		}
 
 		protected virtual void UpdateState(ComplexEntity e) {
-			if (Speed.X < 0) Direction = AnimationDirection.Left;
-			else if (Speed.X > 0) Direction = AnimationDirection.Right;
+			bool dlock = false;
+			if (IsDirectionLocked != null) dlock = IsDirectionLocked.Invoke();
+
+			if (!dlock) {
+				if (Speed.X < 0) Direction = AnimationDirection.Left;
+				else if (Speed.X > 0) Direction = AnimationDirection.Right;
+			}
 		}
 
 		protected virtual void UpdateAnchor(ComplexEntity e) {
