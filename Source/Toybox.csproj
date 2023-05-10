@@ -11,4 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Utils\Source\Utils.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="utils\" />
+  </ItemGroup>
 </Project>
