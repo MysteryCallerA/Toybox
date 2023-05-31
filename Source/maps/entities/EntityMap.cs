@@ -1,24 +1,22 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 using Utils.data;
-using Utils.save;
 
-namespace Toybox.maps.entities
-{
-	public class EntityMap<T> where T : Entity {
+namespace Toybox.maps.entities {
+
+	public class EntityMap:EntityMap<Entity> {
+		public EntityMap(int cellwidth, int cellheight):base(cellwidth, cellheight) {
+		}
+	}
+
+	public class EntityMap<T>:IEntityCollection<T> where T : Entity {
 
 		private Dictionary<Point, LinkedList<int>> Map = new Dictionary<Point, LinkedList<int>>();
 		private StableList<T> Entities = new StableList<T>();
 
-		private bool Updating = false;
-		private HashSet<T> WillAdd = new HashSet<T>();
-		private HashSet<T> WillRemove = new HashSet<T>();
+		private bool Locked = false;
+		private EntityLockoutBuffer<T> Buffer = new EntityLockoutBuffer<T>();
 
 		private int CellWidth;
 		private int CellHeight;
@@ -40,10 +38,7 @@ namespace Toybox.maps.entities
 		}
 
 		public void Add(T e) {
-			if (Updating) {
-				WillAdd.Add(e);
-				return;
-			}
+			if (Locked) { Buffer.QueueAdd(e); return; }
 
 			int id = Entities.Add(e);
 			e.Id = id;
@@ -65,10 +60,7 @@ namespace Toybox.maps.entities
 		}
 
 		public void Remove(T e) {
-			if (Updating) {
-				WillRemove.Add(e);
-				return;
-			}
+			if (Locked) { Buffer.QueueAdd(e); return; }
 
 			Entities.RemoveAt(e.Id);
 			RemoveFromMap(e);
@@ -76,23 +68,14 @@ namespace Toybox.maps.entities
 		}
 
 		public void Update() {
-			Updating = true;
+			Locked = true;
 			foreach (T e in Entities) {
 				if (e == null) continue;
 				e.Update();
 				UpdateMapPosition(e);
 			}
-			Updating = false;
-
-			foreach (T e in WillAdd) {
-				Add(e);
-			}
-			WillAdd.Clear();
-
-			foreach (T e in WillRemove) {
-				Remove(e);
-			}
-			WillRemove.Clear();
+			Locked = false;
+			Buffer.Apply(this);
 		}
 
 		private void AddToMap(T e) {

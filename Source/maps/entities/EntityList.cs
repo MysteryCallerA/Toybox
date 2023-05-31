@@ -12,9 +12,11 @@ namespace Toybox.maps.entities {
 	public class EntityList:EntityList<Entity> {
 	}
 
-	public class EntityList<T>:IEnumerable<T> where T : Entity {
+	public class EntityList<T>:IEnumerable<T>, IEntityCollection<T> where T : Entity {
 
 		private List<T> Content = new List<T>();
+		private bool Locked = false;
+		private EntityLockoutBuffer<T> Buffer = new EntityLockoutBuffer<T>();
 
 		public EntityList() {
 
@@ -30,9 +32,12 @@ namespace Toybox.maps.entities {
 		}
 
 		public void Update() {
+			Locked = true;
 			foreach (var e in Content) {
 				e.Update();
 			}
+			Locked = false;
+			Buffer.Apply(this);
 		}
 
 		public void Draw(Renderer r, Camera c) {
@@ -42,6 +47,7 @@ namespace Toybox.maps.entities {
 		}
 
 		public void Add(T e) {
+			if (Locked) { Buffer.QueueAdd(e); return; }
 			Content.Add(e);
 		}
 
@@ -72,6 +78,11 @@ namespace Toybox.maps.entities {
 
 		IEnumerator IEnumerable.GetEnumerator() {
 			return GetEnumerator();
+		}
+
+		public void Remove(T e) {
+			if (Locked) { Buffer.QueueRemove(e); return; }
+			Content.Remove(e);
 		}
 	}
 }
