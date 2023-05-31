@@ -35,10 +35,12 @@ namespace Toybox {
 		}
 
 		public override int GetHashCode() {
+			if (Id == -1) return base.GetHashCode();
 			return Id.GetHashCode();
 		}
 
 		public override bool Equals(object obj) {
+			if (Id == -1) return base.Equals(obj);
 			return Id.Equals(obj);
 		}
 
