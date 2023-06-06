@@ -67,8 +67,7 @@ namespace Toybox {
 
 			Init();
 
-			Resources.DebugInfo = new DebugInfoPanel(GetDefaultFont());
-			Resources.DebugHighlighter = new DebugHighlighter();
+			Resources.Debug = new DebugManager(GetDefaultFont());
 		}
 
 		/// <summary> Called after LoadContent() </summary>
@@ -100,7 +99,7 @@ namespace Toybox {
 			UpdateScene();
 			Camera.Update();
 
-			if (Resources.DebugHighlighter.Active) Resources.DebugHighlighter.Update(GetActiveScene());
+			if (Resources.Debug.Enabled) Resources.Debug.Update();
 
 			base.Update(gameTime);
 		}
@@ -115,11 +114,10 @@ namespace Toybox {
 		protected sealed override void Draw(GameTime gameTime) {
 			DoDraw();
 
-			if (Resources.DebugInfo.Active || Resources.DebugHighlighter.Active) {
+			if (Resources.Debug.Active) {
 				//Draw dev tools
 				Renderer.Batch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
-				if (Resources.DebugHighlighter.Active) Resources.DebugHighlighter.Draw(Renderer, Camera);
-				if (Resources.DebugInfo.Active) Resources.DebugInfo.Draw(Renderer, Camera);
+				Resources.Debug.Draw(Renderer, Camera);
 				Renderer.Batch.End();
 			}
 
@@ -141,7 +139,7 @@ namespace Toybox {
 		}
 
 		/// <summary> Return your SceneManager.ActiveScene </summary>
-		protected abstract Scene GetActiveScene();
+		public abstract Scene GetActiveScene();
 
 		protected abstract Font GetDefaultFont();
 

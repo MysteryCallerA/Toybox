@@ -18,13 +18,16 @@ namespace Toybox {
 		public static KeyboardInputManager TextInput;
 		public static MouseInputManager MouseInput;
 		public static Random Random;
-		public static DebugInfoPanel DebugInfo;
-		public static DebugHighlighter DebugHighlighter;
+		public static DebugManager Debug;
 
 		public static float DeltaTime = 0;
 
 		public static Camera Camera {
 			get { return Game.Camera; }
+		}
+
+		public static Scene Scene {
+			get { return Game.GetActiveScene(); }
 		}
 
 	}
