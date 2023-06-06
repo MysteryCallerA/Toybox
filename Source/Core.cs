@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Utils.input;
 using Utils;
 using Utils.text;
+using Toybox.debug;
 
 namespace Toybox {
 	public abstract class Core:Game {
@@ -37,6 +38,7 @@ namespace Toybox {
 			Resources.TextInput = new KeyboardInputManager() { AllowHoldRepeats = true };
 			Resources.MouseInput = new MouseInputManager();
 			Resources.Random = new Random();
+			
 		}
 
 		protected virtual void WindowSizeChanged(object o, EventArgs e) {
@@ -54,9 +56,6 @@ namespace Toybox {
 			}
 
 			Camera.ApplyChanges(GraphicsDevice);
-			//if (Resources.Console != null) {
-			//	Resources.Console.UpdateBounds(GraphicsDevice.Viewport.Bounds);
-			//}
 		}
 
 		/// <summary> Internal Initialize logic. Override Init() instead. </summary>
@@ -67,6 +66,9 @@ namespace Toybox {
 			base.Initialize();
 
 			Init();
+
+			Resources.DebugInfo = new DebugInfoPanel(GetDefaultFont());
+			Resources.DebugHighlighter = new DebugHighlighter();
 		}
 
 		/// <summary> Called after LoadContent() </summary>
@@ -94,13 +96,11 @@ namespace Toybox {
 			Resources.TextInput.UpdateControlStates(k);
 			Resources.MouseInput.UpdateControlStates(Mouse.GetState());
 
-			//if (Resources.Console == null || !Resources.Console.Active) {
-				DoUpdate(); //TODO can prob combine these? not sure why they're seperated in the first place...
-				UpdateScene();
-				Camera.Update();
-			//}
+			DoUpdate(); //TODO can prob combine these? not sure why they're seperated in the first place...
+			UpdateScene();
+			Camera.Update();
 
-			//Resources.Console?.Update(Resources.TextInput, Resources.MouseInput);
+			if (Resources.DebugHighlighter.Active) Resources.DebugHighlighter.Update(GetActiveScene());
 
 			base.Update(gameTime);
 		}
@@ -111,19 +111,17 @@ namespace Toybox {
 		/// <summary> Update your game logic here. </summary>
 		protected abstract void DoUpdate();
 
-		protected void EnableConsole(Font f) {
-			//R.Console = new GameConsole(f, GraphicsDevice.Viewport.Bounds);
-			//R.Console.Commands.Add("campos", new Command(CamPosCommand, 3, "campos <g/w> <x> <y>", "Set camera position. g = GameSpace, w = WorldSpace."));
-		}
-
 		/// <summary> Internal engine drawing function. Override DoDraw() instead. </summary>
 		protected sealed override void Draw(GameTime gameTime) {
 			DoDraw();
 
-			//Draw dev tools
-			//S.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
-			//Resources.Console?.Draw(S);
-			//S.End();
+			if (Resources.DebugInfo.Active || Resources.DebugHighlighter.Active) {
+				//Draw dev tools
+				Renderer.Batch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
+				if (Resources.DebugHighlighter.Active) Resources.DebugHighlighter.Draw(Renderer, Camera);
+				if (Resources.DebugInfo.Active) Resources.DebugInfo.Draw(Renderer, Camera);
+				Renderer.Batch.End();
+			}
 
 			base.Draw(gameTime);
 		}
@@ -142,34 +140,10 @@ namespace Toybox {
 			Renderer.Batch.End();
 		}
 
-		private void CamPosCommand(string[] args) {
-			bool gamespace = args[1] == "g";
-			var x = int.Parse(args[2]);
-			var y = int.Parse(args[3]);
-			if (gamespace) {
-				Camera.GameX = x;
-				Camera.GameY = y;
-			} else {
-				Camera.WorldX = x;
-				Camera.WorldY = y;
-			}
-		}
-
-		private string GetCamInfo() {
-			var output = new StringBuilder();
-			output.Append("Game: " + Camera.GameX.ToString() + ", " + Camera.GameY.ToString() + ", " + Camera.GameWidth.ToString() + ", " + Camera.GameHeight.ToString());
-			output.Append(Font.Newline);
-			output.Append("World: " + Camera.WorldX.ToString() + ", " + Camera.WorldY.ToString() + ", " + Camera.WorldWidth.ToString() + ", " + Camera.WorldHeight.ToString());
-			output.Append(Font.Newline);
-			output.Append("Screen: " + GraphicsDevice.Viewport.Bounds.Width.ToString() + ", " + GraphicsDevice.Viewport.Bounds.Height.ToString());
-			output.Append(Font.Newline);
-			var renderscale = Camera.GetScreenBounds().Width / Camera.Render.Width;
-			output.Append("GS: " + Camera.GameScale.ToString() + ", RS: " + renderscale.ToString());
-			return output.ToString();
-		}
-
 		/// <summary> Return your SceneManager.ActiveScene </summary>
 		protected abstract Scene GetActiveScene();
+
+		protected abstract Font GetDefaultFont();
 
 		/// <summary> Call your SceneManager.Update() </summary>
 		protected abstract void UpdateScene();

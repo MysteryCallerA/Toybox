@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,7 @@ namespace Toybox.maps.entities {
 
 		public void Add(T e);
 		public void Remove(T e);
+		public T Find(Point p);
 
 	}
 }

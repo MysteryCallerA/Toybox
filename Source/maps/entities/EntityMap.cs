@@ -59,6 +59,10 @@ namespace Toybox.maps.entities {
 			return null;
 		}
 
+		public T Find(Point pos) {
+			return GetEntity(pos);
+		}
+
 		public void Remove(T e) {
 			if (Locked) { Buffer.QueueAdd(e); return; }
 

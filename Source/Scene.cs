@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using Toybox.maps.entities;
 using Utils.save;
 
 namespace Toybox {
@@ -21,6 +22,10 @@ namespace Toybox {
 		}
 
 		public virtual void Draw(Renderer r, Camera c) {
+		}
+
+		public virtual Entity FindEntity(Point pos) {
+			return null;
 		}
 	}
 }

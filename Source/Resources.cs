@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Toybox.debug;
 using Utils.input;
 
 namespace Toybox {
@@ -17,6 +18,8 @@ namespace Toybox {
 		public static KeyboardInputManager TextInput;
 		public static MouseInputManager MouseInput;
 		public static Random Random;
+		public static DebugInfoPanel DebugInfo;
+		public static DebugHighlighter DebugHighlighter;
 
 		public static float DeltaTime = 0;
 
