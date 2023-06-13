@@ -24,7 +24,7 @@ namespace Toybox.debug {
 		private int HoverLine = -1;
 
 		public DebugInfoPanel(Font f) {
-			TextRenderer = new Text(f) { BackColor = Color.Black * 0.5f, Color = Color.White, Position = new Point(1, 1), Scale = 2 };
+			TextRenderer = new Text(f) { BackColor = Color.Black * 0.5f, Color = Color.White, Position = new Point(1, 1), Scale = 1 };
 		}
 
 		public void SetTarget(object t, bool newstack) {
