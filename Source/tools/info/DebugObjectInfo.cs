@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -18,7 +19,7 @@ namespace Toybox.tools.info {
 			var s = new StringBuilder();
 
 			s.Append(Content.GetType().Name);
-			foreach (var f in Content.GetType().GetFields()) {
+			foreach (var f in Content.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
 				s.AppendLine();
 				s.Append(f.Name + "=");
 				var val = f.GetValue(Content);
@@ -29,7 +30,7 @@ namespace Toybox.tools.info {
 		}
 
 		public object TargetLine(int linenum) {
-			var fields = Content.GetType().GetFields();
+			var fields = Content.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 			if (linenum < 0 || linenum >= fields.Length) return null;
 			return fields[linenum].GetValue(Content);
 		}
