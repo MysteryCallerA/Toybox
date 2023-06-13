@@ -50,7 +50,7 @@ namespace Toybox.debug {
 		}
 
 		public void SetInfoTarget(object o) {
-			InfoPanel.SetTarget(o);
+			InfoPanel.SetTarget(o, true);
 			CurrentState = DebugState.InfoInteract;
 		}
 

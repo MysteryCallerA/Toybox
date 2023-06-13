@@ -16,12 +16,11 @@ namespace Toybox.debug {
 			var find = s.FindEntity(pos);
 			if (find == null) {
 				Highlight = Rectangle.Empty;
-				HighlightedObject = null;
-				return;
+				HighlightedObject = Resources.Game;
+			} else {
+				HighlightedObject = find;
+				Highlight = find.GetHitbox();
 			}
-
-			HighlightedObject = find;
-			Highlight = find.GetHitbox();
 
 			if (Resources.MouseInput.LeftPress) {
 				Resources.Debug.SetInfoTarget(HighlightedObject);

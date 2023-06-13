@@ -1,44 +1,80 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.CodeDom;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Toybox.tools.info;
 using Utils.text;
 
 namespace Toybox.debug {
 	public class DebugInfoPanel {
 
 		public bool Active = false;
-		private object Target;
-		private string Text = "";
+		private IDebugInfo Target;
+		private Stack<IDebugInfo> History = new Stack<IDebugInfo>();
 		public Text TextRenderer;
+		private TextMeasurer TextM = new TextMeasurer();
+
+		private Rectangle HoverRect;
+		private int HoverLine = -1;
 
 		public DebugInfoPanel(Font f) {
-			TextRenderer = new Text(f) { BackColor = Color.Black * 0.5f };
+			TextRenderer = new Text(f) { BackColor = Color.Black * 0.5f, Color = Color.White, Position = new Point(1, 1), Scale = 2 };
 		}
 
-		public void SetTarget(object t) {
-			Target = t;
+		public void SetTarget(object t, bool newstack) {
+			if (t == null) return;
+			if (newstack) History.Clear();
+			var prev = Target;
+
+			if (t is IDictionary) {
+				Target = new DebugDictionaryInfo(t);
+			}else if (t is IEnumerable) {
+				Target = new DebugEnumerableInfo(t);
+			} else if (t is object) {
+				Target = new DebugObjectInfo(t);
+			}
+
+			if (Target != prev) History.Push(prev);
+		}
+
+		public void PrevTarget() {
+			if (History.Count > 0) Target = History.Pop();
 		}
 
 		public void Update() {
-			var s = new StringBuilder();
+			if (Target == null) return;
 
-			s.Append(Target.GetType().Name);
-			foreach (var f in Target.GetType().GetFields()) {
-				s.AppendLine();
-				s.Append(f.Name + "=");
-				var val = f.GetValue(Target);
-				if (val == null) s.Append("null");
-				else s.Append(val.ToString());
+			TextRenderer.Content = Target.GetText();
+			TextM.Update(TextRenderer);
+			UpdateHoveredField();
+
+			if (Resources.MouseInput.LeftPress) {
+				if (HoverLine == -1) PrevTarget();
+				else SetTarget(Target.TargetLine(HoverLine), false);
 			}
-			Text = s.ToString();
+		}
+
+		private void UpdateHoveredField() {
+			HoverRect = Rectangle.Empty;
+			HoverLine = -1;
+			var pick = TextM.PickLine(Resources.MouseInput.Position, out int linenum);
+			if (pick.HasValue) {
+				HoverRect = pick.Value;
+				HoverLine = linenum - 1;
+			}
 		}
 
 		public void Draw(Renderer r, Camera c) {
-			if (Text == "") return;
-			TextRenderer.Draw(r.Batch, Color.White, new Point(1, 1), Text, 2);
+			if (TextRenderer.Content == "" || Target == null) return;
+
+			if (HoverRect != Rectangle.Empty) r.DrawRectDirect(HoverRect, Color.Black);
+			TextRenderer.Draw(r.Batch);
 		}
 
 	}
