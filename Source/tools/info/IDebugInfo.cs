@@ -9,6 +9,7 @@ namespace Toybox.tools.info {
 
 		public string GetText();
 		public object TargetLine(int linenum);
+		public void SetField(int linenum, object value);
 
 	}
 }

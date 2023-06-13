@@ -19,7 +19,7 @@ namespace Toybox.tools.info {
 			var s = new StringBuilder();
 
 			s.Append(Content.GetType().Name);
-			foreach (var f in Content.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
+			foreach (var f in GetFields()) {
 				s.AppendLine();
 				s.Append(f.Name + "=");
 				var val = f.GetValue(Content);
@@ -29,10 +29,20 @@ namespace Toybox.tools.info {
 			return s.ToString();
 		}
 
+		public void SetField(int linenum, object value) {
+			var fields = GetFields();
+			if (linenum < 0 || linenum >= fields.Length) return;
+			fields[linenum].SetValue(Content, value);
+		}
+
 		public object TargetLine(int linenum) {
-			var fields = Content.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+			var fields = GetFields();
 			if (linenum < 0 || linenum >= fields.Length) return null;
 			return fields[linenum].GetValue(Content);
+		}
+
+		private FieldInfo[] GetFields() {
+			return Content.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 		}
 	}
 }

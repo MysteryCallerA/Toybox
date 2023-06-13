@@ -25,6 +25,9 @@ namespace Toybox.tools.info {
 			return s.ToString();
 		}
 
+		public void SetField(int linenum, object value) {
+		}
+
 		public object TargetLine(int linenum) {
 			if (linenum < 0) return null;
 			int i = 0;
