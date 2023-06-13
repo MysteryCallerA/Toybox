@@ -28,6 +28,10 @@ namespace Toybox {
 		public int Ydir {
 			get { return End.Y - Start.Y; }
 		}
-	
+
+		public override string ToString() {
+			return $"PointRay{{X:{Start.X},Y:{Start.Y}}}->{{X:{End.X},Y{End.Y}}}";
+		}
+
 	}
 }
