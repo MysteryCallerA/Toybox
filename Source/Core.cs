@@ -20,6 +20,7 @@ namespace Toybox {
 		protected Renderer Renderer;
 
 		public Camera Camera;
+		public bool Running = true;
 
 		/// <summary> Sets the screen to this color every frame before drawing the Scene.
 		/// <br></br>This is only for space outside the camera bounds. Use Camera.ClearColor instead for world background color.</summary>
@@ -91,13 +92,15 @@ namespace Toybox {
 			}
 
 			var k = Keyboard.GetState();
-			UpdateInputManager(Mouse.GetState(), k);
+			if (Running) UpdateInputManager(Mouse.GetState(), k);
 			Resources.TextInput.UpdateControlStates(k);
 			Resources.MouseInput.UpdateControlStates(Mouse.GetState());
 
-			DoUpdate(); //TODO can prob combine these? not sure why they're seperated in the first place...
-			UpdateScene();
-			Camera.Update();
+			if (Running) {
+				DoUpdate(); //TODO can prob combine these? not sure why they're seperated in the first place...
+				UpdateScene();
+				Camera.Update();
+			}
 
 			if (Resources.Debug.Enabled) Resources.Debug.Update();
 

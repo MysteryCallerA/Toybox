@@ -79,7 +79,7 @@ namespace Toybox.debug {
 
 		private void UpdateHoveredField() {
 			HoverRect = Rectangle.Empty;
-			HoverLine = -1;
+			HoverLine = -2;
 			var pick = TextM.PickLine(Resources.MouseInput.Position, out int linenum);
 			if (pick.HasValue) {
 				HoverRect = pick.Value;

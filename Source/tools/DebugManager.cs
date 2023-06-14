@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Input;
+using Toybox.tools;
 using Utils.text;
 
 namespace Toybox.debug {
@@ -8,9 +9,11 @@ namespace Toybox.debug {
 
 		public Keys KeyHighlight = Keys.F1;
 		public Keys KeyToggleInfo = Keys.F2;
+		public Keys KeyToggleStepPanel = Keys.F3;
 
 		public DebugInfoPanel InfoPanel;
 		public DebugHighlighter Highlighter;
+		public SlowStepPanel SlowStep;
 
 		private DebugState CurrentState = DebugState.Inactive;
 		private enum DebugState {
@@ -20,6 +23,7 @@ namespace Toybox.debug {
 		public DebugManager(Font f) {
 			InfoPanel = new DebugInfoPanel(f);
 			Highlighter = new DebugHighlighter();
+			SlowStep = new SlowStepPanel(f);
 		}
 
 		public void Update() {
@@ -28,6 +32,9 @@ namespace Toybox.debug {
 				if (CurrentState == DebugState.InfoInteract) CloseInfoInteract();
 				else CurrentState = DebugState.InfoInteract;
 			}
+			
+			if (Resources.TextInput.Pressed(KeyToggleStepPanel)) SlowStep.Visible = !SlowStep.Visible;
+			SlowStep.Update();
 
 			if (CurrentState == DebugState.Inactive) return;
 
@@ -36,6 +43,7 @@ namespace Toybox.debug {
 		}
 
 		public void Draw(Renderer r, Camera c) {
+			SlowStep.Draw(r, c);
 			if (CurrentState == DebugState.Highlighting) Highlighter.Draw(r, c);
 			else if (CurrentState == DebugState.InfoInteract) InfoPanel.Draw(r, c);
 		}
@@ -46,7 +54,7 @@ namespace Toybox.debug {
 		}
 
 		public bool Active {
-			get { return CurrentState != DebugState.Inactive; }
+			get { return CurrentState != DebugState.Inactive || SlowStep.Visible; }
 		}
 
 		public void SetInfoTarget(object o) {
