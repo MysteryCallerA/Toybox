@@ -21,6 +21,9 @@ namespace Toybox {
 		public virtual void Update() {
 		}
 
+		public virtual void PostUpdate() {
+		}
+
 		public virtual void Draw(Renderer r, Camera c) {
 		}
 

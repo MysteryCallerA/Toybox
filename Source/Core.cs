@@ -21,6 +21,7 @@ namespace Toybox {
 
 		public Camera Camera;
 		public bool Running = true;
+		public bool InUpdateStep { get; private set; } = false;
 
 		/// <summary> Sets the screen to this color every frame before drawing the Scene.
 		/// <br></br>This is only for space outside the camera bounds. Use Camera.ClearColor instead for world background color.</summary>
@@ -97,8 +98,10 @@ namespace Toybox {
 			Resources.MouseInput.UpdateControlStates(Mouse.GetState());
 
 			if (Running) {
-				DoUpdate(); //TODO can prob combine these? not sure why they're seperated in the first place...
+				InUpdateStep = true;
 				UpdateScene();
+				InUpdateStep = false;
+				PostUpdate();
 				Camera.Update();
 			}
 
@@ -109,9 +112,6 @@ namespace Toybox {
 
 		/// <summary> Update your GameInputManager here. </summary>
 		protected abstract void UpdateInputManager(MouseState m, KeyboardState k);
-
-		/// <summary> Update your game logic here. </summary>
-		protected abstract void DoUpdate();
 
 		/// <summary> Internal engine drawing function. Override DoDraw() instead. </summary>
 		protected sealed override void Draw(GameTime gameTime) {
@@ -146,8 +146,15 @@ namespace Toybox {
 
 		protected abstract Font GetDefaultFont();
 
-		/// <summary> Call your SceneManager.Update() </summary>
-		protected abstract void UpdateScene();
+		/// <summary> Calls GetActiveScene().Update() </summary>
+		protected virtual void UpdateScene() {
+			GetActiveScene().Update();
+		}
+
+		/// <summary> Calls GetActiveScene().PostUpdate. PostUpdates are for things like removing/adding entities after finished main Update. </summary>
+		protected virtual void PostUpdate() {
+			GetActiveScene().PostUpdate();
+		}
 
 	}
 }

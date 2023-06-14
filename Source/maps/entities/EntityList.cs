@@ -15,7 +15,6 @@ namespace Toybox.maps.entities {
 	public class EntityList<T>:IEnumerable<T>, IEntityCollection<T> where T : Entity {
 
 		private List<T> Content = new List<T>();
-		private bool Locked = false;
 		private EntityLockoutBuffer<T> Buffer = new EntityLockoutBuffer<T>();
 
 		public EntityList() {
@@ -32,11 +31,12 @@ namespace Toybox.maps.entities {
 		}
 
 		public void Update() {
-			Locked = true;
 			foreach (var e in Content) {
 				e.Update();
 			}
-			Locked = false;
+		}
+
+		public void PostUpdate() {
 			Buffer.Apply(this);
 		}
 
@@ -47,7 +47,7 @@ namespace Toybox.maps.entities {
 		}
 
 		public void Add(T e) {
-			if (Locked) { Buffer.QueueAdd(e); return; }
+			if (Resources.Game.InUpdateStep) { Buffer.QueueAdd(e); return; }
 			Content.Add(e);
 		}
 
@@ -72,6 +72,12 @@ namespace Toybox.maps.entities {
 			return null;
 		}
 
+		public IEnumerable<T> GetCollisions(Rectangle r) {
+			foreach (T e in Content) {
+				if (e.GetHitbox().Intersects(r)) yield return e;
+			}
+		}
+
 		public IEnumerator<T> GetEnumerator() {
 			return Content.GetEnumerator();
 		}
@@ -81,7 +87,7 @@ namespace Toybox.maps.entities {
 		}
 
 		public void Remove(T e) {
-			if (Locked) { Buffer.QueueRemove(e); return; }
+			if (Resources.Game.InUpdateStep) { Buffer.QueueRemove(e); return; }
 			Content.Remove(e);
 		}
 	}

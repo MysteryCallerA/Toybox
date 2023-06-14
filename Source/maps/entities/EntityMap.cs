@@ -14,8 +14,6 @@ namespace Toybox.maps.entities {
 
 		private Dictionary<Point, LinkedList<int>> Map = new Dictionary<Point, LinkedList<int>>();
 		private StableList<T> Entities = new StableList<T>();
-
-		private bool Locked = false;
 		private EntityLockoutBuffer<T> Buffer = new EntityLockoutBuffer<T>();
 
 		private int CellWidth;
@@ -38,7 +36,7 @@ namespace Toybox.maps.entities {
 		}
 
 		public void Add(T e) {
-			if (Locked) { Buffer.QueueAdd(e); return; }
+			if (Resources.Game.InUpdateStep) { Buffer.QueueAdd(e); return; }
 
 			int id = Entities.Add(e);
 			e.Id = id;
@@ -64,7 +62,7 @@ namespace Toybox.maps.entities {
 		}
 
 		public void Remove(T e) {
-			if (Locked) { Buffer.QueueAdd(e); return; }
+			if (Resources.Game.InUpdateStep) { Buffer.QueueAdd(e); return; }
 
 			Entities.RemoveAt(e.Id);
 			RemoveFromMap(e);
@@ -72,13 +70,14 @@ namespace Toybox.maps.entities {
 		}
 
 		public void Update() {
-			Locked = true;
 			foreach (T e in Entities) {
 				if (e == null) continue;
 				e.Update();
 				UpdateMapPosition(e);
 			}
-			Locked = false;
+		}
+
+		public void PostUpdate() {
 			Buffer.Apply(this);
 		}
 
