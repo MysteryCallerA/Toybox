@@ -24,6 +24,8 @@ namespace Toybox.components.action {
 		public PointRay Anchor;
 		public int Timer = 0;
 
+		public HashSet<object> Hitlist = new HashSet<object>();
+
 		public AttackBox(VirtualKey attack) {
 			AttackButton = attack;
 		}
@@ -48,6 +50,7 @@ namespace Toybox.components.action {
 			Size = StartSize;
 			Color = StartColor;
 			Offset = StartOffset;
+			Hitlist.Clear();
 		}
 
 		protected virtual void EndAttack() {
