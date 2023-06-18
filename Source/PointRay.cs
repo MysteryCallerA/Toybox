@@ -32,6 +32,5 @@ namespace Toybox {
 		public override string ToString() {
 			return $"PointRay{{X:{Start.X},Y:{Start.Y}}}->{{X:{End.X},Y{End.Y}}}";
 		}
-
 	}
 }
