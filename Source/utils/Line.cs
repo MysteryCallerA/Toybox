@@ -89,77 +89,77 @@ namespace Toybox.utils {
 
 			var slope = Slope;
 			var yint = YInt;
-			Point xcollision = Point.Zero, ycollision = Point.Zero;
+			Vector2 xcollision = Vector2.Zero, ycollision = Vector2.Zero;
 
 			if (End.X > Start.X) {
 				int x = (int)Math.Ceiling((float)Start.X / gridsize) * gridsize;
-				xcollision = new Point(x, (int)SolveY(x, slope, yint));
+				xcollision = new Vector2(x, SolveY(x, slope, yint));
 			} else if (End.X < Start.X) {
 				int x = (int)(Math.Floor((float)Start.X / gridsize) * gridsize) - 1;
-				xcollision = new Point(x, (int)SolveY(x, slope, yint));
+				xcollision = new Vector2(x, SolveY(x, slope, yint));
 			}
 			if (End.Y > Start.Y) {
 				int y = (int)Math.Ceiling((float)Start.Y / gridsize) * gridsize;
-				ycollision = new Point((int)SolveX(y, slope, yint), y);
+				ycollision = new Vector2(SolveX(y, slope, yint), y);
 			} else if (End.Y < Start.Y) {
 				int y = (int)(Math.Floor((float)Start.Y / gridsize) * gridsize) - 1;
-				ycollision = new Point((int)SolveX(y, slope, yint), y);
+				ycollision = new Vector2(SolveX(y, slope, yint), y);
 			}
 
 			if (IsVertical) {
 				ycollision.X = Start.X;
 				while (true) {
-					yield return ycollision;
-					ycollision = new Point(Start.X, GetNextGridYCollision(ycollision.Y, gridsize, slope, yint).Y);
+					yield return ycollision.ToPoint();
+					ycollision = new Vector2(Start.X, GetNextGridYCollision((int)ycollision.Y, gridsize, slope, yint).Y);
 				}
 			}
 			if (IsHorizontal) {
 				xcollision.Y = Start.Y;
 				while (true) {
-					yield return xcollision;
-					xcollision = new Point(GetNextGridXCollision(xcollision.X, gridsize, slope, yint).X, Start.Y);
+					yield return xcollision.ToPoint();
+					xcollision = new Vector2(GetNextGridXCollision((int)xcollision.X, gridsize, slope, yint).X, Start.Y);
 				}
 			}
 
 			if (End.X > Start.X) {
 				while (true) {
 					if (xcollision.X < ycollision.X) {
-						yield return xcollision;
-						xcollision = GetNextGridXCollision(xcollision.X, gridsize, slope, yint);
+						yield return xcollision.ToPoint();
+						xcollision = GetNextGridXCollision((int)xcollision.X, gridsize, slope, yint);
 					} else {
-						yield return ycollision;
-						ycollision = GetNextGridYCollision(ycollision.Y, gridsize, slope, yint);
+						yield return ycollision.ToPoint();
+						ycollision = GetNextGridYCollision((int)ycollision.Y, gridsize, slope, yint);
 					}
 				}
 			}
 
 			while (true) {
 				if (xcollision.X > ycollision.X) {
-					yield return xcollision;
-					xcollision = GetNextGridXCollision(xcollision.X, gridsize, slope, yint);
+					yield return xcollision.ToPoint();
+					xcollision = GetNextGridXCollision((int)xcollision.X, gridsize, slope, yint);
 				} else {
-					yield return ycollision;
-					ycollision = GetNextGridYCollision(ycollision.Y, gridsize, slope, yint);
+					yield return ycollision.ToPoint();
+					ycollision = GetNextGridYCollision((int)ycollision.Y, gridsize, slope, yint);
 				}
 			}
 		}
 
 		/// <summary> Note that prevx must be gridaligned. </summary>
-		private Point GetNextGridXCollision(int prevx, int gridsize, float slope, float yint) {
+		private Vector2 GetNextGridXCollision(int prevx, int gridsize, float slope, float yint) {
 			if (End.X > Start.X) {
-				return new Point(prevx + gridsize, (int)SolveY(prevx + gridsize, slope, yint));
+				return new Vector2(prevx + gridsize, SolveY(prevx + gridsize, slope, yint));
 			} else if (End.X < Start.X) {
-				return new Point(prevx - gridsize, (int)SolveY(prevx - gridsize, slope, yint));
+				return new Vector2(prevx - gridsize, SolveY(prevx - gridsize, slope, yint));
 			}
 			throw new Exception("Line is vertical, no XCollisions exist.");
 		}
 
 		/// <summary> Note that prevy must be gridaligned. </summary>
-		private Point GetNextGridYCollision(int prevy, int gridsize, float slope, float yint) {
+		private Vector2 GetNextGridYCollision(int prevy, int gridsize, float slope, float yint) {
 			if (End.Y > Start.Y) {
-				return new Point((int)SolveX(prevy + gridsize, slope, yint), prevy + gridsize);
+				return new Vector2(SolveX(prevy + gridsize, slope, yint), prevy + gridsize);
 			} else if (End.Y < Start.Y) {
-				return new Point((int)SolveX(prevy - gridsize, slope, yint), prevy - gridsize);
+				return new Vector2(SolveX(prevy - gridsize, slope, yint), prevy - gridsize);
 			}
 			throw new Exception("Line is horizontal, no YCollisions exist.");
 		}
