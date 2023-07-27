@@ -1,9 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using Toybox.utils;
 using Utils.input;
 
-namespace Toybox.components.control {
-	public class JumpMover:EntityComponent { //TODO figure out easing functions and implement here
+namespace Toybox.components.controllers {
+	public class JumpController { //TODO figure out easing functions and implement here
 
 		public VirtualKey LeftKey;
 		public VirtualKey RightKey;
@@ -32,17 +33,17 @@ namespace Toybox.components.control {
 		private int JumpBufferTimer = 0;
 		public int JumpBufferTime = 3;
 
-		public Vector2 Speed = Vector2.Zero;
 		private bool Jumping = false;
 
-		public JumpMover(VirtualKey left, VirtualKey right, VirtualKey jump) {
+		public JumpController(VirtualKey left, VirtualKey right, VirtualKey jump) {
 			LeftKey = left;
 			RightKey = right;
 			JumpKey = jump;
 		}
 
-		public void Apply(ComplexEntity e) {
-			var hitbox = e.GetHitbox();
+		public void Update(ComplexEntity e) {
+			var hitbox = e.Hitbox.Bounds;
+			var speed = e.Collider.Speed;
 
 			int dir = 0;
 			if (LeftKey.Down) dir = -1;
@@ -51,22 +52,22 @@ namespace Toybox.components.control {
 
 			//Acceleration / Deceleration
 			if (dir == 0) {
-				var before = Math.Sign(Speed.X);
-				Speed.X -= MoveDecel * Math.Sign(Speed.X);
-				if (Math.Sign(Speed.X) != before) Speed.X = 0;
+				var before = Math.Sign(speed.X);
+				speed.X -= MoveDecel * Math.Sign(speed.X);
+				if (Math.Sign(speed.X) != before) speed.X = 0;
 			} else {
-				if (Speed.X == 0) Speed.X = MoveStartup * dir;
-				else Speed.X += MoveAccel * dir;
+				if (speed.X == 0) speed.X = MoveStartup * dir;
+				else speed.X += MoveAccel * dir;
 			}
 
 			//Wall Bonking
-			if (Speed.X > 0 && !e.Collider.RightClear(hitbox)) {
-				Speed.X = 0;
-			} else if (Speed.X < 0 && !e.Collider.LeftClear(hitbox)) {
-				Speed.X = 0;
+			if (speed.X > 0 && !e.Collider.RightClear(hitbox)) {
+				speed.X = 0;
+			} else if (speed.X < 0 && !e.Collider.LeftClear(hitbox)) {
+				speed.X = 0;
 			}
 
-			if (Math.Abs(Speed.X) > MaxMoveSpeed) Speed.X = MaxMoveSpeed * Math.Sign(Speed.X);
+			if (Math.Abs(speed.X) > MaxMoveSpeed) speed.X = MaxMoveSpeed * Math.Sign(speed.X);
 
 			//Jump Buffer
 			if (JumpKey.Pressed) {
@@ -75,52 +76,52 @@ namespace Toybox.components.control {
 
 			if (!OnGround(e)) {
 				//Coyote Jumping
-				if (AirTimer < CoyoteTime && Speed.Y >= 0 && JumpKey.Pressed) {
-					Speed.Y = JumpSpeed;
+				if (AirTimer < CoyoteTime && speed.Y >= 0 && JumpKey.Pressed) {
+					speed.Y = JumpSpeed;
 					Jumping = true;
 				}
 
 				//Head Bonk
-				if (Speed.Y < 0 && !e.Collider.TopClear(hitbox)) {
-					Speed.Y = HeadBonkSpeed;
+				if (speed.Y < 0 && !e.Collider.TopClear(hitbox)) {
+					speed.Y = HeadBonkSpeed;
 					Jumping = false;
 				}
 				
 				//Early Jump Termination
 				if (Jumping && JumpKey.Released) {
 					Jumping = false;
-					if (Speed.Y < JumpEarlyTerminationSpeed) {
-						Speed.Y = JumpEarlyTerminationSpeed;
+					if (speed.Y < JumpEarlyTerminationSpeed) {
+						speed.Y = JumpEarlyTerminationSpeed;
 					}
 				}
 
 				//Gravity
-				if (Math.Abs(Speed.Y) < JumpApexWindow) {
-					if (Jumping) Speed.Y += JumpApexGravityJumping;
-					else Speed.Y += JumpApexGravityFalling;
-				} else if (Speed.Y < MaxFallSpeed) {
-					Speed.Y += Gravity;
+				if (Math.Abs(speed.Y) < JumpApexWindow) {
+					if (Jumping) speed.Y += JumpApexGravityJumping;
+					else speed.Y += JumpApexGravityFalling;
+				} else if (speed.Y < MaxFallSpeed) {
+					speed.Y += Gravity;
 				} else {
-					Speed.Y += TerminalGravity;
+					speed.Y += TerminalGravity;
 				}
-				if (Speed.Y > TerminalMaxFallSpeed) Speed.Y = TerminalMaxFallSpeed;
+				if (speed.Y > TerminalMaxFallSpeed) speed.Y = TerminalMaxFallSpeed;
 				
 				AirTimer++;
 			} else {
 				AirTimer = 0;
-				Speed.Y = 0;
+				speed.Y = 0;
 				Jumping = false;
 				//Jumping
 				if (JumpBufferTimer > 0) {
 					JumpBufferTimer = 0;
-					Speed.Y = JumpSpeed;
+					speed.Y = JumpSpeed;
 					Jumping = true;
 				}
 			}
 
 			if (JumpBufferTimer > 0) JumpBufferTimer--;
 
-			e.Move(Speed.ToPoint());
+			e.Collider.Speed = speed;
 
 			UpdateState(e);
 			UpdateAnchor(e);
@@ -131,8 +132,8 @@ namespace Toybox.components.control {
 			if (IsDirectionLocked != null) dlock = IsDirectionLocked.Invoke();
 
 			if (!dlock) {
-				if (Speed.X < 0) Direction = AnimationDirection.Left;
-				else if (Speed.X > 0) Direction = AnimationDirection.Right;
+				if (e.Collider.Speed.X < 0) Direction = AnimationDirection.Left;
+				else if (e.Collider.Speed.X > 0) Direction = AnimationDirection.Right;
 			}
 		}
 
@@ -140,15 +141,15 @@ namespace Toybox.components.control {
 			Point start;
 			Point end;
 			if (Direction == AnimationDirection.Left) {
-				start = e.GetHitbox().Location;
+				start = e.Hitbox.Bounds.Location;
 				end = new Point(start.X - 1, start.Y);
 			} else {
-				var hitbox = e.GetHitbox();
+				var hitbox = e.Hitbox.Bounds;
 				start = new Point(hitbox.Right, hitbox.Y);
 				end = new Point(start.X + 1, start.Y);
 			}
 
-			e.Anchors[FrontAnchorName] = new PointRay(start, end);
+			e.Anchors[FrontAnchorName] = new Line(start, end);
 		}
 
 		public enum AnimationState {
@@ -168,8 +169,8 @@ namespace Toybox.components.control {
 		}
 
 		public bool OnGround(ComplexEntity e) {
-			if (Speed.Y < 0) return false;
-			if (e.Collider.BotClear(e.GetHitbox())) return false;
+			if (e.Collider.Speed.Y < 0) return false;
+			if (e.Collider.BotClear(e.Hitbox.Bounds)) return false;
 			return true;
 		}
 	}

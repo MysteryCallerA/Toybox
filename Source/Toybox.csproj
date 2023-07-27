@@ -4,14 +4,14 @@
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="utils\Primitives2D.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Utils\Source\Utils.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="utils\" />
   </ItemGroup>
 </Project>

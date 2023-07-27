@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Toybox.utils;
 using Utils.input;
 
-namespace Toybox.components.action {
-	public class AttackBox:EntityComponent {
+namespace Toybox.components.action
+{
+    public class AttackBox:EntityComponent {
 
 		public VirtualKey AttackButton;
 		public Action<AttackBox> AttackTransform;
@@ -21,7 +23,7 @@ namespace Toybox.components.action {
 		public Point Offset;
 		public int Time = 20;
 
-		public PointRay Anchor;
+		public Line Anchor;
 		public int Timer = 0;
 
 		public HashSet<object> Hitlist = new HashSet<object>();
@@ -70,7 +72,7 @@ namespace Toybox.components.action {
 
 		public Point Position {
 			get {
-				if (Anchor.Xdir < 0) {
+				if (Anchor.Xdif < 0) {
 					return new Point(Anchor.Start.X - Size.X - Offset.X, Anchor.Start.Y + Offset.Y);
 				}
 				return Anchor.Start + Offset;

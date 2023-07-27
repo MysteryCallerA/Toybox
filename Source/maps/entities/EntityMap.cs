@@ -139,7 +139,7 @@ namespace Toybox.maps.entities {
 
 			possible.Sort();
 			foreach (var e in possible) {
-				if (e.GetHitbox().Contains(gamepos)) return e;
+				if (e.Hitbox.Bounds.Contains(gamepos)) return e;
 			}
 			return null;
 		}
@@ -168,7 +168,7 @@ namespace Toybox.maps.entities {
 		public bool ValidateCellSize() {
 			foreach (T e in Entities) {
 				if (e == null) continue;
-				var box = e.GetHitbox();
+				var box = e.Hitbox.Bounds;
 				if (box.Width > CellWidth || box.Height > CellHeight) return false;
 			}
 			return true;
@@ -208,7 +208,7 @@ namespace Toybox.maps.entities {
 			foreach (var cell in cells) {
 				foreach (var id in Map[cell]) {
 					var e = Entities[id];
-					if (e.GetHitbox().Intersects(collider)) {
+					if (e.Hitbox.Bounds.Intersects(collider)) {
 						yield return e;
 					}
 				}

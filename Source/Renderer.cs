@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,7 +24,7 @@ namespace Toybox {
 		}
 
 		public void DrawRect(Rectangle r, Color c, Camera cam, Camera.Space fromSpace) {
-				r = cam.Project(fromSpace, Camera.Space.Render, r);
+			r = cam.Project(fromSpace, Camera.Space.Render, r);
 			Batch.Draw(Blank, r, c);
 		}
 
@@ -48,9 +49,27 @@ namespace Toybox {
 			Batch.Draw(t, dest, source, c, 0, Vector2.Zero, effect, 0);
 		}
 
-		//TODO -HARD- Currently when using GameScale, you can still draw at subpixel positions to allow for smoother movement
-		//I want to somehow add a way to do this with RenderScale also
-		//Using a RenderModel could mabye work if you remember to take GameScale into account for any in-game spatial math.
+
+
+		public void DrawLineDirect(Vector2 start, Vector2 end, Color c) {
+			var dist = Vector2.Distance(start, end);
+			var angle = (float)Math.Atan2(end.Y - start.Y, end.X - start.X);
+			Batch.Draw(Blank, start, null, c, angle, Vector2.Zero, new Vector2(dist, 1), SpriteEffects.None, 0);
+		}
+
+		public void DrawLine(Vector2 start, Vector2 end, Color c, Camera cam, Camera.Space fromSpace) {
+			var rect = cam.Project(fromSpace, Camera.Space.Render, new Rectangle(start.ToPoint(), (end - start).ToPoint()));
+			var dist = (float)Math.Sqrt(rect.Width * rect.Width + rect.Height * rect.Height);
+			var angle = (float)Math.Atan2(rect.Height, rect.Width);
+			Batch.Draw(Blank, rect.Location.ToVector2(), null, c, angle, Vector2.Zero, new Vector2(dist, 1), SpriteEffects.None, 0);
+		}
+
+		public void DrawLineStatic(Vector2 start, Vector2 end, Color c, Camera cam, Camera.Space fromSpace) {
+			var rect = cam.Project(fromSpace, Camera.Space.Subpixel, new Rectangle(start.ToPoint(), (end - start).ToPoint()));
+			var dist = (float)Math.Sqrt(rect.Width * rect.Width + rect.Height * rect.Height);
+			var angle = (float)Math.Atan2(rect.Height, rect.Width);
+			Batch.Draw(Blank, rect.Location.ToVector2(), null, c, angle, Vector2.Zero, new Vector2(dist, 1), SpriteEffects.None, 0);
+		}
 	
 	}
 }

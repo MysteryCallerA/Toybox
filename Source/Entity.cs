@@ -7,15 +7,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using Toybox.utils;
 using Utils.save;
 
-namespace Toybox {
+namespace Toybox
+{
 	public abstract class Entity: IComparable<Entity> {
 
 		public int Id = -1;
 		public Point MapCell;
 
 		public string Name;
+		public Hitbox Hitbox;
+
+		public Entity() {
+			Hitbox = new Hitbox(this);
+		}
 
 		public virtual void Update() {
 		}
@@ -50,15 +57,8 @@ namespace Toybox {
 			return 0;
 		}
 
-		public abstract Rectangle GetHitbox();
-
 		public virtual float Depth {//TODO fix this so defualt scale is from -1 to 1 based on pos
 			get { return Y; }
-		}
-
-		public virtual void Move(Point dif) {
-			X += dif.X;
-			Y += dif.Y;
 		}
 
 	}

@@ -14,7 +14,7 @@ namespace Toybox {
 
 		public virtual void PositionEntity(Entity e, TiledObject o) {
 			e.Position = Resources.Camera.Project(Camera.Space.Pixel, Camera.Space.Subpixel, o.Position); //This projection should probably be configurable somehow
-			var hitbox = e.GetHitbox();
+			var hitbox = e.Hitbox.Bounds;
 			e.X -= hitbox.Width / 2;
 			e.Y -= hitbox.Bottom - e.Y;
 		}

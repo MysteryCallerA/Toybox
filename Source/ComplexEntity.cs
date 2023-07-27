@@ -5,14 +5,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Toybox.components;
+using Toybox.components.colliders;
+using Toybox.utils;
 
-namespace Toybox {
-	
+namespace Toybox
+{
+
 	public abstract class ComplexEntity:Entity {
 
 		public List<EntityComponent> Components = new List<EntityComponent>();
-		public Dictionary<string, PointRay> Anchors = new Dictionary<string, PointRay>();
-		public EntityCollider Collider = null;
+		public Dictionary<string, Line> Anchors = new Dictionary<string, Line>();
+		public EntityCollider Collider = new NoCollider();
+
+		public ComplexEntity() {
+
+		}
 
 		public override void Update() {
 			base.Update();
@@ -26,15 +33,6 @@ namespace Toybox {
 			foreach (var com in Components) {
 				com.Draw(this, r, c);
 			}
-		}
-
-		public override void Move(Point dif) {
-			if (Collider != null) {
-				Collider.Move(this, dif);
-				return;
-			}
-
-			base.Move(dif);
 		}
 
 	}

@@ -67,14 +67,14 @@ namespace Toybox.maps.entities {
 
 		public T Find(Point p) {
 			foreach (T e in Content) {
-				if (e.GetHitbox().Contains(p)) return e;
+				if (e.Hitbox.Bounds.Contains(p)) return e;
 			}
 			return null;
 		}
 
 		public IEnumerable<T> GetCollisions(Rectangle r) {
 			foreach (T e in Content) {
-				if (e.GetHitbox().Intersects(r)) yield return e;
+				if (e.Hitbox.Bounds.Intersects(r)) yield return e;
 			}
 		}
 

@@ -19,7 +19,7 @@ namespace Toybox.debug {
 				HighlightedObject = Resources.Game;
 			} else {
 				HighlightedObject = find;
-				Highlight = find.GetHitbox();
+				Highlight = find.Hitbox.Bounds;
 			}
 
 			if (Resources.MouseInput.LeftPress) {

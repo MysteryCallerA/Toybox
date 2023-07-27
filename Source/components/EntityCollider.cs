@@ -6,30 +6,14 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Toybox.components {
+namespace Toybox.components
+{
 	public abstract class EntityCollider {
 
-		public struct Collision {
-			public CollisionType Type;
-			public Rectangle Hitbox;
-			public Collision(CollisionType t, Rectangle h) {
-				Type = t;
-				Hitbox = h;
-			}
-			public Collision(CollisionType t) {
-				Type = t;
-				Hitbox = Rectangle.Empty;
-			}
-		}
+		public Vector2 Speed = Vector2.Zero;
 
-		/// <summary> Ordered by priority. Use Max() to get highest priority Collision when encountering multiple at once. </summary>
-		public enum CollisionType {
-			Clear, SemiSolid, Solid
-		}
-
-		public static Collision Max(Collision a, Collision b) {
-			if ((int)a.Type < (int)b.Type) return b;
-			return a;
+		public void Update(Entity e) {
+			Move(e, Speed.ToPoint());
 		}
 
 		public abstract void Move(Entity e, Point dif);
