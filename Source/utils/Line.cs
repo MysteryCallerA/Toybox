@@ -67,6 +67,28 @@ namespace Toybox.utils {
 			get { return Start.Y == End.Y; }
 		}
 
+		public bool InDomain(float x) {
+			if (End.X > Start.X) {
+				if (x < End.X && x >= Start.X) return true;
+			} else if (End.X < Start.X) {
+				if (x >= End.X && x < Start.X) return true;
+			} else {
+				if (x == Start.X) return true;
+			}
+			return false;
+		}
+
+		public bool InRange(float y) {
+			if (End.Y > Start.Y) {
+				if (y < End.Y && y >= Start.Y) return true;
+			} else if (End.Y < Start.Y) {
+				if (y >= End.Y && y < Start.Y) return true;
+			} else {
+				if (y == Start.Y) return true;
+			}
+			return false;
+		}
+
 		public IEnumerable<Point> CollideGrid(int gridsize) {
 			foreach (var output in RaycastGrid(gridsize)) {
 				if (End.X > Start.X) {
@@ -163,5 +185,43 @@ namespace Toybox.utils {
 			}
 			throw new Exception("Line is horizontal, no YCollisions exist.");
 		}
+
+		public Point? CollideRect(Rectangle r) {
+			var slope = Slope;
+			var yint = YInt;
+			Vector2? xcollide = null, ycollide = null;
+
+			if (End.X > Start.X) {
+				xcollide = new Vector2(r.X, SolveY(r.X, slope, yint));
+			} else if (End.X < Start.X) {
+				xcollide = new Vector2(r.Right - 1, SolveY(r.Right - 1, slope, yint));
+			}
+			if (xcollide.HasValue && (xcollide.Value.Y >= r.Bottom || xcollide.Value.Y < r.Top || !InDomain(xcollide.Value.X))) xcollide = null;
+
+			if (End.Y > Start.Y) {
+				ycollide = new Vector2(SolveX(r.Y, slope, yint), r.Y);
+			} else if (End.Y < Start.Y) {
+				ycollide = new Vector2(SolveX(r.Bottom - 1, slope, yint), r.Bottom - 1);
+			}
+			if (ycollide.HasValue && (ycollide.Value.X >= r.Right || ycollide.Value.X < r.Left || !InRange(ycollide.Value.Y))) ycollide = null;
+
+			if (IsVertical && ycollide.HasValue) ycollide = new Vector2(Start.X, ycollide.Value.Y);
+			if (IsHorizontal && xcollide.HasValue) xcollide = new Vector2(xcollide.Value.X, Start.Y);
+
+			if (!xcollide.HasValue) {
+				if (!ycollide.HasValue) return null;
+				return ycollide.Value.ToPoint();
+			}
+			if (!ycollide.HasValue) return xcollide.Value.ToPoint();
+
+			if (End.X > Start.X) {
+				if (xcollide.Value.X < ycollide.Value.X) return xcollide.Value.ToPoint();
+				return ycollide.Value.ToPoint();
+			} else {
+				if (xcollide.Value.X > ycollide.Value.X) return xcollide.Value.ToPoint();
+				return ycollide.Value.ToPoint();
+			}
+		}
+
 	}
 }
