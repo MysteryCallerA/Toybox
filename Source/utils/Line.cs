@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace Toybox.utils {
 
-	public struct Line {
+	public struct Line {//NOTE collisions might not be pixel perfect?
 
 		public Point Start;
 		public Point End;
