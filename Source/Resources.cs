@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace Toybox {
 		public static MouseInputManager MouseInput;
 		public static Random Random;
 		public static DebugManager Debug;
+		public static GameTime GameTime;
 
 		public static float DeltaTime = 0;
 

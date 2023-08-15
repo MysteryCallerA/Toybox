@@ -1,14 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
+using Toybox.components;
+using Toybox.components.colliders;
 using Toybox.utils;
-using Utils.save;
 
 namespace Toybox
 {
@@ -17,21 +12,24 @@ namespace Toybox
 		public int Id = -1;
 		public Point MapCell;
 
+		public int X;
+		public int Y;
+		public Vector2 Speed = Vector2.Zero;
+
 		public string Name;
 		public Hitbox Hitbox;
+		public EntityCollider Collider = new NoCollider();
 
 		public Entity() {
 			Hitbox = new Hitbox(this);
 		}
 
 		public virtual void Update() {
+			Collider.Move(this, Speed.ToPoint());
 		}
 
 		public virtual void Draw(Renderer r, Camera c) {
 		}
-
-		public int X;
-		public int Y;
 
 		public Point Position {
 			get { return new Point(X, Y); }

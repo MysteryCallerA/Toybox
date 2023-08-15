@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 namespace Toybox.components.colliders {
 	public class NoCollider:EntityCollider {
 
-		public override bool BotClear(Rectangle hitbox) {
+		public override bool BotClear(Entity e) {
 			return true;
 		}
 
-		public override bool LeftClear(Rectangle hitbox) {
+		public override bool LeftClear(Entity e) {
 			return true;
 		}
 
@@ -24,11 +24,11 @@ namespace Toybox.components.colliders {
 			return true;
 		}
 
-		public override bool RightClear(Rectangle hitbox) {
+		public override bool RightClear(Entity e) {
 			return true;
 		}
 
-		public override bool TopClear(Rectangle hitbox) {
+		public override bool TopClear(Entity e) {
 			return true;
 		}
 	}

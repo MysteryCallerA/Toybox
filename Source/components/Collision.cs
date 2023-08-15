@@ -1,10 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Toybox.components.EntityCollider;
 
 namespace Toybox.components {
 
@@ -26,14 +20,15 @@ namespace Toybox.components {
 
 	public class CollisionType {
 		public float Priority;
+		public bool IsSolid;
 
-		public CollisionType(float priority) {
+		public CollisionType(float priority, bool solid) {
 			Priority = priority;
+			IsSolid = solid;
 		}
 
-		public static CollisionType Clear = new CollisionType(0);
-		public static CollisionType Solid = new CollisionType(1);
-		public static CollisionType SemiSolid = new CollisionType(0.5f);
+		public static CollisionType Clear = new CollisionType(0, false);
+		public static CollisionType Solid = new CollisionType(1, true);
 	}
 
 }

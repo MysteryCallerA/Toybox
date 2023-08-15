@@ -10,23 +10,25 @@ namespace Toybox.components
 {
 	public abstract class EntityCollider {
 
-		public Vector2 Speed = Vector2.Zero;
-
-		public void Update(Entity e) {
-			Move(e, Speed.ToPoint());
-		}
-
 		public abstract void Move(Entity e, Point dif);
 
-		public abstract bool LeftClear(Rectangle hitbox);
+		public abstract bool LeftClear(Entity e);
 
-		public abstract bool RightClear(Rectangle hitbox);
+		public abstract bool RightClear(Entity e);
 
-		public abstract bool TopClear(Rectangle hitbox);
+		public abstract bool TopClear(Entity e);
 
-		public abstract bool BotClear(Rectangle hitbox);
+		public abstract bool BotClear(Entity e);
 
 		public abstract bool PointClear(Point p);
+
+		protected virtual bool CollisionIsSolid(Collision c, Entity e) {
+			return c.Type.IsSolid;
+		}
+
+		protected virtual bool CollisionIsSolid(Collision c) {
+			return c.Type.IsSolid;
+		}
 
 	}
 }

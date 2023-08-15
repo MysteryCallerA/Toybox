@@ -87,6 +87,7 @@ namespace Toybox {
 		/// <summary> Internal Update logic. Override DoUpdate() instead </summary>
 		protected sealed override void Update(GameTime gameTime) {
 			Resources.DeltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+			Resources.GameTime = gameTime;
 			if (!IsActive) {
 				base.Update(gameTime);
 				return;

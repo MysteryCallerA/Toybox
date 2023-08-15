@@ -20,24 +20,24 @@ namespace Toybox.components.physics {
 			ApplySpeed = dir * (force / Weight);
 		}
 
-		public void Apply(ComplexEntity e) {
-			e.Collider.Speed += ApplySpeed;
+		public void Apply(Entity e) {
+			e.Speed += ApplySpeed;
 			var hitbox = e.Hitbox.Bounds;
 			var friction = GroundFriction;
 
-			if (e.Collider.BotClear(hitbox)) {
-				e.Collider.Speed.Y += Gravity;
+			if (e.Collider.BotClear(e)) {
+				e.Speed.Y += Gravity;
 				friction = AirFriction;
 			} else {
-				e.Collider.Speed.Y = 0;
+				e.Speed.Y = 0;
 			}
 
-			if (Math.Abs(e.Collider.Speed.X) > 0) {
-				var prevh = e.Collider.Speed.X;
-				e.Collider.Speed.X = (Math.Abs(e.Collider.Speed.X) - friction) * Math.Sign(e.Collider.Speed.X);
-				if (Math.Sign(prevh) != Math.Sign(e.Collider.Speed.X)) e.Collider.Speed.X = 0;
-				if (e.Collider.Speed.X > 0 && !e.Collider.RightClear(hitbox)) e.Collider.Speed.X = 0;
-				if (e.Collider.Speed.X < 0 && !e.Collider.LeftClear(hitbox)) e.Collider.Speed.X = 0;
+			if (Math.Abs(e.Speed.X) > 0) {
+				var prevh = e.Speed.X;
+				e.Speed.X = (Math.Abs(e.Speed.X) - friction) * Math.Sign(e.Speed.X);
+				if (Math.Sign(prevh) != Math.Sign(e.Speed.X)) e.Speed.X = 0;
+				if (e.Speed.X > 0 && !e.Collider.RightClear(e)) e.Speed.X = 0;
+				if (e.Speed.X < 0 && !e.Collider.LeftClear(e)) e.Speed.X = 0;
 			}
 		}
 

@@ -32,13 +32,13 @@ namespace Toybox.components.action
 			AttackButton = attack;
 		}
 
-		public void Apply(ComplexEntity e) {
+		public void Apply(Entity e) {
 			if (!Attacking && AttackButton.Pressed) {
 				Attack();
 			}
 
 			if (Attacking) {
-				Anchor = e.Anchors[AnchorName];
+				//Anchor = e.Anchors[AnchorName];
 				AttackTransform?.Invoke(this);
 				Timer++;
 				if (Timer >= Time) EndAttack();

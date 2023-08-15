@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Toybox.components {
 	public interface EntityComponent {
 
-		public void Apply(ComplexEntity e);
+		public void Apply(Entity e);
 
 		public void Draw(Entity e, Renderer r, Camera c) {
 		}

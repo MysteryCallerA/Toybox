@@ -49,10 +49,14 @@ namespace Toybox.utils {
 		public int Top { get { return Y; } }
 		public int Bottom { get { return Y + Height; } }
 
-		public Point TopLeft { get { return Position; } }
-		public Point TopRight { get { return new Point(X + Width, Y); } }
-		public Point BotLeft { get { return new Point(X, Y + Height); } }
-		public Point BotRight { get { return new Point(X + Width, Y + Height); } }
+		public Point TopLeft { get { return new Point(Left, Top); } }
+		public Point TopRight { get { return new Point(Right, Top); } }
+		public Point BotLeft { get { return new Point(Left, Bottom); } }
+		public Point BotRight { get { return new Point(Right, Bottom); } }
+
+		public Point TopRightInner { get { return new Point(Right - 1, Top); } }
+		public Point BotLeftInner { get { return new Point(Left, Bottom - 1); } }
+		public Point BotRightInner { get { return new Point(Right - 1, Bottom - 1); } }
 
 
 	}

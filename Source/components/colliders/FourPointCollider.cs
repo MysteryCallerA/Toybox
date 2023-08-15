@@ -13,82 +13,71 @@ namespace Toybox.components.colliders
 
 		public Func<Point, Collision> CheckSolid;
 
-		private Point ToMove;
-
 		public FourPointCollider(Func<Point, Collision> checkSolid) {
 			CheckSolid = checkSolid;
 		}
 
 		public override void Move(Entity e, Point dif) {
 			if (dif == Point.Zero) return;
-			ToMove = dif;
-			var hitbox = e.Hitbox.Bounds;
+			while (dif != Point.Zero) {
+				bool hcollision = false;
+				bool vcollision = false;
+				if (dif.X > 0) {
+					if (RightClear(e)) {
+						dif.X--;
+						e.X++;
+					} else hcollision = true;
+				} else if (dif.X < 0) {
+					if (LeftClear(e)) {
+						dif.X++;
+						e.X--;
+					} else hcollision = true;
+				}
 
-			ResolveHMove(ref hitbox, e);
-			ResolveVMove(ref hitbox, e);
+				if (dif.Y > 0) {
+					if (BotClear(e)) {
+						dif.Y--;
+						e.Y++;
+					} else vcollision = true;
+				} else if (dif.Y < 0) {
+					if (TopClear(e)) {
+						dif.Y++;
+						e.Y--;
+					} else vcollision = true;
+				}
 
-			if (ToMove.X != 0) {
-				ResolveHMove(ref hitbox, e);
+				if ((hcollision || dif.X == 0) && (vcollision || dif.Y == 0)) break;
 			}
+
+			if (dif.X != 0) e.Speed.X = 0;
+			if (dif.Y != 0) e.Speed.Y = 0;
 		}
 
-		private void ResolveHMove(ref Rectangle hitbox, Entity e) {
-			while (ToMove.X >= 1 && RightClear(hitbox)) {
-				hitbox.X++;
-				e.X++;
-				ToMove.X--;
-			}
-			while (ToMove.X <= -1 && LeftClear(hitbox)) {
-				hitbox.X--;
-				e.X--;
-				ToMove.X++;
-			}
+		private static readonly Point HOffset = new Point(1, 0);
+		private static readonly Point VOffset = new Point(0, 1);
+
+		public override bool LeftClear(Entity e) {
+			var c = Collision.Max(CheckSolid.Invoke(e.Hitbox.TopLeft - HOffset), CheckSolid.Invoke(e.Hitbox.BotLeftInner - HOffset));
+			return !CollisionIsSolid(c, e);
 		}
 
-		private void ResolveVMove(ref Rectangle hitbox, Entity e) {
-			while (ToMove.Y >= 1 && BotClear(hitbox)) {
-				hitbox.Y++;
-				e.Y++;
-				ToMove.Y--;
-			}
-			while (ToMove.Y <= -1 && TopClear(hitbox)) {
-				hitbox.Y--;
-				e.Y--;
-				ToMove.Y++;
-			}
+		public override bool RightClear(Entity e) {
+			var c = Collision.Max(CheckSolid.Invoke(e.Hitbox.TopRightInner + HOffset), CheckSolid.Invoke(e.Hitbox.BotRightInner + HOffset));
+			return !CollisionIsSolid(c, e);
 		}
 
-		public override bool LeftClear(Rectangle hitbox) {
-			var c = Collision.Max(CheckSolid.Invoke(new Point(hitbox.X - 1, hitbox.Y)), CheckSolid.Invoke(new Point(hitbox.X - 1, hitbox.Bottom - 1)));
-			if (c.Type == CollisionType.Solid) return false;
-			return true;
+		public override bool TopClear(Entity e) {
+			var c = Collision.Max(CheckSolid.Invoke(e.Hitbox.TopLeft - VOffset), CheckSolid.Invoke(e.Hitbox.TopRightInner - VOffset));
+			return !CollisionIsSolid(c, e);
 		}
 
-		public override bool RightClear(Rectangle hitbox) {
-			var c = Collision.Max(CheckSolid.Invoke(new Point(hitbox.Right, hitbox.Top)), CheckSolid.Invoke(new Point(hitbox.Right, hitbox.Bottom - 1)));
-			if (c.Type == CollisionType.Solid) return false;
-			return true;
-		}
-
-		public override bool TopClear(Rectangle hitbox) {
-			var c = Collision.Max(CheckSolid.Invoke(new Point(hitbox.Left, hitbox.Top - 1)), CheckSolid.Invoke(new Point(hitbox.Right - 1, hitbox.Top - 1)));
-			if (c.Type == CollisionType.Solid) return false;
-			return true;
-		}
-
-		public override bool BotClear(Rectangle hitbox) {
-			var c = Collision.Max(CheckSolid.Invoke(new Point(hitbox.Left, hitbox.Bottom)), CheckSolid.Invoke(new Point(hitbox.Right - 1, hitbox.Bottom)));
-			if (c.Type == CollisionType.Solid) return false;
-			if (c.Type == CollisionType.SemiSolid) {
-				if (hitbox.Bottom <= c.Hitbox.Top) return false;
-			}
-			return true;
+		public override bool BotClear(Entity e) {
+			var c = Collision.Max(CheckSolid.Invoke(e.Hitbox.BotLeftInner + VOffset), CheckSolid.Invoke(e.Hitbox.BotRightInner + VOffset));
+			return !CollisionIsSolid(c, e);
 		}
 
 		public override bool PointClear(Point p) {
-			var c = CheckSolid.Invoke(p);
-			if (c.Type == CollisionType.Solid) return false;
-			return true;
+			return !CollisionIsSolid(CheckSolid.Invoke(p));
 		}
 	}
 }
