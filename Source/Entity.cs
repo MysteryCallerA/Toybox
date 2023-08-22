@@ -18,14 +18,14 @@ namespace Toybox
 
 		public string Name;
 		public Hitbox Hitbox;
-		public EntityCollider Collider = new NoCollider();
+		public EntityCollider Collider;
 
 		public Entity() {
 			Hitbox = new Hitbox(this);
 		}
 
 		public virtual void Update() {
-			Collider.Move(this, Speed.ToPoint());
+			Collider.ApplyMove(Speed.ToPoint());
 		}
 
 		public virtual void Draw(Renderer r, Camera c) {

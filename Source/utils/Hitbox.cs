@@ -58,6 +58,11 @@ namespace Toybox.utils {
 		public Point BotLeftInner { get { return new Point(Left, Bottom - 1); } }
 		public Point BotRightInner { get { return new Point(Right - 1, Bottom - 1); } }
 
+		public Rectangle BoxAbove { get { return new Rectangle(X, Y - 1, Width, 1); } }
+		public Rectangle BoxBelow { get { return new Rectangle(X, Bottom, Width, 1); } }
+		public Rectangle BoxLeft { get { return new Rectangle(X - 1, Y, 1, Height); } }
+		public Rectangle BoxRight { get { return new Rectangle(Right, Y, 1, Height); } }
+
 
 	}
 }

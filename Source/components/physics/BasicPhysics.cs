@@ -21,7 +21,7 @@ namespace Toybox.components.physics {
 		}
 
 		public void Apply(Entity e) {
-			e.Speed += ApplySpeed;
+			/*e.Speed += ApplySpeed;
 			var hitbox = e.Hitbox.Bounds;
 			var friction = GroundFriction;
 
@@ -38,7 +38,7 @@ namespace Toybox.components.physics {
 				if (Math.Sign(prevh) != Math.Sign(e.Speed.X)) e.Speed.X = 0;
 				if (e.Speed.X > 0 && !e.Collider.RightClear(e)) e.Speed.X = 0;
 				if (e.Speed.X < 0 && !e.Collider.LeftClear(e)) e.Speed.X = 0;
-			}
+			}*/
 		}
 
 	}

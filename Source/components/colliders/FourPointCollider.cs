@@ -9,9 +9,10 @@ using Toybox.utils;
 
 namespace Toybox.components.colliders
 {
-	public class FourPointCollider:EntityCollider {
+	/*public class FourPointCollider:EntityCollider {
 
 		public Func<Point, Collision> CheckSolid;
+		public Func<Point, IEnumerable<Collision>> GetCollisions; //TODO mabye migrate everything to this function instead
 
 		public FourPointCollider(Func<Point, Collision> checkSolid) {
 			CheckSolid = checkSolid;
@@ -79,5 +80,9 @@ namespace Toybox.components.colliders
 		public override bool PointClear(Point p) {
 			return !CollisionIsSolid(CheckSolid.Invoke(p));
 		}
-	}
+
+		public void UpdateCollisions(Entity e) {
+			
+		}
+	}*/
 }

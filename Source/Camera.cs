@@ -311,5 +311,20 @@ namespace Toybox {
 			return new Rectangle(Utils.math.Utils.FloorDiv(r.X, GameScale), Utils.math.Utils.FloorDiv(r.Y, GameScale), Utils.math.Utils.FloorDiv(r.Width, GameScale), Utils.math.Utils.FloorDiv(r.Height, GameScale));
 		}
 
+		//-------- Special Projection ----------
+		public Rectangle ProjectSubpixelToPixelShrink(Rectangle r) {
+			var output = new Rectangle(Utils.math.Utils.CeilDiv(r.X, GameScale), Utils.math.Utils.CeilDiv(r.Y, GameScale), 0, 0);
+			output.Width = Utils.math.Utils.FloorDiv(r.Right, GameScale) - output.X;
+			output.Height = Utils.math.Utils.FloorDiv(r.Bottom, GameScale) - output.Y;
+			return output;
+		}
+
+		public Rectangle ProjectSubpixelToPixelGrow(Rectangle r) {
+			var output = new Rectangle(Utils.math.Utils.FloorDiv(r.X, GameScale), Utils.math.Utils.FloorDiv(r.Y, GameScale), 0, 0);
+			output.Width = Utils.math.Utils.CeilDiv(r.Right, GameScale) - output.X;
+			output.Height = Utils.math.Utils.CeilDiv(r.Bottom, GameScale) - output.Y;
+			return output;
+		}
+
 	}
 }

@@ -10,7 +10,11 @@ namespace Toybox.components
 {
 	public abstract class EntityCollider {
 
-		public abstract void Move(Entity e, Point dif);
+		public abstract void ApplyMove(Point move);
+
+		public abstract Collision? FindSolid(Rectangle box);
+
+		/*public abstract void Move(Entity e, Point dif);
 
 		public abstract bool LeftClear(Entity e);
 
@@ -28,7 +32,7 @@ namespace Toybox.components
 
 		protected virtual bool CollisionIsSolid(Collision c) {
 			return c.Type.IsSolid;
-		}
+		}*/
 
 	}
 }

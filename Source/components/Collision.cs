@@ -21,14 +21,16 @@ namespace Toybox.components {
 	public class CollisionType {
 		public float Priority;
 		public bool IsSolid;
+		public string Name;
 
-		public CollisionType(float priority, bool solid) {
+		public CollisionType(string name, float priority, bool solid) {
 			Priority = priority;
 			IsSolid = solid;
+			Name = name;
 		}
 
-		public static CollisionType Clear = new CollisionType(0, false);
-		public static CollisionType Solid = new CollisionType(1, true);
+		public static CollisionType Clear = new CollisionType("Clear", 0, false);
+		public static CollisionType Solid = new CollisionType("Solid", 1, true);
 	}
 
 }
