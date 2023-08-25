@@ -12,7 +12,7 @@ namespace Toybox.components {
 		}
 		public Collision() : this(CollisionType.Clear, Rectangle.Empty) { }
 
-		public static Collision Max(Collision a, Collision b) {
+		public static Collision Max(in Collision a, in Collision b) {
 			if (a.Type.Priority > b.Type.Priority) return a;
 			return b;
 		}
