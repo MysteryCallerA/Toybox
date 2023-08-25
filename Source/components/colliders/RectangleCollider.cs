@@ -8,7 +8,7 @@ using Toybox.utils;
 
 namespace Toybox.components.colliders {
 
-	public class RectangleCollider:EntityCollider { //NEXT comment this
+	public class RectangleCollider:EntityCollider {
 
 		public readonly Entity Parent;
 
@@ -18,8 +18,6 @@ namespace Toybox.components.colliders {
 		/// <summary> The order you check for collisions is important here for performance. Check for easy, common things first (like tiles), then solid entities, then non-solid entities. </summary>
 		public Func<Rectangle, IEnumerable<Collision>> FindCollisions;
 
-		public List<Collision> Touching = new List<Collision>();
-
 		private Rectangle PrevBounds;
 		private enum CollisionDirection { None, Vertical, Horizontal, Both };
 
@@ -28,6 +26,7 @@ namespace Toybox.components.colliders {
 			FindCollisions = findCollisions;
 		}
 
+		/// <summary> Moves parent while respecting solid collisions. </summary>
 		public override void ApplyMove(Point move) {
 			if (move == Point.Zero) return;
 
@@ -40,14 +39,10 @@ namespace Toybox.components.colliders {
 		}
 
 		private bool FinalizeMove(out Collision? c) {
-			Touching.Clear();
 			var bounds = Parent.Hitbox.Bounds;
-			var truebounds = bounds;
-			//bounds.Inflate(1, 1);
 
 			foreach (var col in FindCollisions.Invoke(bounds)) {
-				Touching.Add(col);
-				if (IsCollisionSolid(col, PrevBounds) && col.Hitbox.Intersects(truebounds)) {
+				if (IsCollisionSolid(col, PrevBounds.Location) && col.Hitbox.Intersects(bounds)) {
 					c = col;
 					return false;
 				}
@@ -56,7 +51,7 @@ namespace Toybox.components.colliders {
 			return true;
 		}
 
-		private void ResolveCollision(Collision c) {
+		private void ResolveCollision(in Collision c) {
 			Point fullmove = Parent.Hitbox.Position - PrevBounds.Location;
 			Point move = fullmove;
 
@@ -103,13 +98,14 @@ namespace Toybox.components.colliders {
 			}
 		}
 
-		protected virtual bool IsCollisionSolid(Collision c, Rectangle referencePos) {
-			return c.Type.IsSolid;
+		public override bool IsCollisionSolid(in Collision c) {
+			return IsCollisionSolid(c, Parent.Hitbox.Position);
 		}
 
+		/// <summary> Returns the first solid collision. </summary>
 		public override Collision? FindSolid(Rectangle box) {
 			foreach (var c in FindCollisions.Invoke(box)) {
-				if (IsCollisionSolid(c, Parent.Hitbox.Bounds)) return c;
+				if (IsCollisionSolid(c, Parent.Hitbox.Position)) return c;
 			}
 			return null;
 		}

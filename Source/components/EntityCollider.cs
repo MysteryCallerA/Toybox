@@ -1,10 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Toybox.components
 {
@@ -14,25 +8,14 @@ namespace Toybox.components
 
 		public abstract Collision? FindSolid(Rectangle box);
 
-		/*public abstract void Move(Entity e, Point dif);
-
-		public abstract bool LeftClear(Entity e);
-
-		public abstract bool RightClear(Entity e);
-
-		public abstract bool TopClear(Entity e);
-
-		public abstract bool BotClear(Entity e);
-
-		public abstract bool PointClear(Point p);
-
-		protected virtual bool CollisionIsSolid(Collision c, Entity e) {
+		/// <summary> Checks if a Collision should be treated as solid. </summary>
+		/// <param name="referencePos"> Some collisions are different depending on the Collider's reference position. </param>
+		public virtual bool IsCollisionSolid(in Collision c, Point referencePos) {
 			return c.Type.IsSolid;
 		}
 
-		protected virtual bool CollisionIsSolid(Collision c) {
-			return c.Type.IsSolid;
-		}*/
+		/// <summary> Checks if a Collision should be treated as solid. Uses Parent.Hitbox.Position as reference position. </summary>
+		public abstract bool IsCollisionSolid(in Collision c);
 
 	}
 }

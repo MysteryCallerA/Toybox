@@ -2,9 +2,9 @@
 
 namespace Toybox.components {
 
-	public struct Collision {
-		public CollisionType Type;
-		public Rectangle Hitbox;
+	public readonly struct Collision {
+		public readonly CollisionType Type;
+		public readonly Rectangle Hitbox;
 
 		public Collision(CollisionType t, Rectangle h) {
 			Type = t;
@@ -19,9 +19,15 @@ namespace Toybox.components {
 	}
 
 	public class CollisionType {
-		public float Priority;
-		public bool IsSolid;
-		public string Name;
+
+		/// <summary> When colliding with multiple things at once, higher Priority goes first. </summary>
+		public readonly float Priority;
+
+		/// <summary> True only is CollisionType is always solid. Use EntityCollider.IsCollisionSolid() to check if a Collision is solid. </summary>
+		public readonly bool IsSolid;
+
+		/// <summary> Used only for debugging. CollisionTypes should be instantiated once, in a static class, then you can compare them directly. </summary>
+		public readonly string Name;
 
 		public CollisionType(string name, float priority, bool solid) {
 			Priority = priority;
