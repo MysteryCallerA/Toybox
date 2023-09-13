@@ -22,7 +22,7 @@ namespace Toybox.maps.tiles {
 			for (int x = topleft.X; x <= botright.X; x++) {
 				for (int y = topleft.Y; y <= botright.Y; y++) {
 					var tile = t.Get(x, y);
-					if (tile.HasValue) {
+					if (tile.HasValue && !tile.Value.IsEmpty) {
 						yield return new TileData() { Tile = tile.Value, Bounds = new Rectangle(t.MapToPixel(x, y), t.TileSize) };
 					}
 				}
@@ -40,7 +40,7 @@ namespace Toybox.maps.tiles {
 			for (int x = topleft.X; x <= botright.X; x++) {
 				for (int y = topleft.Y; y <= botright.Y; y++) {
 					var tile = t.Get(x, y);
-					if (tile.HasValue) {
+					if (tile.HasValue && !tile.Value.IsEmpty) {
 						yield return new TileData() { Tile = tile.Value, Bounds = new Rectangle(t.MapToPixel(x, y), t.TileSize) };
 					}
 				}

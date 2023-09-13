@@ -44,10 +44,10 @@ namespace Toybox.utils {
 			set { Width = value.X; Height = value.Y; }
 		}
 
-		public int Left { get { return X; } }
-		public int Right { get { return X + Width; } }
-		public int Top { get { return Y; } }
-		public int Bottom { get { return Y + Height; } }
+		public int Left { get { return X; } set { X = value; } }
+		public int Right { get { return X + Width; } set { X = value - Width; } }
+		public int Top { get { return Y; } set { Y = value; } }
+		public int Bottom { get { return Y + Height; } set { Y = value - Height; } }
 
 		public Point TopLeft { get { return new Point(Left, Top); } }
 		public Point TopRight { get { return new Point(Right, Top); } }
@@ -62,6 +62,19 @@ namespace Toybox.utils {
 		public Rectangle BoxBelow { get { return new Rectangle(X, Bottom, Width, 1); } }
 		public Rectangle BoxLeft { get { return new Rectangle(X - 1, Y, 1, Height); } }
 		public Rectangle BoxRight { get { return new Rectangle(Right, Y, 1, Height); } }
+
+		public Point Center {
+			get { return new Point(CenterX, CenterY); }
+			set { CenterX = value.X; CenterY = value.Y; }
+		}
+		public int CenterX {
+			get { return X + Width / 2; }
+			set { X = value - Width / 2; }
+		}
+		public int CenterY {
+			get { return Y + Height / 2; }
+			set { Y = value - Height / 2; }
+		}
 
 
 	}

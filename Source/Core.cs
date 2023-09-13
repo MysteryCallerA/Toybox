@@ -34,13 +34,16 @@ namespace Toybox {
 			IsMouseVisible = true;
 			Window.AllowUserResizing = true;
 			Window.ClientSizeChanged += WindowSizeChanged;
-			IsFixedTimeStep = true;
 			Resources.Game = this;
 
 			Resources.TextInput = new KeyboardInputManager() { AllowHoldRepeats = true };
 			Resources.MouseInput = new MouseInputManager();
 			Resources.Random = new Random();
-			
+
+			IsFixedTimeStep = false;
+			Graphics.SynchronizeWithVerticalRetrace = true;
+			Graphics.ApplyChanges();
+			TargetElapsedTime = TimeSpan.FromTicks((long)(TimeSpan.TicksPerMillisecond * (1000 / (double)60)));
 		}
 
 		protected virtual void WindowSizeChanged(object o, EventArgs e) {

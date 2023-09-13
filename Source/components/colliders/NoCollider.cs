@@ -18,6 +18,10 @@ namespace Toybox.components.colliders {
 			Parent.Position += move;
 		}
 
+		public override IEnumerable<Collision> FindCollisions(Rectangle box) {
+			yield break;
+		}
+
 		public override Collision? FindSolid(Rectangle box) {
 			return null;
 		}

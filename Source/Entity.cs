@@ -25,6 +25,7 @@ namespace Toybox
 		}
 
 		public virtual void Update() {
+			Collider.ResetState();
 			Collider.ApplyMove(Speed.ToPoint());
 		}
 
