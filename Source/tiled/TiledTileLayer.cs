@@ -45,7 +45,7 @@ namespace Toybox.tiled
 			}
 		}
 
-		public Tilemap GetTilemap(List<TiledTileset> tilesets, TextureGrid texture) {
+		public Tilemap GetTilemap(List<TiledTileset> tilesets) {
 			var tileset = FindMatchingTileset(tilesets);
 
 			var data = new List<List<Tilemap.Tile>>();
@@ -55,7 +55,7 @@ namespace Toybox.tiled
 
 			int x = 0;
 			for (int i = 0; i < Tiles.Count; i++) {
-				int tiley = Math.DivRem((int)(Tiles[i] - tileset.FirstGid), texture.Columns, out int tilex);
+				int tiley = Math.DivRem((int)(Tiles[i] - tileset.FirstGid), tileset.Columns, out int tilex);
 				var effect = SpriteEffects.None;
 				if ((Data[i] & FlagHFlip) != 0) effect |= SpriteEffects.FlipHorizontally;
 				if ((Data[i] & FlagVFlip) != 0) effect |= SpriteEffects.FlipVertically;
@@ -65,9 +65,11 @@ namespace Toybox.tiled
 				if (x >= Width) x = 0;
 			}
 
+			var texture = new TextureGrid(Resources.Content.Load<Texture2D>(tileset.Source), tileset.CellWidth, tileset.CellHeight);
 			return new Tilemap(texture, data);
 		}
 
+		/// <summary> Searches through Tiles for the first non-empty value, then finds it's appropriate tileset. </summary>
 		private TiledTileset FindMatchingTileset(List<TiledTileset> tilesets) {
 			uint sample = 0;
 			for (int i = 0; i < Tiles.Count; i++) {

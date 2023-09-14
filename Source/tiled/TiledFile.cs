@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using Toybox.maps.tiles;
 using Utils.graphic;
@@ -24,14 +25,14 @@ namespace Toybox.tiled
 
 			string xml = File.ReadAllText(file);
 			if (file.EndsWith(".tmx")) {
-				ParseXml(xml);
+				ParseXml(xml, contentRoot);
 				return;
 			}
 
 			throw new Exception("Unsupported file format");
 		}
 
-		private void ParseXml(string xml) {
+		private void ParseXml(string xml, string contentRoot) {
 			XmlDocument doc = new XmlDocument();
 			doc.LoadXml(xml);
 			var map = doc.SelectSingleNode("map");
@@ -44,19 +45,41 @@ namespace Toybox.tiled
 					var layer = new TiledObjectLayer(node);
 					ObjectLayers.Add(layer.Name, layer);
 				} else if (node.Name == "tileset") {
-					var tileset = new TiledTileset(node);
-					Tilesets.Add(tileset);
+					AddTileset(new TiledTileset(node, contentRoot));
 				}
 			}
 		}
-		
 
-		public Tilemap GetTilemap(string layerName, TextureGrid t) {
-			return TileLayers[layerName].GetTilemap(Tilesets, t);
+		/// <summary> Adds new tileset to Tilesets while keeping list sorted by FirstGid. </summary>
+		private void AddTileset(TiledTileset tileset) {
+			if (Tilesets.Count == 0 || tileset.FirstGid > Tilesets.Last().FirstGid) {
+				Tilesets.Add(tileset);
+			} else {
+				for (int i = 0; i < Tilesets.Count; i++) {
+					if (tileset.FirstGid < Tilesets[i].FirstGid) {
+						Tilesets.Insert(i, tileset);
+						return;
+					}
+				}
+				Tilesets.Add(tileset);
+			}
 		}
 
-		public List<TiledObject> GetObjects(string layerName) {
-			return ObjectLayers[layerName].Content;
+		public bool TryGetTilemap(string layerName, out Tilemap t) {
+			var output = TileLayers.TryGetValue(layerName, out var layer);
+			if (output) {
+				t = layer.GetTilemap(Tilesets);
+			} else t = null;
+			return output;
+		}
+
+		public bool TryGetObjects(string layerName, out List<TiledObject> objects) {
+			if (!ObjectLayers.ContainsKey(layerName)) {
+				objects = null;
+				return false;
+			}
+			objects = ObjectLayers[layerName].Content;
+			return true;
 		}
 
 	}
