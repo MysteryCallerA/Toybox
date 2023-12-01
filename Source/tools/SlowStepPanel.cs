@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Utils.text;
+using Toybox.utils.text;
 
 namespace Toybox.tools {
 	public class SlowStepPanel {

@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Toybox.maps.entities;
-using Utils.save;
 
 namespace Toybox {
 	public class Scene {

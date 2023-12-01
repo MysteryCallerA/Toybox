@@ -8,10 +8,10 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
-using Utils.input;
-using Utils;
-using Utils.text;
 using Toybox.debug;
+using Toybox.utils.input;
+using Toybox.utils.text;
+using Toybox.utils;
 
 namespace Toybox {
 	public abstract class Core:Game {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using Utils.data;
+using Toybox.utils.data;
 
 namespace Toybox.maps.entities {
 

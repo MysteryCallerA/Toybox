@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Toybox.tools;
 using Toybox.tools.info;
-using Utils.text;
+using Toybox.utils.text;
 
 namespace Toybox.debug {
 	public class DebugInfoPanel {

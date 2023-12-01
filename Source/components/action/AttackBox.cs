@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Toybox.utils;
-using Utils.input;
+using Toybox.utils.input;
+using Toybox.utils.math;
 
 namespace Toybox.components.action
 {
-    public class AttackBox:EntityComponent {
+	public class AttackBox:EntityComponent {
 
 		public VirtualKey AttackButton;
 		public Action<AttackBox> AttackTransform;

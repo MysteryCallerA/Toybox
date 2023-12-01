@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using Utils.graphic;
+using Toybox.graphic;
 
 namespace Toybox.maps.tiles {
 	public class Tilemap {

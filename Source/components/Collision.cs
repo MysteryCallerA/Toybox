@@ -18,7 +18,7 @@ namespace Toybox.components {
 		}
 	}
 
-	public class CollisionType {
+	public class CollisionType { //TODO add a tag-based system to this so collision types can have subtypes
 
 		/// <summary> When colliding with multiple things at once, higher Priority goes first. </summary>
 		public readonly float Priority;

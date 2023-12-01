@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using Toybox.tools;
-using Utils.text;
+using Toybox.utils.text;
 
 namespace Toybox.debug {
 	public class DebugManager {

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using Toybox.maps.tiles;
-using Utils.graphic;
+using Toybox.graphic;
 
 namespace Toybox.tiled
 {

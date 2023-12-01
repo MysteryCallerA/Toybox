@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Toybox.debug;
-using Utils.input;
+using Toybox.utils.input;
 
 namespace Toybox {
 	public static class Resources {

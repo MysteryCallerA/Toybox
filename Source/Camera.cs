@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Toybox.components;
 using Toybox.rendermodels;
+using Toybox.utils.math;
 
 namespace Toybox {
 	public class Camera { //TODO rename world and game and SubPixelPosition to use updated terminology
@@ -281,7 +282,7 @@ namespace Toybox {
 		}
 
 		private Point WorldToGame(Point p) {
-			return new Point(Utils.math.Utils.FloorDiv(p.X, GameScale), Utils.math.Utils.FloorDiv(p.Y, GameScale));
+			return new Point(MathOps.FloorDiv(p.X, GameScale), MathOps.FloorDiv(p.Y, GameScale));
 		}
 
 		//---------- Rect Projection -----------
@@ -308,21 +309,21 @@ namespace Toybox {
 		}
 
 		private Rectangle WorldToGame(Rectangle r) {
-			return new Rectangle(Utils.math.Utils.FloorDiv(r.X, GameScale), Utils.math.Utils.FloorDiv(r.Y, GameScale), Utils.math.Utils.FloorDiv(r.Width, GameScale), Utils.math.Utils.FloorDiv(r.Height, GameScale));
+			return new Rectangle(MathOps.FloorDiv(r.X, GameScale), MathOps.FloorDiv(r.Y, GameScale), MathOps.FloorDiv(r.Width, GameScale), MathOps.FloorDiv(r.Height, GameScale));
 		}
 
 		//-------- Special Projection ----------
 		public Rectangle ProjectSubpixelToPixelShrink(Rectangle r) {
-			var output = new Rectangle(Utils.math.Utils.CeilDiv(r.X, GameScale), Utils.math.Utils.CeilDiv(r.Y, GameScale), 0, 0);
-			output.Width = Utils.math.Utils.FloorDiv(r.Right, GameScale) - output.X;
-			output.Height = Utils.math.Utils.FloorDiv(r.Bottom, GameScale) - output.Y;
+			var output = new Rectangle(MathOps.CeilDiv(r.X, GameScale), MathOps.CeilDiv(r.Y, GameScale), 0, 0);
+			output.Width = MathOps.FloorDiv(r.Right, GameScale) - output.X;
+			output.Height = MathOps.FloorDiv(r.Bottom, GameScale) - output.Y;
 			return output;
 		}
 
 		public Rectangle ProjectSubpixelToPixelGrow(Rectangle r) {
-			var output = new Rectangle(Utils.math.Utils.FloorDiv(r.X, GameScale), Utils.math.Utils.FloorDiv(r.Y, GameScale), 0, 0);
-			output.Width = Utils.math.Utils.CeilDiv(r.Right, GameScale) - output.X;
-			output.Height = Utils.math.Utils.CeilDiv(r.Bottom, GameScale) - output.Y;
+			var output = new Rectangle(MathOps.FloorDiv(r.X, GameScale), MathOps.FloorDiv(r.Y, GameScale), 0, 0);
+			output.Width = MathOps.CeilDiv(r.Right, GameScale) - output.X;
+			output.Height = MathOps.CeilDiv(r.Bottom, GameScale) - output.Y;
 			return output;
 		}
 

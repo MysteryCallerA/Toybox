@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Utils.text;
+using Toybox.utils.text;
 
 namespace Toybox.tools {
 	internal class DebugEditField {

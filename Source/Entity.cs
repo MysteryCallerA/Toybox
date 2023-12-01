@@ -3,11 +3,11 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Toybox.components;
 using Toybox.components.colliders;
-using Toybox.utils;
+using Toybox.utils.math;
 
 namespace Toybox
 {
-	public abstract class Entity: IComparable<Entity> {
+    public abstract class Entity: IComparable<Entity> {
 
 		public int Id = -1;
 		public Point MapCell;

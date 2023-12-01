@@ -13,7 +13,4 @@
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Utils\Source\Utils.csproj" />
-  </ItemGroup>
 </Project>

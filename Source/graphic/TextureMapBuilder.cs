@@ -1,0 +1,81 @@
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Serialization;
+
+namespace Toybox.graphic {
+	public static class TextureMapBuilder {
+
+		public static TextureMap Build(Texture2D t, Color backColor) {
+			var map = new TextureMap(t);
+			var pixels = GraphicOps.GetPixels(t);
+
+			var nextY = -1;
+			var lineEnd = t.Width;
+			var x = 0;
+			var y = 0;
+			var frameXStart = 0;
+
+			for (int i = 0; i < pixels.Length; i++) {
+				if (pixels[i] == backColor || i >= lineEnd) {
+					var frame = BuildFrame(frameXStart, x, y, pixels, t.Width, backColor, out bool validFrame);
+
+					if (validFrame) {
+						map.Frames.Add(new TextureMap.TextureMapFrame(frame));
+					}
+					frameXStart = x + 1;
+
+					//Adjust nextY line pointer to always be the bottom of the highest frame
+					if (nextY == -1 || frame.Bottom + 1 < nextY) nextY = frame.Bottom + 1;
+				}
+				x++;
+
+				//Adjust pointers when hit texture edge
+				if (i >= lineEnd) {
+					i = nextY * t.Width;
+					lineEnd = i + t.Width;
+					x = 0;
+					y = nextY;
+					nextY = -1;
+					frameXStart = 0;
+					i--; //-1 because will ++ with next iteration
+				}
+			}
+
+			return map;
+		}
+
+		/// <param name="validFrame"> True if the frame has width and isn't a duplicate. </param>
+		private static Rectangle BuildFrame(int xLeft, int xRight, int yTop, Color[] pixels, int textureWidth, Color backColor, out bool validFrame) {
+			var height = 0;
+			validFrame = true;
+
+			if (xRight - xLeft > 0) {
+				//Starting from top-left of frame, iterate downward, looking for edge of frame
+				for (int i = xLeft + (yTop * textureWidth); i < pixels.Length; i += textureWidth) {
+					if (pixels[i] == backColor) break;
+					height++;
+				}
+
+				//Check pixel above top-left of frame. If not a border, then it is a duplicate frame and thus invalid
+				var check = xLeft + ((yTop - 1) * textureWidth);
+				if (check >= 0 && pixels[check] != backColor) validFrame = false;
+			} else {
+				validFrame = false;
+				//Starting from top-left of invalid-frame, iterate downward looking for start of next frame below
+				for (int i = xLeft + (yTop * textureWidth); i < pixels.Length; i += textureWidth) {
+					if (pixels[i] != backColor) break;
+					height++;
+				}
+				height--; //leave the expected border around the invalid-frame
+			}
+
+			return new Rectangle(xLeft, yTop, xRight - xLeft, height);
+		}
+
+	}
+}
