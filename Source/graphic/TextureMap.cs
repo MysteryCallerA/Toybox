@@ -19,6 +19,10 @@ namespace Toybox.graphic {
 			get { return Frames[SelectedFrame].Bounds; }
 		}
 
+		public TextureMapFrame this[int i] {
+			get { return Frames[i]; }
+		}
+
 		public struct TextureMapFrame {
 
 			public Rectangle Bounds;
