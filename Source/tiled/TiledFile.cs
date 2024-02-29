@@ -15,8 +15,9 @@ namespace Toybox.tiled
 		private Dictionary<string, TiledObjectLayer> ObjectLayers = new Dictionary<string, TiledObjectLayer>();
 		private List<TiledTileset> Tilesets = new List<TiledTileset>();
 
-		public TiledFile(string contentRoot, string file) { //NEXT this just needs testing now!!!
+		public TiledFile(string contentRoot, string file) {
 			file = contentRoot + "\\" + file;
+			var workingDir = Path.GetDirectoryName(file);
 
 			if (!File.Exists(file)) {
 				throw new Exception("File not found. Path:" + file);
@@ -24,14 +25,14 @@ namespace Toybox.tiled
 
 			string xml = File.ReadAllText(file);
 			if (file.EndsWith(".tmx")) {
-				ParseXml(xml, contentRoot);
+				ParseXml(xml, workingDir, contentRoot);
 				return;
 			}
 
 			throw new Exception("Unsupported file format");
 		}
 
-		private void ParseXml(string xml, string contentRoot) {
+		private void ParseXml(string xml, string workingDir, string contentRoot) {
 			XmlDocument doc = new XmlDocument();
 			doc.LoadXml(xml);
 			var map = doc.SelectSingleNode("map");
@@ -44,7 +45,7 @@ namespace Toybox.tiled
 					var layer = new TiledObjectLayer(node);
 					ObjectLayers.Add(layer.Name, layer);
 				} else if (node.Name == "tileset") {
-					AddTileset(new TiledTileset(node, contentRoot));
+					AddTileset(new TiledTileset(node, workingDir, contentRoot));
 				}
 			}
 		}

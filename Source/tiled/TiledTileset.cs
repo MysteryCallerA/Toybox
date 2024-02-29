@@ -17,11 +17,12 @@ namespace Toybox.tiled {
 		public int CellHeight;
 		public int Columns;
 
-		public TiledTileset(XmlNode data, string contentRoot) {
+		public TiledTileset(XmlNode data, string workingDir, string contentRoot) {
 			var filename = data.Attributes["source"].Value;
 			FirstGid = uint.Parse(data.Attributes["firstgid"].Value);
 
-			filename = contentRoot + "\\" + filename;
+			filename = Path.Combine(workingDir, filename);
+			workingDir = Path.GetDirectoryName(filename);
 
 			if (!File.Exists(filename)) {
 				throw new Exception("File not found. Path:" + filename);
@@ -29,14 +30,14 @@ namespace Toybox.tiled {
 
 			string xml = File.ReadAllText(filename);
 			if (filename.EndsWith(".tsx")) {
-				ParseXml(xml);
+				ParseXml(xml, workingDir, contentRoot);
 				return;
 			}
 
 			throw new Exception("Unsupported file format");
 		}
 
-		private void ParseXml(string xml) {
+		private void ParseXml(string xml, string workingDir, string contentRoot) {
 			XmlDocument doc = new XmlDocument();
 			doc.LoadXml(xml);
 			var data = doc.SelectSingleNode("tileset");
@@ -44,8 +45,9 @@ namespace Toybox.tiled {
 			CellWidth = int.Parse(data.Attributes["tilewidth"].Value);
 			CellHeight = int.Parse(data.Attributes["tileheight"].Value);
 			Columns = int.Parse(data.Attributes["columns"].Value);
-			Source = data.FirstChild.Attributes["source"].Value;
-			Source = Source.Substring(0, Source.LastIndexOf('.'));
+			Source = Path.Combine(workingDir, data.FirstChild.Attributes["source"].Value);
+			Source = Path.GetFullPath(Source);
+			Source = Path.GetRelativePath(contentRoot, Source);
 		}
 
 	}
