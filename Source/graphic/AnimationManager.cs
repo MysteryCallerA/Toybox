@@ -8,34 +8,34 @@ using System.Windows.Forms;
 namespace Toybox.graphic {
 	public class AnimationManager {
 
-		private Dictionary<string, Animation> Animations = new Dictionary<string, Animation>();
+		private Dictionary<int, Animation> Animations = new Dictionary<int, Animation>();
 
 		public AnimationManager(params Animation[] animations) {
 			foreach (var a in animations) {
-				Animations.Add(a.Name, a);
+				Animations.Add(a.Id, a);
 			}
 		}
 
-		public Animation this[string name] {
-			get { return Animations[name]; }
+		public Animation this[int id] {
+			get { return Animations[id]; }
 		}
 
 	}
 
 	public class Animation {
 
-		public readonly string Name;
+		public readonly int Id;
 		public int[] Frames;
 		public int[] FrameTimes;
 
-		public Animation(string name, int[] frames, int frameTime) {
-			Name = name;
+		public Animation(int id, int[] frames, int frameTime) {
+			Id = id;
 			Frames = frames;
 			FrameTimes = new int[] { frameTime };
 		}
 
-		public Animation(string name, int[] frames, int[] frameTimes) {
-			Name = name;
+		public Animation(int id, int[] frames, int[] frameTimes) {
+			Id = id;
 			Frames = frames;
 			FrameTimes = frameTimes;
 		}
@@ -45,15 +45,15 @@ namespace Toybox.graphic {
 	public class AnimationState {
 
 		private Animation Animation;
-		public int FrameTimer = 0;
+		public float FrameTimer = 0;
 		public int ElapsedFrames = 0;
-		public int Speed = 1;
+		public float Speed = 1;
 		public Action OnAnimationComplete;
 
 		public AnimationState() {
 		}
 
-		public string Name { get { return Animation.Name; } }
+		public int AnimationId { get { return Animation.Id; } }
 		public int Frames { get { return Animation.Frames.Length; } }
 		public int FrameTime {
 			get {
