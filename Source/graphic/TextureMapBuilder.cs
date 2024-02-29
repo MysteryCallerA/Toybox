@@ -85,7 +85,7 @@ namespace Toybox.graphic {
 					}
 					if (pixels[i] == originColor) {
 						pixels[i] = Color.Transparent;
-						origin = new Point(i % textureWidth, i / textureWidth);
+						origin = new Point(i % textureWidth, i / textureWidth) - output.Location;
 						break;
 					}
 				}
