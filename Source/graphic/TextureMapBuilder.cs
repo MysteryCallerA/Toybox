@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 namespace Toybox.graphic {
 	public static class TextureMapBuilder {
 
-		public static TextureMap Build(Texture2D t, Color backColor) {
+		public static TextureMap Build(Texture2D t, Color backColor, Color? originColor = null) {
 			var map = new TextureMap(t);
 			var pixels = GraphicOps.GetPixels(t);
 
@@ -22,10 +22,10 @@ namespace Toybox.graphic {
 
 			for (int i = 0; i < pixels.Length; i++) {
 				if (pixels[i] == backColor || i >= lineEnd) {
-					var frame = BuildFrame(frameXStart, x, y, pixels, t.Width, backColor, out bool validFrame);
+					var frame = BuildFrame(frameXStart, x, y, ref pixels, t.Width, backColor, originColor, out bool validFrame, out Point origin);
 
 					if (validFrame) {
-						map.Frames.Add(new TextureMap.TextureMapFrame(frame));
+						map.Frames.Add(new TextureMap.TextureMapFrame(frame) { Origin = origin });
 					}
 					frameXStart = x + 1;
 
@@ -45,12 +45,13 @@ namespace Toybox.graphic {
 					i--; //-1 because will ++ with next iteration
 				}
 			}
+			t.SetData(pixels);
 
 			return map;
 		}
 
 		/// <param name="validFrame"> True if the frame has width and isn't a duplicate. </param>
-		private static Rectangle BuildFrame(int xLeft, int xRight, int yTop, Color[] pixels, int textureWidth, Color backColor, out bool validFrame) {
+		private static Rectangle BuildFrame(int xLeft, int xRight, int yTop, ref Color[] pixels, int textureWidth, Color backColor, Color? originColor, out bool validFrame, out Point origin) {
 			var height = 0;
 			validFrame = true;
 
@@ -68,7 +69,29 @@ namespace Toybox.graphic {
 				validFrame = false;
 			}
 
-			return new Rectangle(xLeft, yTop, xRight - xLeft, height);
+			var output = new Rectangle(xLeft, yTop, xRight - xLeft, height);
+
+			origin = Point.Zero;
+			if (originColor != null) {
+				//iterate thru every pixel to find the origin
+				int addForNextLine = textureWidth - output.Width;
+				int endPixel = output.Right + ((output.Bottom - 1) * textureWidth);
+				int lineEnd = output.Right + (output.Top * textureWidth);
+				for (int i = xLeft + (yTop * textureWidth); i < endPixel; i++) {
+					if (i >= lineEnd) {
+						i += addForNextLine;
+						lineEnd += textureWidth;
+						continue;
+					}
+					if (pixels[i] == originColor) {
+						pixels[i] = Color.Transparent;
+						origin = new Point(i % textureWidth, i / textureWidth);
+						break;
+					}
+				}
+			}
+
+			return output;
 		}
 
 	}
