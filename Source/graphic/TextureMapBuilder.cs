@@ -66,12 +66,6 @@ namespace Toybox.graphic {
 				if (check >= 0 && pixels[check] != backColor) validFrame = false;
 			} else {
 				validFrame = false;
-				//Starting from top-left of invalid-frame, iterate downward looking for start of next frame below
-				for (int i = xLeft + (yTop * textureWidth); i < pixels.Length; i += textureWidth) {
-					if (pixels[i] != backColor) break;
-					height++;
-				}
-				height--; //leave the expected border around the invalid-frame
 			}
 
 			return new Rectangle(xLeft, yTop, xRight - xLeft, height);
