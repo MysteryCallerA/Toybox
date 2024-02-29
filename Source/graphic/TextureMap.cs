@@ -32,6 +32,11 @@ namespace Toybox.graphic {
 				Bounds = bounds;
 			}
 
+			public void GetDrawRects(int x, int y, int scale, out Rectangle source, out Rectangle dest) {
+				source = Bounds;
+				dest = new Rectangle(x - (Origin.X * scale), y - (Origin.Y * scale), source.Width * scale, source.Height * scale);
+			}
+
 		}
 	}
 }
