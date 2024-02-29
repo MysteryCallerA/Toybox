@@ -45,9 +45,11 @@ namespace Toybox.tiled {
 			CellWidth = int.Parse(data.Attributes["tilewidth"].Value);
 			CellHeight = int.Parse(data.Attributes["tileheight"].Value);
 			Columns = int.Parse(data.Attributes["columns"].Value);
+
 			Source = Path.Combine(workingDir, data.FirstChild.Attributes["source"].Value);
 			Source = Path.GetFullPath(Source);
 			Source = Path.GetRelativePath(contentRoot, Source);
+			Source = Source.Substring(0, Source.Length - Path.GetExtension(Source).Length);
 		}
 
 	}
