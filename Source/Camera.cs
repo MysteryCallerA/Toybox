@@ -77,6 +77,10 @@ namespace Toybox {
 			get { return WorldHeight / GameScale; }
 		}
 
+		public Point WorldSize {
+			get { return new Point(WorldWidth, WorldHeight); }
+		}
+
 		public RenderModel RenderModel;
 		public Color ClearColor = Color.Black;
 		public FocusModes FocusMode = FocusModes.Center;
