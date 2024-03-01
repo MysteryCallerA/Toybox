@@ -38,14 +38,23 @@ namespace Toybox.tiled
 			var map = doc.SelectSingleNode("map");
 
 			foreach (XmlNode node in map.ChildNodes) {
-				if (node.Name == "layer") {
-					var layer = new TiledTileLayer(node);
-					TileLayers.Add(layer.Name, layer);
-				} else if (node.Name == "objectgroup") {
-					var layer = new TiledObjectLayer(node);
-					ObjectLayers.Add(layer.Name, layer);
-				} else if (node.Name == "tileset") {
-					AddTileset(new TiledTileset(node, workingDir, contentRoot));
+				ParseNode(node, workingDir, contentRoot);
+			}
+		}
+
+		private void ParseNode(XmlNode node, string workingDir, string contentRoot, string groupName = "") {
+			if (node.Name == "layer") {
+				var layer = new TiledTileLayer(node);
+				TileLayers.Add(groupName + layer.Name, layer);
+			} else if (node.Name == "objectgroup") {
+				var layer = new TiledObjectLayer(node);
+				ObjectLayers.Add(groupName + layer.Name, layer);
+			} else if (node.Name == "tileset") {
+				AddTileset(new TiledTileset(node, workingDir, contentRoot));
+			} else if (node.Name == "group") {
+				var name = node.Attributes["name"].Value;
+				foreach (XmlNode groupNode in node.ChildNodes) {
+					ParseNode(groupNode, workingDir, contentRoot, groupName + name + ".");
 				}
 			}
 		}
