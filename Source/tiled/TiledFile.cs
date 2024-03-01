@@ -78,7 +78,7 @@ namespace Toybox.tiled
 		}
 
 		public bool TryGetTilemap(string layerName, out Tilemap t, string groupName = "") {
-			if (layerName != "") layerName = groupName + "." + layerName;
+			if (groupName != "") layerName = groupName + "." + layerName;
 
 			var output = TileLayers.TryGetValue(layerName, out var layer);
 			if (output) {
@@ -88,7 +88,7 @@ namespace Toybox.tiled
 		}
 
 		public bool TryGetObjects(string layerName, out List<TiledObject> objects, string groupName = "") {
-			if (layerName != "") layerName = groupName + "." + layerName;
+			if (groupName != "") layerName = groupName + "." + layerName;
 
 			if (!ObjectLayers.ContainsKey(layerName)) {
 				objects = null;
