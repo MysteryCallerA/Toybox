@@ -77,7 +77,9 @@ namespace Toybox.tiled
 			}
 		}
 
-		public bool TryGetTilemap(string layerName, out Tilemap t) {
+		public bool TryGetTilemap(string layerName, out Tilemap t, string groupName = "") {
+			if (layerName != "") layerName = groupName + "." + layerName;
+
 			var output = TileLayers.TryGetValue(layerName, out var layer);
 			if (output) {
 				t = layer.GetTilemap(Tilesets);
@@ -85,7 +87,9 @@ namespace Toybox.tiled
 			return output;
 		}
 
-		public bool TryGetObjects(string layerName, out List<TiledObject> objects) {
+		public bool TryGetObjects(string layerName, out List<TiledObject> objects, string groupName = "") {
+			if (layerName != "") layerName = groupName + "." + layerName;
+
 			if (!ObjectLayers.ContainsKey(layerName)) {
 				objects = null;
 				return false;
