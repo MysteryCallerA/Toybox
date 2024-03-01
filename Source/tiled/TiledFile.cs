@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -14,6 +15,7 @@ namespace Toybox.tiled
 		private Dictionary<string, TiledTileLayer> TileLayers = new Dictionary<string, TiledTileLayer>();
 		private Dictionary<string, TiledObjectLayer> ObjectLayers = new Dictionary<string, TiledObjectLayer>();
 		private List<TiledTileset> Tilesets = new List<TiledTileset>();
+		private List<string> GroupNames = new List<string>(); //TODO this needs a better solution to handle multiple layers of groups, possibly a tree?
 
 		public TiledFile(string contentRoot, string file) {
 			file = contentRoot + "\\" + file;
@@ -53,6 +55,7 @@ namespace Toybox.tiled
 				AddTileset(new TiledTileset(node, workingDir, contentRoot));
 			} else if (node.Name == "group") {
 				var name = node.Attributes["name"].Value;
+				GroupNames.Add(name);
 				foreach (XmlNode groupNode in node.ChildNodes) {
 					ParseNode(groupNode, workingDir, contentRoot, groupName + name + ".");
 				}
@@ -89,6 +92,10 @@ namespace Toybox.tiled
 			}
 			objects = ObjectLayers[layerName].Content;
 			return true;
+		}
+
+		public ReadOnlyCollection<string> GetGroupNames() {
+			return GroupNames.AsReadOnly();
 		}
 
 	}
