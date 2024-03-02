@@ -12,9 +12,10 @@ using Toybox.debug;
 using Toybox.utils.input;
 using Toybox.utils.text;
 using Toybox.utils;
+using Toybox.scenes;
 
 namespace Toybox {
-	public abstract class Core:Game {
+    public abstract class Core:Game {
 
 		protected GraphicsDeviceManager Graphics;
 		protected Renderer Renderer;

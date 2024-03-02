@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Toybox.scenes;
 
-namespace Toybox {
+namespace Toybox
+{
 
-	public abstract class SceneManager<T> where T : Scene {
+    public abstract class SceneManager<T> where T : Scene {
 
 		public bool AlwaysKeepScenesInMemory = false;
 

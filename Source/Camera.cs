@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Toybox.components;
 using Toybox.rendermodels;
+using Toybox.scenes;
 using Toybox.utils.math;
 
 namespace Toybox {
-	public class Camera { //TODO rename world and game and SubPixelPosition to use updated terminology
+    public class Camera { //TODO rename world and game and SubPixelPosition to use updated terminology
 
 		public float TrueWorldX, TrueWorldY;
 

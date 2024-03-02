@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Toybox.scenes;
 
 namespace Toybox.debug {
-	public class DebugHighlighter {
+    public class DebugHighlighter {
 
 		public object HighlightedObject;
 		private Rectangle Highlight;

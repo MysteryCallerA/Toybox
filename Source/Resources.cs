@@ -7,10 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Toybox.debug;
+using Toybox.scenes;
 using Toybox.utils.input;
 
 namespace Toybox {
-	public static class Resources {
+    public static class Resources {
 
 		//public static GameConsole Console;
 		public static ContentManager Content;
