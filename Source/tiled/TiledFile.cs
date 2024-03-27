@@ -16,6 +16,8 @@ namespace Toybox.tiled
 		private Dictionary<string, TiledObjectLayer> ObjectLayers = new Dictionary<string, TiledObjectLayer>();
 		private List<TiledTileset> Tilesets = new List<TiledTileset>();
 		private List<string> GroupNames = new List<string>(); //TODO this needs a better solution to handle multiple layers of groups, possibly a tree?
+		//Actual data could be stored in a TiledGroup class and groups could contain groups
+		//Then you could esily iterate through groups when loading
 
 		public TiledFile(string contentRoot, string file) {
 			file = contentRoot + "\\" + file;
