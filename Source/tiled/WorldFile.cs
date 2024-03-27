@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Toybox.scenes.world;
 
 namespace Toybox.tiled {
 	public class WorldFile {
@@ -29,6 +31,14 @@ namespace Toybox.tiled {
 
 		private void ParseJson(string json) {
 			Data = JsonSerializer.Deserialize<TiledWorldData>(json, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+		}
+
+		public T GetWorldLayout<T>() where T : WorldLayout, new() {
+			T layout = new T();
+			foreach (var map in Data.Maps) {
+				layout.AddData(map.FileName, new Rectangle(map.X, map.Y, map.Width, map.Height));
+			}
+			return layout;
 		}
 
 	}
