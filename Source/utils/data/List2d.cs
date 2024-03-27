@@ -14,7 +14,11 @@ namespace Toybox.utils.data {
 		public int Rows { get {	if (Content.Count == 0) return 0; else return Content.First().Count; } }
 		public T DefaultValue = default;
 
-		public List2d() {
+		public List2d(T defaultValue = default) {
+			DefaultValue = defaultValue;
+
+			Content.Add(new List<T>());
+			Content[0].Add(defaultValue);
 		}
 
 		public List2d(T defaultValue, int cols, int rows) {
