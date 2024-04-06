@@ -12,10 +12,9 @@ using System.Xml.Linq;
 using Toybox.maps.tiles;
 using Toybox.graphic;
 
-namespace Toybox.tiled
-{
+namespace Toybox.tiled {
 
-    internal class TiledTileLayer {
+	internal class TiledTileLayer {
 
 		private const uint FlagHFlip = 0b10000000000000000000000000000000;
 		private const uint FlagVFlip = 0b01000000000000000000000000000000;
