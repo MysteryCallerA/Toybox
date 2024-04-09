@@ -74,7 +74,7 @@ namespace Toybox.graphic {
 			origin = Point.Zero;
 			if (originColor != null) {
 				//iterate thru every pixel to find the origin
-				int addForNextLine = textureWidth - output.Width;
+				int addForNextLine = textureWidth - output.Width - 1;
 				int endPixel = output.Right + ((output.Bottom - 1) * textureWidth);
 				int lineEnd = output.Right + (output.Top * textureWidth);
 				for (int i = xLeft + (yTop * textureWidth); i < endPixel; i++) {
