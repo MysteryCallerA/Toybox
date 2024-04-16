@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Toybox.graphic {
-	public class AnimationManager {
+	public class AnimationCollection {
 
-		private Dictionary<int, Animation> Animations = new Dictionary<int, Animation>();
+		private readonly Dictionary<int, Animation> Animations = new();
 
-		public AnimationManager(params Animation[] animations) {
+		public AnimationCollection(params Animation[] animations) {
 			foreach (var a in animations) {
 				Animations.Add(a.Id, a);
 			}
@@ -42,16 +42,19 @@ namespace Toybox.graphic {
 
 	}
 
-	public class AnimationState {
+	public class AnimationManager {
 
+		public AnimationCollection Animations;
 		private Animation Animation;
 		public float FrameTimer = 0;
 		public int ElapsedFrames = 0;
 		public float Speed = 1;
 		public Action OnAnimationComplete;
 
-		public AnimationState() {
+		public AnimationManager(AnimationCollection a) {
+			Animations = a;
 		}
+		public AnimationManager() { }
 
 		public int AnimationId { get { return Animation.Id; } }
 		public int Frames { get { return Animation.Frames.Length; } }
@@ -62,6 +65,7 @@ namespace Toybox.graphic {
 			}
 		}
 		public int Frame { get { return Animation.Frames[ElapsedFrames]; } }
+		public bool NoAnimation { get { return Animation == null; } }
 
 		public void StartAnimation(Animation a) {
 			Animation = a;
@@ -69,9 +73,18 @@ namespace Toybox.graphic {
 			ElapsedFrames = 0;
 		}
 
+		public void StartAnimation(int id) {
+			StartAnimation(Animations[id]);
+		}
+
 		/// <summary> Switch playing Animation without reseting the frame and frameTimer. </summary>
 		public void BlendAnimation(Animation a) {
 			Animation = a;
+		}
+
+		/// <summary> Switch playing Animation without reseting the frame and frameTimer. </summary>
+		public void BlendAnimation(int id) {
+			BlendAnimation(Animations[id]);
 		}
 
 		public void Update() {
