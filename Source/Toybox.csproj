@@ -13,4 +13,8 @@
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ai\" />
+    <Folder Include="pathfinding\" />
+  </ItemGroup>
 </Project>
