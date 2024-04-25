@@ -12,8 +12,7 @@ namespace Toybox
 		public int Id = -1;
 		public Point MapCell;
 
-		public int X;
-		public int Y;
+		public Point Position;
 		public Vector2 Speed = Vector2.Zero;
 
 		public string Name;
@@ -32,12 +31,12 @@ namespace Toybox
 		public virtual void Draw(Renderer r, Camera c) {
 		}
 
-		public Point Position {
-			get { return new Point(X, Y); }
-			set {
-				X = value.X;
-				Y = value.Y;
-			}
+		public int X {
+			get { return Position.X; } set { Position.X = value; }
+		}
+
+		public int Y {
+			get { return Position.Y; } set { Position.Y = value; }
 		}
 
 		public override int GetHashCode() {
