@@ -59,7 +59,7 @@ namespace Toybox.utils.text {
 			Draw(s, color, Position - Scroll, Content);
 		}
 
-		public void Draw(SpriteBatch s, Color color, Point pos, string text) {
+		public void Draw(SpriteBatch s, Color color, Point pos, string text) { //TODO would be nice if this could output the drawn size also
 			Rectangle draw = new Rectangle(pos.X, pos.Y, 0, 0);
 			char prev = ' ';
 
@@ -187,7 +187,7 @@ namespace Toybox.utils.text {
 		}
 
 		public Point GetSize(string t) {
-			Point output = new Point();
+			Point output = new();
 			output.Y += LineHeight;
 			Point currentline = new Point();
 			for (int i = 0; i < t.Length; i++) {
