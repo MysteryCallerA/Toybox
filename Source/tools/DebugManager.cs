@@ -10,6 +10,7 @@ namespace Toybox.debug {
 		public Keys KeyHighlight = Keys.F1;
 		public Keys KeyToggleInfo = Keys.F2;
 		public Keys KeyToggleStepPanel = Keys.F3;
+		public Keys KeyToggleDrawHitboxes = Keys.F4;
 
 		public DebugInfoPanel InfoPanel;
 		public DebugHighlighter Highlighter;
@@ -32,6 +33,7 @@ namespace Toybox.debug {
 				if (CurrentState == DebugState.InfoInteract) CloseInfoInteract();
 				else CurrentState = DebugState.InfoInteract;
 			}
+			if (Resources.TextInput.Pressed(KeyToggleDrawHitboxes)) Core.DrawHitboxes = !Core.DrawHitboxes;
 			
 			if (Resources.TextInput.Pressed(KeyToggleStepPanel)) SlowStep.Visible = !SlowStep.Visible;
 			SlowStep.Update();

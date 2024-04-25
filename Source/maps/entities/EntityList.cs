@@ -46,6 +46,12 @@ namespace Toybox.maps.entities {
 			}
 		}
 
+		public void DrawHitboxes(Renderer r, Camera c) {
+			foreach (var e in Content) {
+				e.DrawHitboxes(r, c);
+			}
+		}
+
 		public void Add(T e) {
 			if (Resources.Game.InUpdateStep) { Buffer.QueueAdd(e); return; }
 			Content.Add(e);

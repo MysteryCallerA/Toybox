@@ -13,6 +13,7 @@ using Toybox.utils.input;
 using Toybox.utils.text;
 using Toybox.utils;
 using Toybox.scenes;
+using System.Reflection;
 
 namespace Toybox {
     public abstract class Core:Game {
@@ -23,6 +24,7 @@ namespace Toybox {
 		public Camera Camera;
 		public bool Running = true;
 		public bool InUpdateStep { get; private set; } = false;
+		public static bool DrawHitboxes = false;
 
 		/// <summary> Sets the screen to this color every frame before drawing the Scene.
 		/// <br></br>This is only for space outside the camera bounds. Use Camera.ClearColor instead for world background color.</summary>
@@ -138,7 +140,13 @@ namespace Toybox {
 			if (s == null) return;
 
 			Camera.DrawToBuffer(Renderer, s, GraphicsDevice);
-			
+
+			if (DrawHitboxes) {
+				Renderer.Batch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
+				Resources.Scene.DrawHitboxes(Renderer, Camera);
+				Renderer.Batch.End();
+			}
+
 			GraphicsDevice.SetRenderTarget(null);
 			GraphicsDevice.Clear(ClearColor);
 			Renderer.Batch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);

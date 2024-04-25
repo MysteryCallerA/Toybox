@@ -16,6 +16,9 @@ namespace Toybox.scenes {
 		public virtual void Draw(Renderer r, Camera c) {
 		}
 
+		public virtual void DrawHitboxes(Renderer r, Camera c) {
+		}
+
 		//Used by the DebugHighlighter to find clicked-on entities.
 		public virtual Entity FindEntity(Point pos) {
 			return null;

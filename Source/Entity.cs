@@ -31,6 +31,10 @@ namespace Toybox
 		public virtual void Draw(Renderer r, Camera c) {
 		}
 
+		public virtual void DrawHitboxes(Renderer r, Camera c) {
+			Hitbox.Draw(r, c);
+		}
+
 		public int X {
 			get { return Position.X; } set { Position.X = value; }
 		}
