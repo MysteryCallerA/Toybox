@@ -18,6 +18,7 @@ namespace Toybox
 		public string Name;
 		public Hitbox Hitbox;
 		public EntityCollider Collider;
+		public bool Visible = true;
 
 		public Entity() {
 			Hitbox = new Hitbox(this);
@@ -28,7 +29,12 @@ namespace Toybox
 			Collider.ApplyMove(Speed.ToPoint());
 		}
 
-		public virtual void Draw(Renderer r, Camera c) {
+		public void Draw(Renderer r, Camera c) {
+			if (!Visible) return;
+			DoDraw(r, c);
+		}
+
+		protected virtual void DoDraw(Renderer r, Camera c) {
 		}
 
 		public virtual void DrawHitboxes(Renderer r, Camera c) {
