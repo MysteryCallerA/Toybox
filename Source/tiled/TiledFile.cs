@@ -12,8 +12,10 @@ namespace Toybox.tiled
 
     public class TiledFile:TiledDataGroup {
 
+		public Color BackColor { get; private set; }
+
 		public TiledFile(string contentRoot, string file) {
-			file = contentRoot + "\\" + file;
+			file = Path.Join(contentRoot, file);
 			var workingDir = Path.GetDirectoryName(file);
 
 			if (!File.Exists(file)) {
@@ -33,6 +35,14 @@ namespace Toybox.tiled
 			XmlDocument doc = new XmlDocument();
 			doc.LoadXml(xml);
 			var map = doc.SelectSingleNode("map");
+
+			int tilewidth = int.Parse(map.Attributes["tilewidth"].Value);
+			int tileheight = int.Parse(map.Attributes["tileheight"].Value);
+			TileSize = new Point(tilewidth, tileheight);
+
+			var color = map.Attributes["backgroundcolor"].Value;
+			var trans = System.Drawing.ColorTranslator.FromHtml(color);
+			BackColor = new Color(trans.R, trans.G, trans.B);
 
 			ParseNodes(map.ChildNodes, workingDir, contentRoot);
 		}

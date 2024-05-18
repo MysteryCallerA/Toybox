@@ -46,6 +46,8 @@ namespace Toybox.tiled {
 
 		public Tilemap GetTilemap(List<TiledTileset> tilesets) {
 			var tileset = FindMatchingTileset(tilesets);
+			var texture = new TextureGrid(Resources.Content.Load<Texture2D>(tileset.Source), tileset.CellWidth, tileset.CellHeight);
+			var columns = texture.Columns;
 
 			var data = new List<List<Tilemap.Tile>>();
 			for (int i = 0; i < Width; i++) {
@@ -54,17 +56,20 @@ namespace Toybox.tiled {
 
 			int x = 0;
 			for (int i = 0; i < Tiles.Count; i++) {
-				int tiley = Math.DivRem((int)(Tiles[i] - tileset.FirstGid), tileset.Columns, out int tilex);
-				var effect = SpriteEffects.None;
-				if ((Data[i] & FlagHFlip) != 0) effect |= SpriteEffects.FlipHorizontally;
-				if ((Data[i] & FlagVFlip) != 0) effect |= SpriteEffects.FlipVertically;
-				data[x].Add(new Tilemap.Tile(new Point(tilex, tiley), effect));
+				if (Tiles[i] == 0) {
+					data[x].Add(new Tilemap.Tile());
+				} else {
+					int tiley = Math.DivRem((int)(Tiles[i] - tileset.FirstGid), columns, out int tilex);
+					var effect = SpriteEffects.None;
+					if ((Data[i] & FlagHFlip) != 0) effect |= SpriteEffects.FlipHorizontally;
+					if ((Data[i] & FlagVFlip) != 0) effect |= SpriteEffects.FlipVertically;
+					data[x].Add(new Tilemap.Tile(new Point(tilex, tiley), effect));
+				}
 
 				x++;
 				if (x >= Width) x = 0;
 			}
 
-			var texture = new TextureGrid(Resources.Content.Load<Texture2D>(tileset.Source), tileset.CellWidth, tileset.CellHeight);
 			return new Tilemap(texture, data);
 		}
 

@@ -15,7 +15,7 @@ namespace Toybox.tiled {
 		public uint FirstGid; //NOTE this is different in each tilemap
 		public int CellWidth;
 		public int CellHeight;
-		public int Columns;
+		//public int Columns;
 
 		public TiledTileset(XmlNode data, string workingDir, string contentRoot) {
 			var filename = data.Attributes["source"].Value;
@@ -44,9 +44,9 @@ namespace Toybox.tiled {
 
 			CellWidth = int.Parse(data.Attributes["tilewidth"].Value);
 			CellHeight = int.Parse(data.Attributes["tileheight"].Value);
-			Columns = int.Parse(data.Attributes["columns"].Value);
+			//Columns = int.Parse(data.Attributes["columns"].Value);
 
-			Source = Path.Combine(workingDir, data.FirstChild.Attributes["source"].Value);
+			Source = Path.Combine(workingDir, data.SelectSingleNode("image").Attributes["source"].Value);
 			Source = Path.GetFullPath(Source);
 			Source = Path.GetRelativePath(contentRoot, Source);
 			Source = Source.Substring(0, Source.Length - Path.GetExtension(Source).Length);

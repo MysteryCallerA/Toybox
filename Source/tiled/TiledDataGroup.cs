@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,7 @@ namespace Toybox.tiled {
 		internal Dictionary<string, TiledTileLayer> TileLayers = new Dictionary<string, TiledTileLayer>();
 		internal Dictionary<string, TiledObjectLayer> ObjectLayers = new Dictionary<string, TiledObjectLayer>();
 		internal List<TiledTileset> Tilesets = new List<TiledTileset>();
+		public Point TileSize { get; protected set; }
 
 		public TiledDataGroup() {
 		}
@@ -32,6 +34,7 @@ namespace Toybox.tiled {
 					var group = new TiledDataGroup { GroupName = n.Attributes["name"].Value };
 					group.Tilesets = Tilesets;
 					group.ParseNodes(n.ChildNodes, workingDir, contentRoot);
+					group.TileSize = TileSize;
 					DataGroups.Add(group);
 				}
 			}
