@@ -38,6 +38,12 @@ namespace Toybox.maps.entities {
 
 		public void PostUpdate() {
 			Buffer.Apply(this);
+			for (int i = 0; i < Content.Count; i++) {
+				if (Content[i].Destroy == true) {
+					Content.RemoveAt(i);
+					i--;
+				}
+			}
 		}
 
 		public void Draw(Renderer r, Camera c) {
@@ -80,7 +86,7 @@ namespace Toybox.maps.entities {
 
 		public IEnumerable<T> GetCollisions(Rectangle r) {
 			foreach (T e in Content) {
-				if (e.Hitbox.Bounds.Intersects(r)) yield return e;
+				if (e.Hitbox.Bounds.Intersects(r) && !e.Destroy) yield return e;
 			}
 		}
 

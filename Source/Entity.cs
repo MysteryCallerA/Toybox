@@ -19,6 +19,7 @@ namespace Toybox
 		public Hitbox Hitbox;
 		public EntityCollider Collider;
 		public bool Visible = true;
+		public bool Destroy = false;
 
 		public Entity() {
 			Hitbox = new Hitbox(this);

@@ -1,17 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 
 namespace Toybox.scenes {
-	public class Scene {
+	public abstract class Scene {
 
 		public Scene() {
 		}
 
-		public virtual void Update() {
-		}
+		public abstract void Update();
 
 		//PostUpdates are for things like removing/adding entities after finished main Update.
-		public virtual void PostUpdate() {
-		}
+		public abstract void PostUpdate();
 
 		public virtual void Draw(Renderer r, Camera c) {
 		}
