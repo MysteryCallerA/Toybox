@@ -114,5 +114,27 @@ namespace Toybox.maps.tiles {
 			return new Point(col * Tileset.CellWidth + X, row * Tileset.CellHeight + Y);
 		}
 
+		protected internal Rectangle Bounds {
+			get {
+				int rows = 0;
+				if (Map.Count > 0) rows = Map[0].Count;
+				return new Rectangle(X, Y, TileWidth * Map.Count, TileHeight * rows);
+			}
+		}
+
+		protected internal Rectangle PixelToMap(Rectangle r) {
+			var topleft = PixelToMap(r.X, r.Y);
+			var botright = PixelToMap(r.Right, r.Bottom);
+			return new Rectangle(topleft.X, topleft.Y, botright.X - topleft.X, botright.Y - topleft.Y);
+		}
+
+		protected internal bool InBounds(int col, int row) {
+			if (col < 0) return false;
+			if (row < 0) return false;
+			if (col >= Map.Count) return false;
+			if (row >= Map[col].Count) return false;
+			return true;
+		}
+
 	}
 }
