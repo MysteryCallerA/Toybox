@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Toybox.scenes.layer {
-	public class SceneLayerGroup<T> where T:SceneLayer {
+	public class SceneLayerGroup<T>:IEnumerable<T> where T : SceneLayer {
 
 		public List<T> Content = new();
 		public T MainLayer;
@@ -56,5 +57,12 @@ namespace Toybox.scenes.layer {
 			MainLayer ??= layer;
 		}
 
+		public IEnumerator<T> GetEnumerator() {
+			return Content.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator() {
+			return GetEnumerator();
+		}
 	}
 }
