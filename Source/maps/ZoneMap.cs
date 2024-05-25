@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 namespace Toybox.maps {
 	public class ZoneMap {
 
-		private List<ZoneEntity> Zones = new List<ZoneEntity>();
+		public List<ZoneEntity> Content = new List<ZoneEntity>();
 
 		public ZoneMap() {
 
 		}
 
 		public void Add(ZoneEntity e) {
-			Zones.Add(e);
+			Content.Add(e);
 		}
 
 		public void Add(string name, Rectangle r) {
@@ -29,32 +29,60 @@ namespace Toybox.maps {
 		}
 
 		/// <summary> Returns the first zone containing the point, or null if none do.  </summary>
-		public ZoneEntity Find(Point p) {
-			foreach (var e in Zones) {
+		public IEnumerable<ZoneEntity> CollideAll(Point p) {
+			foreach (var e in Content) {
 				if (e.Rect.Contains(p)) {
-					return e;
+					yield return e;
 				}
 			}
-			return null;
 		}
 
-		public ZoneEntity FindIntersects(Rectangle r) {
-			foreach (var e in Zones) {
-				if (e.Rect.Intersects(r)) {
-					return e;
+		public bool TryCollide(Point p, out ZoneEntity output) {
+			foreach (var e in Content) {
+				if (e.Rect.Contains(p)) {
+					output = e;
+					return true;
 				}
 			}
-			return null;
+			output = null;
+			return false;
+		}
+
+		public IEnumerable<ZoneEntity> CollideAll(Rectangle r) {
+			foreach (var e in Content) {
+				if (e.Rect.Intersects(r)) {
+					yield return e;
+				}
+			}
+		}
+
+		public bool TryCollide(Rectangle r, out ZoneEntity output) {
+			foreach (var e in Content) {
+				if (e.Rect.Intersects(r)) {
+					output = e;
+					return true;
+				}
+			}
+			output = null;
+			return false;
+		}
+
+		public void RemoveAll(string name) {
+			for (int i = 0; i < Content.Count; i++) {
+				if (Content[i].Name == name) {
+					Content.RemoveAt(i);
+					i--;
+				}
+			}
 		}
 
 		/// <summary> Returns the first zone with the supplied name, or null if none match. </summary>
-		public ZoneEntity Find(string name) {
-			foreach (var e in Zones) {
+		public IEnumerator<ZoneEntity> Find(string name) {
+			foreach (var e in Content) {
 				if (e.Name == name) {
-					return e;
+					yield return e;
 				}
 			}
-			return null;
 		}
 	}
 
