@@ -12,7 +12,9 @@ namespace Toybox.tiled
 
     public class TiledFile:TiledDataGroup {
 
+		internal List<TiledTileset> Tilesets = new List<TiledTileset>();
 		public Color BackColor { get; private set; }
+		public Point TileSize { get; protected set; }
 
 		public TiledFile(string contentRoot, string file) {
 			file = Path.Join(contentRoot, file);
@@ -44,7 +46,22 @@ namespace Toybox.tiled
 			var trans = System.Drawing.ColorTranslator.FromHtml(color);
 			BackColor = new Color(trans.R, trans.G, trans.B);
 
-			ParseNodes(map.ChildNodes, workingDir, contentRoot);
+			ParseNodes(map.ChildNodes, workingDir, contentRoot, this);
+		}
+
+		/// <summary> Adds new tileset to Tilesets while keeping list sorted by FirstGid. </summary>
+		internal void AddTileset(TiledTileset tileset) {
+			if (Tilesets.Count == 0 || tileset.FirstGid > Tilesets.Last().FirstGid) {
+				Tilesets.Add(tileset);
+			} else {
+				for (int i = 0; i < Tilesets.Count; i++) {
+					if (tileset.FirstGid < Tilesets[i].FirstGid) {
+						Tilesets.Insert(i, tileset);
+						return;
+					}
+				}
+				Tilesets.Add(tileset);
+			}
 		}
 
 	}

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using Toybox.maps;
 using Toybox.maps.tiles;
 
 namespace Toybox.tiled {
@@ -14,13 +15,14 @@ namespace Toybox.tiled {
 		public List<TiledDataGroup> DataGroups = new List<TiledDataGroup>();
 		internal Dictionary<string, TiledTileLayer> TileLayers = new Dictionary<string, TiledTileLayer>();
 		internal Dictionary<string, TiledObjectLayer> ObjectLayers = new Dictionary<string, TiledObjectLayer>();
-		internal List<TiledTileset> Tilesets = new List<TiledTileset>();
-		public Point TileSize { get; protected set; }
+		public Dictionary<string, string> Properties = new Dictionary<string, string>();
+		private TiledFile File;
 
 		public TiledDataGroup() {
 		}
 
-		protected void ParseNodes(XmlNodeList nodes, string workingDir, string contentRoot) {
+		protected void ParseNodes(XmlNodeList nodes, string workingDir, string contentRoot, TiledFile file) {
+			File = file;
 			foreach (XmlNode n in nodes) {
 				if (n.Name == "layer") {
 					var layer = new TiledTileLayer(n);
@@ -29,36 +31,28 @@ namespace Toybox.tiled {
 					var layer = new TiledObjectLayer(n);
 					ObjectLayers.Add(layer.Name, layer);
 				} else if (n.Name == "tileset") {
-					AddTileset(new TiledTileset(n, workingDir, contentRoot));
+					File.AddTileset(new TiledTileset(n, workingDir, contentRoot));
 				} else if (n.Name == "group") {
-					var group = new TiledDataGroup { GroupName = n.Attributes["name"].Value };
-					group.Tilesets = Tilesets;
-					group.ParseNodes(n.ChildNodes, workingDir, contentRoot);
-					group.TileSize = TileSize;
+					var group = new TiledDataGroup() { GroupName = n.Attributes["name"].Value };
+					group.ParseNodes(n.ChildNodes, workingDir, contentRoot, file);
 					DataGroups.Add(group);
+				} else if (n.Name == "properties") {
+					ParseProps(n);
 				}
 			}
 		}
 
-		/// <summary> Adds new tileset to Tilesets while keeping list sorted by FirstGid. </summary>
-		private void AddTileset(TiledTileset tileset) {
-			if (Tilesets.Count == 0 || tileset.FirstGid > Tilesets.Last().FirstGid) {
-				Tilesets.Add(tileset);
-			} else {
-				for (int i = 0; i < Tilesets.Count; i++) {
-					if (tileset.FirstGid < Tilesets[i].FirstGid) {
-						Tilesets.Insert(i, tileset);
-						return;
-					}
-				}
-				Tilesets.Add(tileset);
+		private void ParseProps(XmlNode n) {
+			var nodes = n.ChildNodes;
+			foreach (XmlNode prop in nodes) {
+				Properties.Add(prop.Attributes["name"].Value, prop.Attributes["value"].Value);
 			}
 		}
 
 		public bool TryGetTilemap(string layerName, out Tilemap t) {
 			var output = TileLayers.TryGetValue(layerName, out var layer);
 			if (output) {
-				t = layer.GetTilemap(Tilesets);
+				t = layer.GetTilemap(File.Tilesets);
 			} else t = null;
 			return output;
 		}
@@ -69,6 +63,18 @@ namespace Toybox.tiled {
 				return false;
 			}
 			objects = ObjectLayers[layerName].Content;
+			return true;
+		}
+
+		public bool TryGetZoneMap(string layerName, out ZoneMap z) {
+			z = new ZoneMap();
+			if (!ObjectLayers.ContainsKey(layerName)) {
+				return false;
+			}
+			var layer = ObjectLayers[layerName].Content;
+			foreach (var zone in layer) {
+				z.Add(zone.Name, zone.Bounds);
+			}
 			return true;
 		}
 
