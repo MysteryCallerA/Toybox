@@ -8,10 +8,7 @@ using System.Threading.Tasks;
 namespace Toybox.components.colliders {
 	public class NoCollider:EntityCollider {
 
-		public readonly Entity Parent;
-
-		public NoCollider(Entity parent) {
-			Parent = parent;
+		public NoCollider(Entity parent):base(parent) {
 		}
 
 		public override void ApplyMove(Point move) {
@@ -23,6 +20,10 @@ namespace Toybox.components.colliders {
 		}
 
 		public override Collision? FindSolid(Rectangle box) {
+			return null;
+		}
+
+		public override Collision? FindSolid(Point p) {
 			return null;
 		}
 

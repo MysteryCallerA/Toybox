@@ -11,32 +11,33 @@ namespace Toybox.components {
 			Hitbox = h;
 		}
 		public Collision() : this(CollisionType.Clear, Rectangle.Empty) { }
-
-		public static Collision Max(in Collision a, in Collision b) {
-			if (a.Type.Priority > b.Type.Priority) return a;
-			return b;
-		}
 	}
 
 	public class CollisionType { //TODO add a tag-based system to this so collision types can have subtypes
 
-		/// <summary> When colliding with multiple things at once, higher Priority goes first. </summary>
-		public readonly float Priority;
-
-		/// <summary> True only is CollisionType is always solid. Use EntityCollider.IsCollisionSolid() to check if a Collision is solid. </summary>
-		public readonly bool IsSolid;
-
 		/// <summary> Used only for debugging. CollisionTypes should be instantiated once, in a static class, then you can compare them directly. </summary>
 		public readonly string Name;
 
-		public CollisionType(string name, float priority, bool solid) {
-			Priority = priority;
-			IsSolid = solid;
+		public readonly int Id;
+		private static int NextId;
+
+		public CollisionType(string name) {
 			Name = name;
+			Id = NextId;
+			NextId++;
 		}
 
-		public static CollisionType Clear = new CollisionType("Clear", 0, false);
-		public static CollisionType Solid = new CollisionType("Solid", 1, true);
+		public override bool Equals(object obj) {
+			if (obj == null || GetType() != obj.GetType()) return false;
+			return Id == ((CollisionType)obj).Id;
+		}
+
+		public override int GetHashCode() {
+			return Id.GetHashCode();
+		}
+
+		public static readonly CollisionType Clear = new CollisionType("Clear");
+		public static readonly CollisionType Solid = new CollisionType("Solid");
 	}
 
 }

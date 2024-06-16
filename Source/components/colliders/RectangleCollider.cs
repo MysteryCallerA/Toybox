@@ -10,8 +10,6 @@ namespace Toybox.components.colliders {
 
 	public class RectangleCollider:EntityCollider {
 
-		public readonly Entity Parent;
-
 		/// <summary> When hitting a corner perfectly, while true, it will prioritize moving horizontally. Otherwise, vertically. </summary>
 		public bool HCornerPriority = true;
 
@@ -21,8 +19,7 @@ namespace Toybox.components.colliders {
 		private Rectangle PrevBounds;
 		private enum CollisionDirection { None, Vertical, Horizontal, Both };
 
-		public RectangleCollider(Entity parent, Func<Rectangle, IEnumerable<Collision>> findCollisions) {
-			Parent = parent;
+		public RectangleCollider(Entity parent, Func<Rectangle, IEnumerable<Collision>> findCollisions):base(parent) {
 			FindCollisionsFunc = findCollisions;
 		}
 
@@ -102,10 +99,6 @@ namespace Toybox.components.colliders {
 			}
 		}
 
-		public override bool IsCollisionSolid(in Collision c) {
-			return IsCollisionSolid(c, Parent.Hitbox.Position);
-		}
-
 		/// <summary> Returns the first solid collision. </summary>
 		public override Collision? FindSolid(Rectangle box) {
 			foreach (var c in FindCollisionsFunc.Invoke(box)) {
@@ -118,5 +111,8 @@ namespace Toybox.components.colliders {
 			return FindCollisionsFunc.Invoke(box);
 		}
 
+		public override Collision? FindSolid(Point p) {
+			throw new NotImplementedException();
+		}
 	}
 }
