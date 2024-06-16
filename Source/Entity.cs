@@ -25,6 +25,9 @@ namespace Toybox
 			Hitbox = new Hitbox(this);
 		}
 
+		public virtual void Init() {
+		}
+
 		public virtual void Update() {
 			Collider.ResetState();
 			Collider.ApplyMove(Speed.ToPoint());

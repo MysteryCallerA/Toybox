@@ -6,6 +6,8 @@ namespace Toybox.scenes {
 		public Scene() {
 		}
 
+		public abstract void Init();
+
 		public abstract void Update();
 
 		//PostUpdates are for things like removing/adding entities after finished main Update.
