@@ -75,6 +75,11 @@ namespace Toybox {
 
 			Init();
 
+			Graphics.PreferredBackBufferHeight = Camera.WorldHeight;
+			Graphics.PreferredBackBufferWidth = Camera.WorldWidth;
+			Graphics.ApplyChanges();
+			Camera.ApplyChanges(GraphicsDevice);
+
 			Resources.Debug = new DebugManager(GetDefaultFont());
 		}
 
