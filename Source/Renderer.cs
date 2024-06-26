@@ -23,9 +23,10 @@ namespace Toybox {
 			Batch.Draw(Blank, r, c);
 		}
 
-		public void DrawRect(Rectangle r, Color c, Camera cam, Camera.Space fromSpace) {
+		public Rectangle DrawRect(Rectangle r, Color c, Camera cam, Camera.Space fromSpace) {
 			r = cam.Project(fromSpace, Camera.Space.Render, r);
 			Batch.Draw(Blank, r, c);
+			return r;
 		}
 
 		public void DrawRectStatic(Rectangle r, Color c, Camera cam, Camera.Space fromSpace) {
