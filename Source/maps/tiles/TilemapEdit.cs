@@ -10,15 +10,33 @@ using static Toybox.maps.tiles.Tilemap;
 namespace Toybox.maps.tiles {
 	public static class TilemapEdit {
 
+		public static Tilemap CreateBlankMap(TextureGrid texture, int columns, int rows) {
+			var map = new Tilemap(texture);
+			for (int i = 0; i < columns; i++) {
+				map.Map.Add(CreateColumn(rows));
+			}
+			return map;
+		}
+
+		private static List<Tile> CreateColumn(int rows) {
+			var col = new List<Tile>();
+			for (int i = 0; i < rows; i++) {
+				col.Add(new Tile());
+			}
+			return col;
+		}
+
 		public static void Set(this Tilemap t, int x, int y, Tile? tile) {
 			var mappos = t.PixelToMap(x, y);
+			if (!tile.HasValue && !t.InBounds(mappos.X, mappos.Y)) return;
+
 			while (mappos.X < 0) {
 				mappos.X++;
 				t.X -= t.TileWidth;
-				t.Map.Insert(0, new List<Tile>());
+				t.Map.Insert(0, CreateColumn(t.Rows));
 			}
 			while (mappos.X >= t.Map.Count) {
-				t.Map.Add(new List<Tile>());
+				t.Map.Add(CreateColumn(t.Rows));
 			}
 			while (mappos.Y < 0) {
 				mappos.Y++;
@@ -27,8 +45,10 @@ namespace Toybox.maps.tiles {
 					t.Map[col].Insert(0, new Tile());
 				}
 			}
-			while (mappos.Y >= t.Map[mappos.X].Count) {
-				t.Map[mappos.X].Add(new Tile());
+			while (mappos.Y >= t.Map[0].Count) {
+				for (int col = 0; col < t.Map.Count; col++) {
+					t.Map[col].Add(new Tile());
+				}
 			}
 
 			if (!tile.HasValue) {

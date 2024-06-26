@@ -13,7 +13,7 @@ namespace Toybox.maps.tiles {
 
 		protected internal List<List<Tile>> Map = new List<List<Tile>>();//x,y
 
-		protected Tilemap(TextureGrid t) {
+		protected internal Tilemap(TextureGrid t) {
 			Tileset = t;
 		}
 
@@ -60,7 +60,7 @@ namespace Toybox.maps.tiles {
 		public void Draw(Renderer r, Camera c) {
 			if (Map.Count == 0) return;
 			var bounds = c.GetGameBounds();
-			var topleft = PixelToMap(bounds.Left, bounds.Top);
+			var topleft = PixelToMap(bounds.Left, bounds.Top) - new Point(1, 1);
 			var botright = PixelToMap(bounds.Right, bounds.Bottom) + new Point(1, 1);
 
 			if (topleft.X < 0) topleft.X = 0;
@@ -114,11 +114,17 @@ namespace Toybox.maps.tiles {
 			return new Point(col * Tileset.CellWidth + X, row * Tileset.CellHeight + Y);
 		}
 
-		protected internal Rectangle Bounds {
+		protected internal int Rows {
 			get {
 				int rows = 0;
 				if (Map.Count > 0) rows = Map[0].Count;
-				return new Rectangle(X, Y, TileWidth * Map.Count, TileHeight * rows);
+				return rows;
+			}
+		}
+
+		protected internal Rectangle Bounds {
+			get {
+				return new Rectangle(X, Y, TileWidth * Map.Count, TileHeight * Rows);
 			}
 		}
 
