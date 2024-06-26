@@ -27,8 +27,13 @@ namespace Toybox.components.colliders {
 			return null;
 		}
 
-		public override bool IsCollisionSolid(in Collision c) {
+		public override bool IsCollisionSolid(Collision c) {
 			return false;
 		}
+
+		public override bool IsCollisionSolid(Collision c, Point referencePos) {
+			return false;
+		}
+
 	}
 }

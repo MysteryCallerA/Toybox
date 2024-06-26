@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms.Design;
 
@@ -7,6 +8,7 @@ namespace Toybox.components
 	public abstract class EntityCollider {
 
 		public readonly Entity Parent;
+		public Func<Collision, Point, bool> CheckSolidFunc = CheckSolidDefault;
 
 		protected EntityCollider(Entity parent) {
 			Parent = parent;
@@ -29,13 +31,13 @@ namespace Toybox.components
 
 		/// <summary> Checks if a Collision should be treated as solid. </summary>
 		/// <param name="referencePos"> Some collisions are different depending on the Collider's reference position. </param>
-		public virtual bool IsCollisionSolid(in Collision c, Point referencePos) {
-			return c.Type == CollisionType.Solid;
+		public virtual bool IsCollisionSolid(Collision c, Point referencePos) {
+			return CheckSolidFunc.Invoke(c, referencePos);
 		}
 
 		/// <summary> Checks if a Collision should be treated as solid. Uses Parent.Hitbox.Position as reference position. </summary>
-		public virtual bool IsCollisionSolid(in Collision c) {
-			return IsCollisionSolid(in c, Parent.Hitbox.Position);
+		public virtual bool IsCollisionSolid(Collision c) {
+			return IsCollisionSolid(c, Parent.Hitbox.Position);
 		}
 
 		public bool CollidedTop {
@@ -53,6 +55,11 @@ namespace Toybox.components
 
 		public bool CollidedAny {
 			get { return CollidedTop || CollidedBottom || CollidedLeft || CollidedRight; }
+		}
+
+		private static bool CheckSolidDefault(Collision c, Point referencePos) {
+			if (c.Type != Collision.DefaultValue) return true;
+			return false;
 		}
 
 	}
