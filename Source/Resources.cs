@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Toybox.debug;
 using Toybox.scenes;
 using Toybox.utils.input;
+using Toybox.utils.text;
 
 namespace Toybox {
     public static class Resources {
@@ -22,6 +23,7 @@ namespace Toybox {
 		public static Random Random;
 		public static DebugManager Debug;
 		public static GameTime GameTime;
+		public static Text TextRenderer;
 
 		public static float DeltaTime = 0;
 

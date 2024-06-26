@@ -81,6 +81,7 @@ namespace Toybox {
 			Camera.ApplyChanges(GraphicsDevice);
 
 			Resources.Debug = new DebugManager(GetDefaultFont());
+			Resources.TextRenderer = new Text(GetDefaultFont());
 		}
 
 		/// <summary> Called after LoadContent() </summary>
