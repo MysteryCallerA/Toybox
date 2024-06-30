@@ -69,6 +69,14 @@ namespace Toybox.maps.tiles {
 			}
 		}
 
+		public static void Fill(this Tilemap t, Tile tile) {
+			for (int x = 0; x < t.Map.Count; x++) {
+				for (int y = 0; y < t.Map[x].Count; y++) {
+					t.Map[x][y] = tile;
+				}
+			}
+		}
+
 		
 	}
 }
