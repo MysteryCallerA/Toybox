@@ -18,7 +18,10 @@ namespace Toybox.maps.entities {
 		private EntityLockoutBuffer<T> Buffer = new EntityLockoutBuffer<T>();
 
 		public EntityList() {
+		}
 
+		public EntityList(List<T> content) {
+			Content = content;
 		}
 
 		public T this[int i] {
@@ -28,6 +31,12 @@ namespace Toybox.maps.entities {
 
 		public int Count {
 			get { return Content.Count; }
+		}
+
+		public void Init() {
+			foreach (var e in Content) {
+				e.Init();
+			}
 		}
 
 		public void Update() {

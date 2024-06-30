@@ -15,8 +15,10 @@ namespace Toybox.scenes.layer {
 			Name = name;
 		}
 
+		public abstract void Init();
 		public abstract void Draw(Renderer r, Camera c);
 		public abstract void Update();
+		public abstract void PostUpdate();
 
 	}
 }

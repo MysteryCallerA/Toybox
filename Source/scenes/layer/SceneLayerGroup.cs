@@ -25,6 +25,12 @@ namespace Toybox.scenes.layer {
 			}
 		}
 
+		public void Init() {
+			foreach (var layer in Content) {
+				layer.Init();
+			}
+		}
+
 		public void Draw(Renderer r, Camera c) {
 			foreach (var layer in Content) {
 				if (!layer.Visible) continue;
