@@ -40,5 +40,10 @@ namespace Toybox.graphic {
 			get { return new Point(CellWidth, CellHeight); }
 		}
 
+		public void GetDrawRects(Point cell, int x, int y, int scale, out Rectangle source, out Rectangle dest) {
+			source = GetCell(cell);
+			dest = new Rectangle(x - (Origin.X * scale), y - (Origin.Y * scale), source.Width * scale, source.Height * scale);
+		}
+
 	}
 }
