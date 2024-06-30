@@ -114,12 +114,16 @@ namespace Toybox.maps.tiles {
 			return new Point(col * Tileset.CellWidth + X, row * Tileset.CellHeight + Y);
 		}
 
-		protected internal int Rows {
+		public int Rows {
 			get {
 				int rows = 0;
 				if (Map.Count > 0) rows = Map[0].Count;
 				return rows;
 			}
+		}
+
+		public int Columns {
+			get { return Map.Count; }
 		}
 
 		protected internal Rectangle Bounds {
