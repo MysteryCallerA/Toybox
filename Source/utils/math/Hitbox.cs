@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Toybox.utils.math
 {
-	public class Hitbox {
+	public class Hitbox { //TODO move to components?
 
 		private readonly Entity Entity;
 
