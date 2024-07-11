@@ -6,54 +6,54 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Toybox.graphic {
-	public class AnimationCollection {
-
-		private readonly Dictionary<int, Animation> Animations = new();
-
-		public AnimationCollection(params Animation[] animations) {
-			foreach (var a in animations) {
-				Animations.Add(a.Id, a);
-			}
-		}
-
-		public Animation this[int id] {
-			get { return Animations[id]; }
-		}
-
-	}
 
 	public class Animation {
+
+		private static int NextId = 0;
 
 		public readonly int Id;
 		public int[] Frames;
 		public int[] FrameTimes;
 
-		public Animation(int id, int[] frames, int frameTime) {
-			Id = id;
-			Frames = frames;
-			FrameTimes = new int[] { frameTime };
+		public Animation(int[] frames, int frameTime):this(frames, new int[] { frameTime }) {
+		}
+		public Animation(int frame) : this(new int[] { frame }, new int[] { -1 }) {
+		}
+		public Animation(int frame, int frameTime):this(new int[] { frame }, new int[] { frameTime }) {
 		}
 
-		public Animation(int id, int[] frames, int[] frameTimes) {
-			Id = id;
+		public Animation(int[] frames, int[] frameTimes) {
+			Id = NextId;
+			NextId++;
 			Frames = frames;
 			FrameTimes = frameTimes;
 		}
 
+		public override bool Equals(object obj) {
+			if (obj == null || GetType() != obj.GetType()) return false;
+			return Id == ((Animation)obj).Id;
+		}
+
+		public override int GetHashCode() {
+			return Id.GetHashCode();
+		}
 	}
 
 	public class AnimationManager {
 
-		public AnimationCollection Animations;
-		private Animation Animation;
+		public Animation Animation;
 		public float FrameTimer = 0;
 		public int ElapsedFrames = 0;
 		public float Speed = 1;
+		public float OverallTimer = 0;
+		private enum TriggerType { None, NextFrame, MinTime, MinFrameTime }
+
 		public Action OnAnimationComplete;
 
-		public AnimationManager(AnimationCollection a) {
-			Animations = a;
-		}
+		private Animation NextAnimation;
+		private TriggerType NextAnimTrigger = TriggerType.None;
+		private int MinTime = 0;
+
 		public AnimationManager() { }
 
 		public int AnimationId { get { return Animation.Id; } }
@@ -67,31 +67,56 @@ namespace Toybox.graphic {
 		public int Frame { get { return Animation.Frames[ElapsedFrames]; } }
 		public bool NoAnimation { get { return Animation == null; } }
 
-		public void StartAnimation(Animation a) {
+		public void Start(Animation a) {
 			Animation = a;
 			FrameTimer = 0;
 			ElapsedFrames = 0;
+			OverallTimer = 0;
 		}
 
-		public void StartAnimation(int id) {
-			StartAnimation(Animations[id]);
+		public void StartNextFrame(Animation a) {
+			SetupTrigger(a, TriggerType.NextFrame);
 		}
 
-		/// <summary> Switch playing Animation without reseting the frame and frameTimer. </summary>
-		public void BlendAnimation(Animation a) {
-			Animation = a;
+		public void StartAfterMinTime(Animation a, int minTime) {
+			SetupTrigger(a, TriggerType.MinTime);
+			MinTime = minTime;
 		}
 
-		/// <summary> Switch playing Animation without reseting the frame and frameTimer. </summary>
-		public void BlendAnimation(int id) {
-			BlendAnimation(Animations[id]);
+		public void StartAfterMinFrameTime(Animation a, int minTime) {
+			SetupTrigger(a, TriggerType.MinFrameTime);
+			MinTime = minTime;
+		}
+
+		private void SetupTrigger(Animation a, TriggerType t) {
+			NextAnimation = a;
+			NextAnimTrigger = t;
 		}
 
 		public void Update() {
 			if (Animation == null) return;
 
+			OverallTimer += Speed;
+			if (NextAnimTrigger == TriggerType.MinTime && OverallTimer > MinTime) {
+				StartNextAnimation();
+				return;
+			}
+
+			if (FrameTime == -1) return;
+
 			FrameTimer += Speed;
+
+			if (NextAnimTrigger == TriggerType.MinFrameTime && FrameTimer > MinTime) {
+				StartNextAnimation();
+				return;
+			}
+
 			if (FrameTimer > FrameTime) {
+				if (NextAnimTrigger == TriggerType.NextFrame) {
+					StartNextAnimation();
+					return;
+				}
+
 				ElapsedFrames++;
 				FrameTimer = 0;
 				if (ElapsedFrames >= Frames) {
@@ -101,9 +126,16 @@ namespace Toybox.graphic {
 			}
 		}
 
+		private void StartNextAnimation() {
+			Start(NextAnimation);
+			NextAnimation = null;
+			NextAnimTrigger = TriggerType.None;
+		}
+
 		public void Reset() {
 			ElapsedFrames = 0;
 			FrameTimer = 0;
+			OverallTimer = 0;
 		}
 
 	}
