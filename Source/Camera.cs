@@ -14,6 +14,8 @@ using Toybox.utils.math;
 namespace Toybox {
     public class Camera { //TODO rename world and game and SubPixelPosition to use updated terminology
 
+		public EventHandler OnGameScaleChanged;
+
 		public float TrueWorldX, TrueWorldY;
 
 		/// <summary> Position of the camera in render pixels. </summary>
@@ -51,6 +53,7 @@ namespace Toybox {
 		public int GameScale { //TODO change this so ZoomFocus is only used in a seperate function SetGameScale(Point focus)
 			get { return _GameScale; }
 			set { //TODO need t a way to set more easily without using focus
+				if (value == _GameScale) return;
 				if (value < 1) value = 1;
 
 				var gamebounds = GetGameBounds();
@@ -58,6 +61,7 @@ namespace Toybox {
 				_GameScale = value;
 				GameX = focus.X - (int)(GameWidth * ZoomFocus.X);
 				GameY = focus.Y - (int)(GameHeight * ZoomFocus.Y);
+				OnGameScaleChanged?.Invoke(this, new EventArgs());
 			}
 		}
 
