@@ -54,6 +54,20 @@ namespace Toybox.utils {
 			return Direction.Right;
 		}
 
+		public static Point ToPoint(this Direction d) {
+			switch (d) {
+				case Direction.Up: return new Point(0, -1);
+				case Direction.Down: return new Point(0, 1);
+				case Direction.Left: return new Point(-1, 0);
+				case Direction.Right: return new Point(1, 0);
+				case Direction.UpLeft: return new Point(-1, -1);
+				case Direction.UpRight: return new Point(1, -1);
+				case Direction.DownLeft: return new Point(-1, 1);
+				case Direction.DownRight: return new Point(1, 1);
+			}
+			return Point.Zero;
+		}
+
 	}
 
 }
