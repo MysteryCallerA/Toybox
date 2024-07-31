@@ -63,7 +63,7 @@ namespace Toybox.components.action
 			if (!Attacking) return;
 
 			float opacity = (float)Timer / Time;
-			r.DrawRect(Bounds, Color * opacity, c, Camera.Space.Subpixel);
+			r.DrawRect(Bounds, Color * opacity, c, Camera.Space.Pixel);
 		}
 
 		public bool Attacking {

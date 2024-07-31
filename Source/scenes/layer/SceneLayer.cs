@@ -20,5 +20,8 @@ namespace Toybox.scenes.layer {
 		public abstract void Update();
 		public abstract void PostUpdate();
 
+		public virtual void PixelScaleChanged(int prevPixelScale, int newPixelScale) {
+		}
+
 	}
 }

@@ -30,7 +30,7 @@ namespace Toybox {
 		}
 
 		public void DrawRectStatic(Rectangle r, Color c, Camera cam, Camera.Space fromSpace) {
-			r = cam.Project(fromSpace, Camera.Space.Subpixel, r);
+			r = cam.Project(fromSpace, Camera.Space.Pixel, r);
 			Batch.Draw(Blank, r, c);
 		}
 
@@ -46,7 +46,7 @@ namespace Toybox {
 		}
 
 		public void DrawStatic(Texture2D t, Rectangle dest, Rectangle source, Color c, Camera cam, Camera.Space fromSpace, SpriteEffects effect = SpriteEffects.None) {
-			dest = cam.Project(fromSpace, Camera.Space.Subpixel, dest);
+			dest = cam.Project(fromSpace, Camera.Space.Pixel, dest);
 			Batch.Draw(t, dest, source, c, 0, Vector2.Zero, effect, 0);
 		}
 
@@ -66,7 +66,7 @@ namespace Toybox {
 		}
 
 		public void DrawLineStatic(Vector2 start, Vector2 end, Color c, Camera cam, Camera.Space fromSpace) {
-			var rect = cam.Project(fromSpace, Camera.Space.Subpixel, new Rectangle(start.ToPoint(), (end - start).ToPoint()));
+			var rect = cam.Project(fromSpace, Camera.Space.Pixel, new Rectangle(start.ToPoint(), (end - start).ToPoint()));
 			var dist = (float)Math.Sqrt(rect.Width * rect.Width + rect.Height * rect.Height);
 			var angle = (float)Math.Atan2(rect.Height, rect.Width);
 			Batch.Draw(Blank, rect.Location.ToVector2(), null, c, angle, Vector2.Zero, new Vector2(dist, 1), SpriteEffects.None, 0);

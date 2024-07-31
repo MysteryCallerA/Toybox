@@ -86,7 +86,7 @@ namespace Toybox.utils.math
 
 		public static Color DrawColor = Color.White * 0.3f;
 		public void Draw(Renderer r, Camera c, Color? color = null) {
-			r.DrawRect(Bounds, color ?? DrawColor, c, Camera.Space.Subpixel);
+			r.DrawRect(Bounds, color ?? DrawColor, c, Camera.Space.Pixel);
 		}
 
 	}

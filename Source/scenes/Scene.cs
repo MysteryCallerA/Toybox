@@ -23,5 +23,7 @@ namespace Toybox.scenes {
 		public virtual Entity FindEntity(Point pos) {
 			return null;
 		}
+
+		public abstract void PixelScaleChanged(int prevPixelScale, int newPixelScale);
 	}
 }

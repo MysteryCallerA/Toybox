@@ -73,5 +73,9 @@ namespace Toybox
 			get { return Y; }
 		}
 
+		public virtual void PixelScaleChanged(int prevPixelScale, int newPixelScale) {
+			Position = Camera.ProjectPixelScale(Position, prevPixelScale, newPixelScale);
+		}
+
 	}
 }

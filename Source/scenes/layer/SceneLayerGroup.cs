@@ -70,5 +70,11 @@ namespace Toybox.scenes.layer {
 		IEnumerator IEnumerable.GetEnumerator() {
 			return GetEnumerator();
 		}
+
+		public void PixelScaleChanged(int prevPixelScale, int newPixelScale) {
+			foreach (var layer in Content) {
+				layer.PixelScaleChanged(prevPixelScale, newPixelScale);
+			}
+		}
 	}
 }

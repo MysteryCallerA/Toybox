@@ -173,10 +173,10 @@ namespace Toybox.components.pathing {
 
 		public void Draw(Renderer r, Camera c, Point scale) {
 			foreach (var p in ClosedNodes) {
-				r.DrawRect(new Rectangle(p * scale, scale), ColorClosed, c, Camera.Space.Pixel);
+				r.DrawRect(new Rectangle(p * scale, scale), ColorClosed, c, Camera.Space.Scaled);
 			}
 			foreach (var node in OpenNodes) {
-				var rect = r.DrawRect(new Rectangle(node.Position * scale, scale), ColorOpen, c, Camera.Space.Pixel);
+				var rect = r.DrawRect(new Rectangle(node.Position * scale, scale), ColorOpen, c, Camera.Space.Scaled);
 				Resources.TextRenderer.Draw(r.Batch, Color.White, rect.Location, $"{node.Total}");
 			}
 		}

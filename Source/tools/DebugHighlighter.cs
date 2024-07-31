@@ -13,7 +13,7 @@ namespace Toybox.debug {
 		private Rectangle Highlight;
 
 		public void Update(Scene s) {
-			var pos = Resources.Camera.Project(Camera.Space.Screen, Camera.Space.Subpixel, Resources.MouseInput.Position);
+			var pos = Resources.Camera.Project(Camera.Space.Screen, Camera.Space.Pixel, Resources.MouseInput.Position);
 			var find = s.FindEntity(pos);
 			if (find == null) {
 				Highlight = Rectangle.Empty;
@@ -31,7 +31,7 @@ namespace Toybox.debug {
 		public void Draw(Renderer r, Camera c) {
 			if (Highlight == Rectangle.Empty) return;
 
-			var h = c.Project(Camera.Space.Subpixel, Camera.Space.Screen, Highlight);
+			var h = c.Project(Camera.Space.Pixel, Camera.Space.Screen, Highlight);
 			h.Inflate(1, 1);
 			r.DrawRectDirect(h, Color.White * 0.5f);
 		}

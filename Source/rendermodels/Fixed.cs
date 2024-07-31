@@ -27,9 +27,9 @@ namespace Toybox.rendermodels {
 		}
 
 		public override void Initialize(GraphicsDevice g, Camera c) {
-			c.WorldWidth = InitWorldWidth;
-			c.WorldHeight = InitWorldHeight;
-			c.Render = new RenderTarget2D(g, c.WorldWidth, c.WorldHeight);
+			c.Width = InitWorldWidth;
+			c.Height = InitWorldHeight;
+			c.Render = new RenderTarget2D(g, c.Width, c.Height);
 		}
 
 		public override void Apply(GraphicsDevice g, Camera c) {
@@ -46,7 +46,7 @@ namespace Toybox.rendermodels {
 		}
 
 		public override int GetScreenPixelSize(Camera c) {
-			return c.GameScale * RenderScale;
+			return c.PixelScale * RenderScale;
 		}
 
 		public override Rectangle WorldToScreen(Rectangle r, Camera c) {

@@ -59,7 +59,7 @@ namespace Toybox.maps.tiles {
 
 		public void Draw(Renderer r, Camera c) {
 			if (Map.Count == 0) return;
-			var bounds = c.GetGameBounds();
+			var bounds = c.ScaledBounds;
 			var topleft = PixelToMap(bounds.Left, bounds.Top) - new Point(1, 1);
 			var botright = PixelToMap(bounds.Right, bounds.Bottom) + new Point(1, 1);
 
@@ -73,7 +73,7 @@ namespace Toybox.maps.tiles {
 				for (int row = topleft.Y; row < botright.Y && row < Map[col].Count; row++) {
 					var tile = Map[col][row];
 					if (!tile.IsEmpty) {
-						r.Draw(Tileset.Texture, dest, Tileset.GetCell(tile.Id), Color.White, c, Camera.Space.Pixel, tile.Effect);
+						r.Draw(Tileset.Texture, dest, Tileset.GetCell(tile.Id), Color.White, c, Camera.Space.Scaled, tile.Effect);
 					}
 					dest.Y += dest.Height;
 				}

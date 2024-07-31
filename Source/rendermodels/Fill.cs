@@ -19,12 +19,12 @@ namespace Toybox.rendermodels {
 
 		public override void Apply(GraphicsDevice g, Camera c) {
 			var screen = g.Viewport.Bounds;
-			int width = (int)Math.Floor((float)screen.Width / c.GameScale) * c.GameScale;
-			int height = (int)Math.Floor((float)screen.Height / c.GameScale) * c.GameScale;
+			int width = (int)Math.Floor((float)screen.Width / c.PixelScale) * c.PixelScale;
+			int height = (int)Math.Floor((float)screen.Height / c.PixelScale) * c.PixelScale;
 
 			c.Render = new RenderTarget2D(g, width, height);
-			c.WorldWidth = width;
-			c.WorldHeight = height;
+			c.Width = width;
+			c.Height = height;
 
 			CenterScreen(g, c);
 		}
@@ -46,7 +46,7 @@ namespace Toybox.rendermodels {
 		}
 
 		public override int GetScreenPixelSize(Camera c) {
-			return c.GameScale;
+			return c.PixelScale;
 		}
 
 		public override Rectangle WorldToScreen(Rectangle r, Camera c) {

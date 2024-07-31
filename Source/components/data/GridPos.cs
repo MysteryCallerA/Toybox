@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Toybox.utils.math;
 
 namespace Toybox.components.data {
 	public class GridPos {
@@ -60,6 +61,11 @@ namespace Toybox.components.data {
 
 		public int ToCellOriginY(int ypos) {
 			return ((int)Math.Floor((float)(ypos - YOffset) / CellHeight) * CellHeight) + YOffset;
+		}
+
+		public void PixelScaleChanged(int prevPixelScale, int newPixelScale) {
+			CellSize = new Point(9 * newPixelScale);
+			Offset = new Point(0 * newPixelScale, 1 * newPixelScale);
 		}
 
 	}

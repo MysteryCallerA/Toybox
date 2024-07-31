@@ -22,7 +22,7 @@ namespace Toybox.components.graphic {
 
 		public void Draw(Entity e, Renderer r, Camera c) {
 			var pos = e.Position - Graphic.Origin.Location;
-			r.Draw(Graphic.Texture, new Rectangle(pos, Graphic.Source.Size), Graphic.Source, Color, c, Camera.Space.Pixel, Graphic.Effect);
+			r.Draw(Graphic.Texture, new Rectangle(pos, Graphic.Source.Size), Graphic.Source, Color, c, Camera.Space.Scaled, Graphic.Effect);
 		}
 	}
 }

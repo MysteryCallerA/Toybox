@@ -30,7 +30,7 @@ namespace Toybox.maps.tiles {
 		}
 
 		public static IEnumerable<TileData> GetCollisionsSubpixel(this Tilemap t, Rectangle r, Camera c) {
-			r = c.ProjectSubpixelToPixelGrow(r);
+			r = c.ProjectPixelToScaledGrow(r);
 
 			var topleft = t.PixelToMap(r.Left, r.Top);
 			var botright = t.PixelToMap(r.Right - 1, r.Bottom - 1);

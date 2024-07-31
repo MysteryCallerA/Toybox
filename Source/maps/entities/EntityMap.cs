@@ -27,7 +27,7 @@ namespace Toybox.maps.entities {
 		}
 
 		public void Draw(Renderer r, Camera c) {
-			VisibleEntities = GetEntitiesNearBounds(c.GetWorldBounds());//Possible bug: this might need to be c.GetGameBounds?
+			VisibleEntities = GetEntitiesNearBounds(c.Bounds);//Possible bug: this might need to be c.GetGameBounds?
 			VisibleEntities.Sort();
 
 			foreach (var e in VisibleEntities) {

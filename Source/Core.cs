@@ -66,6 +66,10 @@ namespace Toybox {
 			Camera.ApplyChanges(GraphicsDevice);
 		}
 
+		protected virtual void PixelScaleChanged(int prevPixelScale, int newPixelScale) {
+			Resources.Scene.PixelScaleChanged(prevPixelScale, newPixelScale);
+		}
+
 		/// <summary> Internal Initialize logic. Override Init() instead. </summary>
 		protected sealed override void Initialize() {
 			Resources.Content = Content;
@@ -75,8 +79,8 @@ namespace Toybox {
 
 			Init();
 
-			Graphics.PreferredBackBufferHeight = Camera.WorldHeight;
-			Graphics.PreferredBackBufferWidth = Camera.WorldWidth;
+			Graphics.PreferredBackBufferHeight = Camera.Height;
+			Graphics.PreferredBackBufferWidth = Camera.Width;
 			Graphics.ApplyChanges();
 			Camera.ApplyChanges(GraphicsDevice);
 
@@ -111,11 +115,13 @@ namespace Toybox {
 			Resources.MouseInput.UpdateControlStates(Mouse.GetState());
 
 			if (Running) {
+				var prevScale = Camera.PixelScale;
+				Camera.UpdatePixelScale(out bool scaleChanged);
+				if (scaleChanged) PixelScaleChanged(prevScale, Camera.PixelScale);
 				InUpdateStep = true;
 				UpdateScene();
 				InUpdateStep = false;
 				PostUpdate();
-				Camera.Update();
 			}
 
 			if (Resources.Debug.Enabled) Resources.Debug.Update();

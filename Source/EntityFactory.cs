@@ -13,7 +13,7 @@ namespace Toybox {
 		protected abstract T CreateEntity(string type);
 
 		public virtual void PositionEntity(Entity e, TiledObject o) {
-			e.Position = Resources.Camera.Project(Camera.Space.Pixel, Camera.Space.Subpixel, o.Position); //This projection should probably be configurable somehow
+			e.Position = Resources.Camera.Project(Camera.Space.Scaled, Camera.Space.Pixel, o.Position); //This projection should probably be configurable somehow
 		}
 
 		protected virtual void InitializeEntity(T e, TiledObject o) {
