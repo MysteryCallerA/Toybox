@@ -15,13 +15,13 @@ namespace Toybox.rendermodels {
 
 		public abstract void Apply(GraphicsDevice g, Camera c);
 
-		public abstract Point WorldToScreen(Point p, Camera c);
+		public abstract Point RenderToScreen(Point p, Camera c);
 
-		public abstract Point ScreenToWorld(Point p, Camera c);
+		public abstract Point ScreenToRender(Point p, Camera c);
 
-		public abstract Rectangle WorldToScreen(Rectangle r, Camera c);
+		public abstract Rectangle RenderToScreen(Rectangle r, Camera c);
 
-		public abstract Rectangle ScreenToWorld(Rectangle r, Camera c);
+		public abstract Rectangle ScreenToRender(Rectangle r, Camera c);
 
 		public virtual Rectangle GetScreenBounds(Camera c) {
 			return new Rectangle(ScreenX, ScreenY, GetScreenWidth(c), GetScreenHeight(c));

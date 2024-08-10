@@ -9,13 +9,18 @@ namespace Toybox {
     public class Camera {
 
 		public int PixelScale { get; private set; } = 1;
-		private int NextPixelScale = 1;
 		public int X, Y;
 		public int Width, Height;
 
 		public RenderTarget2D Render;
 		public RenderModel RenderModel;
 		public Color ClearColor = Color.Black;
+
+		public bool ScaleTransitionActive = false;
+		private int TargetPixelScale;
+		private int StartingPixelScale;
+		private int ScaleTransitionTime;
+		private int ScaleTransitionTimer;
 
 		public Camera(GraphicsDevice g, RenderModel render, int pixelScale = 1) {
 			PixelScale = pixelScale;
@@ -36,21 +41,43 @@ namespace Toybox {
 			r.Batch.End();
 		}
 
-		public void ChangePixelScale(int s) {
-			NextPixelScale = s;
-		}
+		public void DrawBufferToScreen(Renderer r, GraphicsDevice g) {
+			g.SetRenderTarget(null);
+			g.Clear(ClearColor);
+			
+			r.Batch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
+			if (!ScaleTransitionActive) {
+				r.Batch.Draw(Render, GetScreenBounds(), Color.White);
+			} else {
+				int hdif = ((int)Math.Round(Render.Width * ((float)PixelScale / TargetPixelScale)) - Render.Width) / 2;
+				int vdif = ((int)Math.Round(Render.Height * ((float)PixelScale / TargetPixelScale)) - Render.Height) / 2;
+				float m = (float)ScaleTransitionTimer / ScaleTransitionTime;
+				//hdif = (int)Math.Round(hdif * m);
+				//vdif = (int)Math.Round(vdif * m);
+				float h = hdif * m;
+				float v = vdif * m;
 
-		internal void UpdatePixelScale(out bool scaleChanged) {
-			if (PixelScale == NextPixelScale) {
-				scaleChanged = false;
-				return;
+				var source = new Rectangle(-(int)Math.Round(h), -(int)Math.Round(v), Render.Width + (int)Math.Round(h * 2), Render.Height + (int)Math.Round(v * 2));
+				r.Batch.Draw(Render, GetScreenBounds(), source, Color.White);
 			}
-			PixelScale = NextPixelScale;
-			scaleChanged = true;
+			r.Batch.End();
 		}
 
-		public int RenderScale {
-			get { return RenderModel.GetRenderScale(); }
+		public void ChangePixelScale(int s, int transitionFrames = 0) {
+			TargetPixelScale = s;
+			StartingPixelScale = PixelScale;
+			ScaleTransitionTime = transitionFrames;
+			ScaleTransitionTimer = 0;
+			ScaleTransitionActive = true;
+		}
+
+		internal void UpdatePixelScale() {
+			if (!ScaleTransitionActive) return;
+			ScaleTransitionTimer++;
+			if (ScaleTransitionTimer >= ScaleTransitionTime) {
+				PixelScale = TargetPixelScale;
+				ScaleTransitionActive = false;
+			}
 		}
 
 		public int ScaledX {
@@ -163,11 +190,11 @@ namespace Toybox {
 			return p - Position;
 		}
 		private Point RenderToScreen(Point p) {
-			return RenderModel.WorldToScreen(p, this);
+			return RenderModel.RenderToScreen(p, this);
 		}
 
 		private Point ScreenToRender(Point p) {
-			return RenderModel.ScreenToWorld(p, this);
+			return RenderModel.ScreenToRender(p, this);
 		}
 		private Point RenderToPixel(Point p) {
 			return p + Position;
@@ -185,11 +212,11 @@ namespace Toybox {
 			return r;
 		}
 		private Rectangle RenderToScreen(Rectangle r) {
-			return RenderModel.WorldToScreen(r, this);
+			return RenderModel.RenderToScreen(r, this);
 		}
 
 		private Rectangle ScreenToRender(Rectangle r) {
-			return RenderModel.ScreenToWorld(r, this);
+			return RenderModel.ScreenToRender(r, this);
 		}
 		private Rectangle RenderToPixel(Rectangle r) {
 			r.Location += Position;

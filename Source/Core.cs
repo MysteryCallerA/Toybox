@@ -115,9 +115,12 @@ namespace Toybox {
 			Resources.MouseInput.UpdateControlStates(Mouse.GetState());
 
 			if (Running) {
+				PreUpdate();
+
 				var prevScale = Camera.PixelScale;
-				Camera.UpdatePixelScale(out bool scaleChanged);
-				if (scaleChanged) PixelScaleChanged(prevScale, Camera.PixelScale);
+				Camera.UpdatePixelScale();
+				if (prevScale != Camera.PixelScale) PixelScaleChanged(prevScale, Camera.PixelScale);
+
 				InUpdateStep = true;
 				UpdateScene();
 				InUpdateStep = false;
@@ -159,11 +162,7 @@ namespace Toybox {
 				Renderer.Batch.End();
 			}
 
-			GraphicsDevice.SetRenderTarget(null);
-			GraphicsDevice.Clear(ClearColor);
-			Renderer.Batch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
-			Renderer.Batch.Draw(Camera.Render, Camera.GetScreenBounds(), Color.White);
-			Renderer.Batch.End();
+			Camera.DrawBufferToScreen(Renderer, GraphicsDevice);
 		}
 
 		/// <summary> Return your SceneManager.ActiveScene </summary>
@@ -179,6 +178,11 @@ namespace Toybox {
 		/// <summary> Calls GetActiveScene().PostUpdate. PostUpdates are for things like removing/adding entities after finished main Update. </summary>
 		protected virtual void PostUpdate() {
 			GetActiveScene().PostUpdate();
+		}
+
+		/// <summary> For things like changing camera pixelscale </summary>
+		protected virtual void PreUpdate() {
+			GetActiveScene().PreUpdate();
 		}
 
 	}

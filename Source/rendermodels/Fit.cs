@@ -36,7 +36,7 @@ namespace Toybox.rendermodels {
 			CenterScreen(g, c);
 		}
 
-		public override Point WorldToScreen(Point p, Camera c) {
+		public override Point RenderToScreen(Point p, Camera c) {
 			return new Point((p.X * RenderScale) + ScreenX, (p.Y * RenderScale) + ScreenY);
 		}
 
@@ -48,7 +48,7 @@ namespace Toybox.rendermodels {
 			return c.Render.Height * RenderScale;
 		}
 
-		public override Point ScreenToWorld(Point p, Camera c) {
+		public override Point ScreenToRender(Point p, Camera c) {
 			return new Point((p.X - ScreenX) / RenderScale, (p.Y - ScreenY) / RenderScale);
 		}
 
@@ -56,12 +56,12 @@ namespace Toybox.rendermodels {
 			return c.PixelScale * RenderScale;
 		}
 
-		public override Rectangle WorldToScreen(Rectangle r, Camera c) {
-			return new Rectangle(WorldToScreen(r.Location, c), new Point(r.Width * RenderScale, r.Height * RenderScale));
+		public override Rectangle RenderToScreen(Rectangle r, Camera c) {
+			return new Rectangle(RenderToScreen(r.Location, c), new Point(r.Width * RenderScale, r.Height * RenderScale));
 		}
 
-		public override Rectangle ScreenToWorld(Rectangle r, Camera c) {
-			return new Rectangle(ScreenToWorld(r.Location, c), new Point(r.Width / RenderScale, r.Height / RenderScale));
+		public override Rectangle ScreenToRender(Rectangle r, Camera c) {
+			return new Rectangle(ScreenToRender(r.Location, c), new Point(r.Width / RenderScale, r.Height / RenderScale));
 		}
 
 		public override int GetRenderScale() {

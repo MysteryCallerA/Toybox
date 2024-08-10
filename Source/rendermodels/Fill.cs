@@ -37,11 +37,11 @@ namespace Toybox.rendermodels {
 			return c.Render.Width;
 		}
 
-		public override Point WorldToScreen(Point p, Camera c) {
+		public override Point RenderToScreen(Point p, Camera c) {
 			return new Point(p.X + ScreenX, p.Y + ScreenY); //NEXT this doesn't cast to RenderSpace correctly which is distinct from screen space, need to update when this becomes relevant
 		}
 
-		public override Point ScreenToWorld(Point p, Camera c) {
+		public override Point ScreenToRender(Point p, Camera c) {
 			return new Point(p.X - ScreenX, p.Y - ScreenY);
 		}
 
@@ -49,12 +49,12 @@ namespace Toybox.rendermodels {
 			return c.PixelScale;
 		}
 
-		public override Rectangle WorldToScreen(Rectangle r, Camera c) {
-			return new Rectangle(WorldToScreen(r.Location, c), new Point(r.Width, r.Height));
+		public override Rectangle RenderToScreen(Rectangle r, Camera c) {
+			return new Rectangle(RenderToScreen(r.Location, c), new Point(r.Width, r.Height));
 		}
 
-		public override Rectangle ScreenToWorld(Rectangle r, Camera c) {
-			return new Rectangle(ScreenToWorld(r.Location, c), new Point(r.Width, r.Height));
+		public override Rectangle ScreenToRender(Rectangle r, Camera c) {
+			return new Rectangle(ScreenToRender(r.Location, c), new Point(r.Width, r.Height));
 		}
 
 		public override int GetRenderScale() {

@@ -13,6 +13,9 @@ namespace Toybox.scenes {
 		//PostUpdates are for things like removing/adding entities after finished main Update.
 		public abstract void PostUpdate();
 
+		public virtual void PreUpdate() {
+		}
+
 		public virtual void Draw(Renderer r, Camera c) {
 		}
 
