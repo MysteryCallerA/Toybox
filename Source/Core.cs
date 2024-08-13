@@ -61,6 +61,7 @@ namespace Toybox {
 			}
 			if (needApply) {
 				Graphics.ApplyChanges();
+				return;
 			}
 
 			Camera.ApplyChanges(GraphicsDevice);
