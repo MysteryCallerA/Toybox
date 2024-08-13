@@ -22,7 +22,7 @@ namespace Toybox {
 		private int ScaleTransitionTime;
 		private int ScaleTransitionTimer;
 
-		public Rectangle LastView { get; private set; }
+		private Rectangle ViewSource;
 
 		public Camera(GraphicsDevice g, RenderModel render, int pixelScale = 1) {
 			PixelScale = pixelScale;
@@ -44,42 +44,16 @@ namespace Toybox {
 		}
 
 		public void DrawBufferToScreen(Renderer r, GraphicsDevice g) {
-			if (ScaleTransitionActive) {
-				DrawScaleTransition(r, g);
-				return;
-			}
-
 			g.SetRenderTarget(null);
 			g.Clear(ClearColor);
 			
 			r.Batch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
-			r.Batch.Draw(Render, GetScreenBounds(), Color.White);
+			r.Batch.Draw(Render, GetScreenBounds(), ViewSource, Color.White);
 			r.Batch.End();
-
-			LastView = new Rectangle(X, Y, Width, Height);
-		}
-
-		private void DrawScaleTransition(Renderer r, GraphicsDevice g) {
-			int hdif = ((int)Math.Round(Render.Width * ((float)StartingPixelScale / TargetPixelScale)) - Render.Width);
-			int vdif = ((int)Math.Round(Render.Height * ((float)StartingPixelScale / TargetPixelScale)) - Render.Height);
-			float m = (float)ScaleTransitionTimer / ScaleTransitionTime;
-			var h = (int)Math.Round(hdif * m);
-			var v = (int)Math.Round(vdif * m);
-			if (h % 2 == 1) h -= Math.Sign(h);
-			if (v % 2 == 1) v -= Math.Sign(v);
-
-			var source = new Rectangle(-h / 2, -v / 2, Render.Width + h, Render.Height + v);
-
-			g.SetRenderTarget(null);
-			g.Clear(ClearColor);
-			r.Batch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
-			r.Batch.Draw(Render, GetScreenBounds(), source, Color.White);
-			r.Batch.End();
-
-			LastView = new Rectangle(source.X + X, source.Y + Y, source.Width, source.Height);
 		}
 
 		public void ChangePixelScale(int s, int transitionFrames = 0) {
+			if (s == PixelScale) return;
 			TargetPixelScale = s;
 			StartingPixelScale = PixelScale;
 			ScaleTransitionTime = transitionFrames;
@@ -88,8 +62,22 @@ namespace Toybox {
 		}
 
 		internal void UpdatePixelScale() {
-			if (!ScaleTransitionActive) return;
+			if (!ScaleTransitionActive) {
+				ViewSource = new Rectangle(0, 0, Render.Width, Render.Height);
+				return;
+			}
 			ScaleTransitionTimer++;
+
+			int hdif = ((int)Math.Round(Render.Width * ((float)StartingPixelScale / TargetPixelScale)) - Render.Width);
+			int vdif = ((int)Math.Round(Render.Height * ((float)StartingPixelScale / TargetPixelScale)) - Render.Height);
+			float m = (float)ScaleTransitionTimer / ScaleTransitionTime;
+			var h = (int)Math.Round(hdif * m);
+			var v = (int)Math.Round(vdif * m);
+			if (h % 2 == 1) h -= Math.Sign(h);
+			if (v % 2 == 1) v -= Math.Sign(v);
+
+			ViewSource = new Rectangle(-h / 2, -v / 2, Render.Width + h, Render.Height + v);
+
 			if (ScaleTransitionTimer >= ScaleTransitionTime) {
 				PixelScale = TargetPixelScale;
 				ScaleTransitionActive = false;
