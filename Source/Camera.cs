@@ -6,7 +6,7 @@ using Toybox.scenes;
 using Toybox.utils.math;
 
 namespace Toybox {
-    public class Camera {
+	public class Camera {
 
 		public int PixelScale { get; private set; } = 1;
 		public int X, Y;
@@ -24,6 +24,7 @@ namespace Toybox {
 
 		private Rectangle ViewSource;
 		public Point ViewSize { get { return ViewSource.Size; } }
+		public float ScaleTransitionPixelMultiplier { get; private set; } = 1;
 
 		public Camera(GraphicsDevice g, RenderModel render, int pixelScale = 1) {
 			PixelScale = pixelScale;
@@ -33,6 +34,7 @@ namespace Toybox {
 
 		internal void ApplyChanges(GraphicsDevice g) {
 			RenderModel.Apply(g, this);
+			ViewSource = new Rectangle(0, 0, Render.Width, Render.Height);
 		}
 
 		public void DrawToBuffer(Renderer r, Scene scene, GraphicsDevice g) {
@@ -64,24 +66,28 @@ namespace Toybox {
 
 		internal void Update() {
 			if (!ScaleTransitionActive) {
-				ViewSource = new Rectangle(0, 0, Render.Width, Render.Height);
+				//ViewSource = new Rectangle(0, 0, Render.Width, Render.Height);
+				//ScaleTransitionPixelMultiplier = 1;
 				return;
 			}
 			ScaleTransitionTimer++;
 
-			int hdif = ((int)Math.Round(Render.Width * ((float)StartingPixelScale / TargetPixelScale)) - Render.Width);
-			int vdif = ((int)Math.Round(Render.Height * ((float)StartingPixelScale / TargetPixelScale)) - Render.Height);
+			if (ScaleTransitionTimer >= ScaleTransitionTime) {
+				PixelScale = TargetPixelScale;
+				ViewSource = new Rectangle(0, 0, Render.Width, Render.Height);
+				ScaleTransitionPixelMultiplier = 1;
+				ScaleTransitionActive = false;
+				return;
+			}
+
+			int hdif = (int)Math.Round(Render.Width * ((float)StartingPixelScale / TargetPixelScale)) - Render.Width;
+			int vdif = (int)Math.Round(Render.Height * ((float)StartingPixelScale / TargetPixelScale)) - Render.Height;
 			float m = (float)ScaleTransitionTimer / ScaleTransitionTime;
 			var h = (int)Math.Round(hdif * m);
 			var v = (int)Math.Round(vdif * m);
 
 			ViewSource = new Rectangle(0, 0, Render.Width + h, Render.Height + v);
-
-			if (ScaleTransitionTimer >= ScaleTransitionTime) {
-				PixelScale = TargetPixelScale;
-				ViewSource = new Rectangle(0, 0, Render.Width, Render.Height);
-				ScaleTransitionActive = false;
-			}
+			ScaleTransitionPixelMultiplier = m * ((float)StartingPixelScale / TargetPixelScale);
 		}
 
 		public int ScaledX {

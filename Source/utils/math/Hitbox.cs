@@ -11,20 +11,49 @@ namespace Toybox.utils.math
 
 		private readonly Entity Entity;
 
-		public Point Offset = Point.Zero;
-		public int Width;
-		public int Height;
+		public int BaseXOffset;
+		public int BaseYOffset;
+		public int BaseWidth;
+		public int BaseHeight;
+		public bool ApplyPixelScale = true;
 
 		public Hitbox(Entity e) {
 			Entity = e;
 		}
 
-		public int XOffset {
-			get { return Offset.X; } set { Offset.X = value; }
+		private int Scale {
+			get {
+				if (ApplyPixelScale) return Resources.Camera.PixelScale;
+				return 1;
+			}
 		}
 
+		public Point BaseOffset {
+			get { return new Point(BaseXOffset, BaseYOffset); }
+			set { BaseXOffset = value.X; BaseYOffset = value.Y; }
+		}
+		public Point BaseSize {
+			get { return new Point(BaseWidth, BaseHeight); }
+			set { BaseWidth = value.X; BaseHeight = value.Y; }
+		}
+
+		public Point Offset {
+			get { return BaseOffset * new Point(Scale); }
+		}
+		public Point Size {
+			get { return BaseSize * new Point(Scale); }
+		}
+		public int Width {
+			get { return BaseWidth * Scale; }
+		}
+		public int Height {
+			get { return BaseHeight * Scale; }
+		}
+		public int XOffset {
+			get { return BaseXOffset * Scale; }
+		}
 		public int YOffset {
-			get { return Offset.Y; } set { Offset.Y = value; }
+			get { return BaseYOffset * Scale; }
 		}
 
 		public virtual int X {
@@ -45,11 +74,6 @@ namespace Toybox.utils.math
 		public Point Position {
 			get { return new Point(X, Y); }
 			set { X = value.X; Y = value.Y; }
-		}
-
-		public Point Size {
-			get { return new Point(Width, Height); }
-			set { Width = value.X; Height = value.Y; }
 		}
 
 		public int Left { get { return X; } set { X = value; } }
@@ -82,6 +106,9 @@ namespace Toybox.utils.math
 		public int CenterY {
 			get { return Y + Height / 2; }
 			set { Y = value - Height / 2; }
+		}
+		public Point LocalCenter {
+			get { return new Point(XOffset + Width / 2, YOffset + Height / 2); }
 		}
 
 		public static Color DrawColor = Color.White * 0.3f;
