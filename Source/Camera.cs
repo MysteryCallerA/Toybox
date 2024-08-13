@@ -21,6 +21,7 @@ namespace Toybox {
 		private int StartingPixelScale;
 		private int ScaleTransitionTime;
 		private int ScaleTransitionTimer;
+		private bool ScaleTransitionReverse;
 
 		private Rectangle ViewSource;
 		public Point ViewSize { get { return ViewSource.Size; } }
@@ -55,25 +56,41 @@ namespace Toybox {
 			r.Batch.End();
 		}
 
-		public void ChangePixelScale(int s, int transitionFrames = 0) {
-			if (s == PixelScale) return;
-			TargetPixelScale = s;
-			StartingPixelScale = PixelScale;
+		public void ChangePixelScale(int targetScale, int transitionFrames = 0) {
+			if (targetScale == PixelScale) return;
+
 			ScaleTransitionTime = transitionFrames;
 			ScaleTransitionTimer = 0;
 			ScaleTransitionActive = true;
+			if (targetScale < PixelScale) {
+				ScaleTransitionReverse = true;
+				StartingPixelScale = targetScale;
+				TargetPixelScale = PixelScale;
+			} else {
+				ScaleTransitionReverse = false;
+				TargetPixelScale = targetScale;
+				StartingPixelScale = PixelScale;
+			}
 		}
 
 		internal void Update() {
 			if (!ScaleTransitionActive) {
-				//ViewSource = new Rectangle(0, 0, Render.Width, Render.Height);
-				//ScaleTransitionPixelMultiplier = 1;
 				return;
+			}
+			if (ScaleTransitionTimer == 0 && ScaleTransitionReverse) {
+				PixelScale = StartingPixelScale;
 			}
 			ScaleTransitionTimer++;
 
+			var step = ScaleTransitionTimer;
+			if (ScaleTransitionReverse) {
+				step = ScaleTransitionTime - step;
+			}
+
 			if (ScaleTransitionTimer >= ScaleTransitionTime) {
-				PixelScale = TargetPixelScale;
+				if (!ScaleTransitionReverse) {
+					PixelScale = TargetPixelScale;
+				}
 				ViewSource = new Rectangle(0, 0, Render.Width, Render.Height);
 				ScaleTransitionPixelMultiplier = 1;
 				ScaleTransitionActive = false;
@@ -82,7 +99,7 @@ namespace Toybox {
 
 			int hdif = (int)Math.Round(Render.Width * ((float)StartingPixelScale / TargetPixelScale)) - Render.Width;
 			int vdif = (int)Math.Round(Render.Height * ((float)StartingPixelScale / TargetPixelScale)) - Render.Height;
-			float m = (float)ScaleTransitionTimer / ScaleTransitionTime;
+			float m = (float)step / ScaleTransitionTime;
 			var h = (int)Math.Round(hdif * m);
 			var v = (int)Math.Round(vdif * m);
 
