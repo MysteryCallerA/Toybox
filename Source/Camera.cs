@@ -22,6 +22,8 @@ namespace Toybox {
 		private int ScaleTransitionTime;
 		private int ScaleTransitionTimer;
 
+		public Rectangle LastView { get; private set; }
+
 		public Camera(GraphicsDevice g, RenderModel render, int pixelScale = 1) {
 			PixelScale = pixelScale;
 			RenderModel = render;
@@ -42,25 +44,39 @@ namespace Toybox {
 		}
 
 		public void DrawBufferToScreen(Renderer r, GraphicsDevice g) {
+			if (ScaleTransitionActive) {
+				DrawScaleTransition(r, g);
+				return;
+			}
+
 			g.SetRenderTarget(null);
 			g.Clear(ClearColor);
 			
 			r.Batch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
-			if (!ScaleTransitionActive) {
-				r.Batch.Draw(Render, GetScreenBounds(), Color.White);
-			} else {
-				int hdif = ((int)Math.Round(Render.Width * ((float)PixelScale / TargetPixelScale)) - Render.Width) / 2;
-				int vdif = ((int)Math.Round(Render.Height * ((float)PixelScale / TargetPixelScale)) - Render.Height) / 2;
-				float m = (float)ScaleTransitionTimer / ScaleTransitionTime;
-				//hdif = (int)Math.Round(hdif * m);
-				//vdif = (int)Math.Round(vdif * m);
-				float h = hdif * m;
-				float v = vdif * m;
-
-				var source = new Rectangle(-(int)Math.Round(h), -(int)Math.Round(v), Render.Width + (int)Math.Round(h * 2), Render.Height + (int)Math.Round(v * 2));
-				r.Batch.Draw(Render, GetScreenBounds(), source, Color.White);
-			}
+			r.Batch.Draw(Render, GetScreenBounds(), Color.White);
 			r.Batch.End();
+
+			LastView = new Rectangle(X, Y, Width, Height);
+		}
+
+		private void DrawScaleTransition(Renderer r, GraphicsDevice g) {
+			int hdif = ((int)Math.Round(Render.Width * ((float)StartingPixelScale / TargetPixelScale)) - Render.Width);
+			int vdif = ((int)Math.Round(Render.Height * ((float)StartingPixelScale / TargetPixelScale)) - Render.Height);
+			float m = (float)ScaleTransitionTimer / ScaleTransitionTime;
+			var h = (int)Math.Round(hdif * m);
+			var v = (int)Math.Round(vdif * m);
+			if (h % 2 == 1) h -= Math.Sign(h);
+			if (v % 2 == 1) v -= Math.Sign(v);
+
+			var source = new Rectangle(-h / 2, -v / 2, Render.Width + h, Render.Height + v);
+
+			g.SetRenderTarget(null);
+			g.Clear(ClearColor);
+			r.Batch.Begin(SpriteSortMode.Immediate, null, SamplerState.PointClamp);
+			r.Batch.Draw(Render, GetScreenBounds(), source, Color.White);
+			r.Batch.End();
+
+			LastView = new Rectangle(source.X + X, source.Y + Y, source.Width, source.Height);
 		}
 
 		public void ChangePixelScale(int s, int transitionFrames = 0) {
