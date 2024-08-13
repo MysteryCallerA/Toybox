@@ -118,7 +118,7 @@ namespace Toybox {
 				PreUpdate();
 
 				var prevScale = Camera.PixelScale;
-				Camera.UpdatePixelScale();
+				Camera.Update();
 				if (prevScale != Camera.PixelScale) PixelScaleChanged(prevScale, Camera.PixelScale);
 
 				InUpdateStep = true;

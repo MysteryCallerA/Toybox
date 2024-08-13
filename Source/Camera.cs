@@ -23,6 +23,7 @@ namespace Toybox {
 		private int ScaleTransitionTimer;
 
 		private Rectangle ViewSource;
+		public Point ViewSize { get { return ViewSource.Size; } }
 
 		public Camera(GraphicsDevice g, RenderModel render, int pixelScale = 1) {
 			PixelScale = pixelScale;
@@ -61,7 +62,7 @@ namespace Toybox {
 			ScaleTransitionActive = true;
 		}
 
-		internal void UpdatePixelScale() {
+		internal void Update() {
 			if (!ScaleTransitionActive) {
 				ViewSource = new Rectangle(0, 0, Render.Width, Render.Height);
 				return;
@@ -73,13 +74,12 @@ namespace Toybox {
 			float m = (float)ScaleTransitionTimer / ScaleTransitionTime;
 			var h = (int)Math.Round(hdif * m);
 			var v = (int)Math.Round(vdif * m);
-			if (h % 2 == 1) h -= Math.Sign(h);
-			if (v % 2 == 1) v -= Math.Sign(v);
 
-			ViewSource = new Rectangle(-h / 2, -v / 2, Render.Width + h, Render.Height + v);
+			ViewSource = new Rectangle(0, 0, Render.Width + h, Render.Height + v);
 
 			if (ScaleTransitionTimer >= ScaleTransitionTime) {
 				PixelScale = TargetPixelScale;
+				ViewSource = new Rectangle(0, 0, Render.Width, Render.Height);
 				ScaleTransitionActive = false;
 			}
 		}
@@ -98,8 +98,8 @@ namespace Toybox {
 		public int ScreenWidth { get { return RenderModel.GetScreenWidth(this); } }
 		public int ScreenHeight { get { return RenderModel.GetScreenHeight(this); } }
 
-		public Point ViewSize {	get { return new Point(Width, Height); } }
-		public Point ScaledViewSize { get { return new Point(ScaledWidth, ScaledHeight); } }
+		public Point Size {	get { return new Point(Width, Height); } }
+		public Point ScaledSize { get { return new Point(ScaledWidth, ScaledHeight); } }
 
 		public Rectangle Bounds { get { return new Rectangle(X, Y, Width, Height); } }
 		public Rectangle ScaledBounds { get { return new Rectangle(ScaledX, ScaledY, ScaledWidth, ScaledHeight); } }
