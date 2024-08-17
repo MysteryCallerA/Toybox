@@ -16,14 +16,14 @@ namespace Toybox.maps.tiles {
 		}
 
 		public static IEnumerable<TileData> GetCollisions(this Tilemap t, Rectangle r) {
-			var topleft = t.PixelToMap(r.Left, r.Top);
-			var botright = t.PixelToMap(r.Right, r.Bottom);
+			var topleft = t.ScaledPixelToCell(r.Left, r.Top);
+			var botright = t.ScaledPixelToCell(r.Right, r.Bottom);
 
 			for (int x = topleft.X; x <= botright.X; x++) {
 				for (int y = topleft.Y; y <= botright.Y; y++) {
 					var tile = t.Get(x, y);
 					if (tile.HasValue && !tile.Value.IsEmpty) {
-						yield return new TileData() { Tile = tile.Value, Bounds = new Rectangle(t.MapToPixel(x, y), t.TileSize) };
+						yield return new TileData() { Tile = tile.Value, Bounds = new Rectangle(t.CellToScaledPixel(x, y), t.TileSize) };
 					}
 				}
 			}
@@ -32,8 +32,8 @@ namespace Toybox.maps.tiles {
 		public static IEnumerable<TileData> GetCollisionsSubpixel(this Tilemap t, Rectangle r, Camera c) {
 			r = c.ProjectPixelToScaledGrow(r);
 
-			var topleft = t.PixelToMap(r.Left, r.Top);
-			var botright = t.PixelToMap(r.Right - 1, r.Bottom - 1);
+			var topleft = t.ScaledPixelToCell(r.Left, r.Top);
+			var botright = t.ScaledPixelToCell(r.Right - 1, r.Bottom - 1);
 			if (botright.X < topleft.X) botright.X = topleft.X;
 			if (botright.Y < topleft.Y) botright.Y = topleft.Y;
 
@@ -41,7 +41,7 @@ namespace Toybox.maps.tiles {
 				for (int y = topleft.Y; y <= botright.Y; y++) {
 					var tile = t.Get(x, y);
 					if (tile.HasValue && !tile.Value.IsEmpty) {
-						yield return new TileData() { Tile = tile.Value, Bounds = new Rectangle(t.MapToPixel(x, y), t.TileSize) };
+						yield return new TileData() { Tile = tile.Value, Bounds = new Rectangle(t.CellToScaledPixel(x, y), t.TileSize) };
 					}
 				}
 			}

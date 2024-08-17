@@ -27,7 +27,7 @@ namespace Toybox.maps.tiles {
 		}
 
 		public static void Set(this Tilemap t, int x, int y, Tile? tile) {
-			var mappos = t.PixelToMap(x, y);
+			var mappos = t.ScaledPixelToCell(x, y);
 			if (!tile.HasValue && !t.InBounds(mappos.X, mappos.Y)) return;
 
 			while (mappos.X < 0) {
@@ -58,10 +58,13 @@ namespace Toybox.maps.tiles {
 			}
 		}
 
-		/// <summary> zone must be in Pixel space. </summary>
+		/// <summary> zone must be in ScaledPixel space. </summary>
 		public static void Set(this Tilemap t, Rectangle zone, Tile tile) {
 			zone = Rectangle.Intersect(zone, t.Bounds);
-			zone = t.PixelToMap(zone);
+			var topleft = t.ScaledPixelToCell(zone.X, zone.Y);
+			var botright = t.ScaledPixelToCell(zone.Right, zone.Bottom);
+			zone = new Rectangle(topleft.X, topleft.Y, botright.X - topleft.X, botright.Y - topleft.Y);
+
 			for (int x = zone.X; x < zone.Right; x++) {
 				for (int y = zone.Y; y < zone.Bottom; y++) {
 					t.Map[x][y] = tile;
