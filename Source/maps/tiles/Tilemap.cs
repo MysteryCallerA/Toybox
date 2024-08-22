@@ -7,9 +7,12 @@ using Toybox.graphic;
 namespace Toybox.maps.tiles {
 	public class Tilemap {
 
+		/// <summary> Map[x][y] <br></br> Bounds must be kept uniform. </summary>
+		protected internal List<List<Tile>> Map = new();
 		public int X, Y;
 		public TextureGrid Tileset;
-		protected internal List<List<Tile>> Map = new();//x,y
+		protected internal Dictionary<Point, TileTransition> Transitions = new();
+		private List<Point> EndedTransitions = new();
 
 		protected internal Tilemap(TextureGrid t) { Tileset = t; }
 
@@ -37,11 +40,31 @@ namespace Toybox.maps.tiles {
 				for (int row = topleft.Y; row < botright.Y; row++) {
 					var tile = Map[col][row];
 					if (!tile.IsEmpty) {
-						r.Batch.Draw(Tileset.Texture, dest, Tileset.GetCell(tile.Id), Color.White, 0, Vector2.Zero, tile.Effect, 0);
+						if (Transitions.Count != 0 && Transitions.TryGetValue(new Point(col, row), out var trans)) {
+							r.Batch.Draw(Tileset.Texture, new Rectangle(dest.Location + trans.Translation, dest.Size), Tileset.GetCell(tile.Id), Color.White * trans.Opacity, 0, Vector2.Zero, tile.Effect, 0);
+						} else {
+							r.Batch.Draw(Tileset.Texture, dest, Tileset.GetCell(tile.Id), Color.White, 0, Vector2.Zero, tile.Effect, 0);
+						}
 					}
 					dest.Y += dest.Height;
 				}
 				dest = new Rectangle(dest.X + dest.Width, starty, dest.Width, dest.Height);
+			}
+		}
+
+		public void Update() {
+			if (Transitions.Count == 0) return;
+
+			foreach (var tt in Transitions) {
+				EndedTransitions.Clear();
+				tt.Value.FramesElapsed++;
+				if (tt.Value.Ended) {
+					if (tt.Value.RemoveOnEnd) Map[tt.Key.X][tt.Key.Y] = new Tile();
+					EndedTransitions.Add(tt.Key);
+				}
+			}
+			foreach (var k in EndedTransitions) {
+				Transitions.Remove(k);
 			}
 		}
 
