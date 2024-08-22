@@ -68,6 +68,7 @@ namespace Toybox.graphic {
 		public bool NoAnimation { get { return Animation == null; } }
 
 		public void Start(Animation a) {
+			if (Animation == a) return;
 			Animation = a;
 			FrameTimer = 0;
 			ElapsedFrames = 0;
@@ -75,15 +76,18 @@ namespace Toybox.graphic {
 		}
 
 		public void StartNextFrame(Animation a) {
+			if (Animation == a) return;
 			SetupTrigger(a, TriggerType.NextFrame);
 		}
 
 		public void StartAfterMinTime(Animation a, int minTime) {
+			if (Animation == a) return;
 			SetupTrigger(a, TriggerType.MinTime);
 			MinTime = minTime;
 		}
 
 		public void StartAfterMinFrameTime(Animation a, int minTime) {
+			if (Animation == a) return;
 			SetupTrigger(a, TriggerType.MinFrameTime);
 			MinTime = minTime;
 		}
@@ -102,7 +106,10 @@ namespace Toybox.graphic {
 				return;
 			}
 
-			if (FrameTime == -1) return;
+			if (FrameTime == -1) {
+				if (NextAnimTrigger == TriggerType.NextFrame) StartNextAnimation();
+				return;
+			}
 
 			FrameTimer += Speed;
 
