@@ -10,6 +10,8 @@ using System.Xml.Serialization;
 namespace Toybox.graphic {
 	public static class TextureMapBuilder {
 
+		/// <param name="backColor"> Color of dividing lines between frames. </param>
+		/// <param name="originColor"> Color of frame origins. Alpha value is used for origins overlapping pixels. </param>
 		public static TextureMap Build(Texture2D t, Color backColor, Color? originColor = null) {
 			var map = new TextureMap(t);
 			var pixels = GraphicOps.GetPixels(t);
@@ -72,7 +74,10 @@ namespace Toybox.graphic {
 			var output = new Rectangle(xLeft, yTop, xRight - xLeft, height);
 
 			origin = Point.Zero;
-			if (originColor != null) {
+			if (originColor.HasValue) {
+				var alpha = originColor.Value.A;
+				var color = new Color(originColor.Value.R, originColor.Value.G, originColor.Value.B);
+
 				//iterate thru every pixel to find the origin
 				int addForNextLine = textureWidth - output.Width - 1;
 				int endPixel = output.Right + ((output.Bottom - 1) * textureWidth);
@@ -83,7 +88,13 @@ namespace Toybox.graphic {
 						lineEnd += textureWidth;
 						continue;
 					}
-					if (pixels[i] == originColor) {
+					if (pixels[i].A == alpha) {
+						var m = (float)alpha / 255;
+						pixels[i] = new Color((byte)(pixels[i].R / m), (byte)(pixels[i].G / m), (byte)(pixels[i].B / m), byte.MaxValue);
+						origin = new Point(i % textureWidth, i / textureWidth) - output.Location;
+						break;
+					}
+					if (pixels[i] == color) {
 						pixels[i] = Color.Transparent;
 						origin = new Point(i % textureWidth, i / textureWidth) - output.Location;
 						break;
