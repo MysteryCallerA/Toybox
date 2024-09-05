@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Toybox.components;
 using Toybox.components.colliders;
+using Toybox.utils;
 using Toybox.utils.math;
 
 namespace Toybox
@@ -14,6 +15,7 @@ namespace Toybox
 
 		public Point Position;
 		public Vector2 Speed = Vector2.Zero;
+		public Direction Direction;
 
 		public string Name;
 		public Hitbox Hitbox;
