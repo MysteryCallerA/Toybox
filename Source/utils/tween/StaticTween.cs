@@ -5,9 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Toybox.utils.tween {
-	public class StaticTween {
+	public class StaticTween:Tween {
 
-		public readonly int Frames;
 		private float[] ReturnValues;
 
 		public StaticTween(Func<float, float> easingFunction, int frames) {
@@ -20,20 +19,27 @@ namespace Toybox.utils.tween {
 			ReturnValues = r;
 		}
 
-		public float Get(int frame) {
+		private StaticTween(int frames, float[] returnvalues) {
+			Frames = frames;
+			ReturnValues = returnvalues;
+		}
+
+		public override float Get(int frame) {
 			if (frame < 0) frame = 0;
 			else if (frame > Frames) frame = Frames;
 			return ReturnValues[frame];
 		}
 
-		public void Reverse() {
-			ReturnValues = ReturnValues.Reverse().ToArray();
+		public StaticTween Reverse() {
+			return new StaticTween(Frames, ReturnValues.Reverse().ToArray());
 		}
 
-		public void MultiplyBy(float m) {
+		public StaticTween MultiplyBy(float m) {
+			var values = new float[ReturnValues.Length];
 			for (int i = 0; i < ReturnValues.Length; i++) {
-				ReturnValues[i] = ReturnValues[i] * m;
+				values[i] = ReturnValues[i] * m;
 			}
+			return new StaticTween(Frames, values);
 		}
 
 	}
