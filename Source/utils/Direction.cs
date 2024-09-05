@@ -68,6 +68,22 @@ namespace Toybox.utils {
 			return Point.Zero;
 		}
 
+		public static Direction ToDirection(this Point p) {
+			if (p.X > 0) {
+				if (p.Y > 0) return Direction.DownRight;
+				if (p.Y < 0) return Direction.UpRight;
+				return Direction.Right;
+			}
+			if (p.X < 0) {
+				if (p.Y > 0) return Direction.DownLeft;
+				if (p.Y < 0) return Direction.UpLeft;
+				return Direction.Left;
+			}
+			if (p.Y > 0) return Direction.Down;
+			if (p.Y < 0) return Direction.Up;
+			return Direction.Neutral;
+		}
+
 	}
 
 }
