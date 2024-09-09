@@ -25,13 +25,15 @@ namespace Toybox.tiled {
 		public string Name;
 		public int Width;
 		public int Height;
+		public Point TileSize;
 		private List<uint> Tiles = new List<uint>(); //TODO these can converted to arrays
 		private List<uint> Data = new List<uint>();
 
-		public TiledTileLayer(XmlNode data) {
+		public TiledTileLayer(XmlNode data, Point tileSize) {
 			Name = data.Attributes["name"].Value;
 			Width = int.Parse(data.Attributes["width"].Value);
 			Height = int.Parse(data.Attributes["height"].Value);
+			TileSize = tileSize;
 
 			string[] lines = data.SelectSingleNode("data").InnerText.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
 			for (int i = 0; i < lines.Length; i++) {
@@ -70,7 +72,7 @@ namespace Toybox.tiled {
 				if (x >= Width) x = 0;
 			}
 
-			return new Tilemap(texture, data);
+			return new Tilemap(texture, data, TileSize.X, TileSize.Y);
 		}
 
 		/// <summary> Searches through Tiles for the first non-empty value, then finds it's appropriate tileset. </summary>

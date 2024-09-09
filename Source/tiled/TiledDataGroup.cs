@@ -25,7 +25,7 @@ namespace Toybox.tiled {
 			File = file;
 			foreach (XmlNode n in nodes) {
 				if (n.Name == "layer") {
-					var layer = new TiledTileLayer(n);
+					var layer = new TiledTileLayer(n, file.TileSize);
 					TileLayers.Add(layer.Name, layer);
 				} else if (n.Name == "objectgroup") {
 					var layer = new TiledObjectLayer(n);

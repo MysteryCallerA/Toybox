@@ -11,12 +11,15 @@ namespace Toybox.maps.tiles {
 		protected internal List<List<Tile>> Map = new();
 		public int X, Y;
 		public TextureGrid Tileset;
+		public int TileWidth, TileHeight;
 
 		protected internal Tilemap(TextureGrid t) { Tileset = t; }
 
-		public Tilemap(TextureGrid t, List<List<Tile>> data) {
+		public Tilemap(TextureGrid t, List<List<Tile>> data, int tileWidth, int tileHeight) {
 			Tileset = t;
 			Map = data;
+			TileWidth = tileWidth;
+			TileHeight = tileHeight;
 		}
 
 		public void Draw(Renderer r, Camera c) {
@@ -30,9 +33,11 @@ namespace Toybox.maps.tiles {
 			if (botright.X > Map.Count) botright.X = Map.Count;
 			if (botright.Y > Map[0].Count) botright.Y = Map[0].Count;
 
-			var dest = new Rectangle(CellToScaledPixel(topleft.X, topleft.Y), TileSize);
+			var overlap = (Tileset.CellSize - TileSize);
+			var dest = new Rectangle(CellToScaledPixel(topleft.X, topleft.Y) - overlap, Tileset.CellSize);
 			dest = c.Project(Camera.Space.Scaled, Camera.Space.Render, dest);
 			int starty = dest.Y;
+			var cellsize = new Point(TileWidth * c.PixelScale, TileHeight * c.PixelScale);
 
 			for (int col = topleft.X; col < botright.X; col++) {
 				for (int row = topleft.Y; row < botright.Y; row++) {
@@ -40,9 +45,9 @@ namespace Toybox.maps.tiles {
 					if (!tile.IsEmpty) {
 						r.Batch.Draw(Tileset.Texture, dest, Tileset.GetCell(tile.Id), Color.White, 0, Vector2.Zero, tile.Effect, 0);
 					}
-					dest.Y += dest.Height;
+					dest.Y += cellsize.Y;
 				}
-				dest = new Rectangle(dest.X + dest.Width, starty, dest.Width, dest.Height);
+				dest = new Rectangle(dest.X + cellsize.X, starty, dest.Width, dest.Height);
 			}
 		}
 
@@ -70,7 +75,7 @@ namespace Toybox.maps.tiles {
 			return new Point((int)Math.Floor((float)(x - X) / TileWidth), (int)Math.Floor((float)(y - Y) / TileHeight));
 		}
 		protected internal Point CellToScaledPixel(int col, int row) {
-			return new Point(col * Tileset.CellWidth + X, row * Tileset.CellHeight + Y);
+			return new Point(col * TileWidth + X, row * TileHeight + Y);
 		}
 
 		protected internal bool InBounds(int col, int row) {
@@ -85,8 +90,6 @@ namespace Toybox.maps.tiles {
 
 		public int Rows { get { if (Map.Count == 0) return 0; else return Map[0].Count; } }
 		public int Columns { get { return Map.Count; } }
-		public int TileWidth { get { return Tileset.CellWidth; } }
-		public int TileHeight { get { return Tileset.CellHeight; } }
 		public Point TileSize { get { return new Point(TileWidth, TileHeight); } }
 		public Rectangle Bounds {
 			get { return new Rectangle(X, Y, TileWidth * Map.Count, TileHeight * Rows); }
