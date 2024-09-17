@@ -13,7 +13,11 @@ namespace Toybox.maps.tiles {
 		public TextureGrid Tileset;
 		public int TileWidth, TileHeight;
 
-		protected internal Tilemap(TextureGrid t) { Tileset = t; }
+		protected internal Tilemap(TextureGrid t, int tileWidth, int tileHeight) { 
+			Tileset = t;
+			TileWidth = tileWidth;
+			TileHeight = tileHeight;
+		}
 
 		public Tilemap(TextureGrid t, List<List<Tile>> data, int tileWidth, int tileHeight) {
 			Tileset = t;
@@ -71,6 +75,15 @@ namespace Toybox.maps.tiles {
 			return tile;
 		}
 
+		protected internal Point GetId(int col, int row) {
+			if (col < 0 || row < 0 || col >= Map.Count || row >= Map[col].Count) {
+				return new Point(-1);
+			}
+			var tile = Map[col][row];
+			if (tile.IsEmpty) return new Point(-1);
+			return tile.Id;
+		}
+
 		protected internal Point ScaledPixelToCell(int x, int y) {
 			return new Point((int)Math.Floor((float)(x - X) / TileWidth), (int)Math.Floor((float)(y - Y) / TileHeight));
 		}
@@ -102,6 +115,10 @@ namespace Toybox.maps.tiles {
 			public Tile() {
 				Id = new Point(-1, -1);
 				Effect = SpriteEffects.None;
+			}
+
+			public Tile(int col, int row) {
+				Id = new Point(col, row);
 			}
 
 			public Tile(Point id, SpriteEffects effect) {
