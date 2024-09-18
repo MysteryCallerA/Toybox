@@ -12,6 +12,7 @@ namespace Toybox.maps.tiles {
 		public int X, Y;
 		public TextureGrid Tileset;
 		public int TileWidth, TileHeight;
+		public Func<int, int, bool> IsTileVisible = (col, row) => { return true; };
 
 		protected internal Tilemap(TextureGrid t, int tileWidth, int tileHeight) { 
 			Tileset = t;
@@ -46,7 +47,7 @@ namespace Toybox.maps.tiles {
 			for (int col = topleft.X; col < botright.X; col++) {
 				for (int row = topleft.Y; row < botright.Y; row++) {
 					var tile = Map[col][row];
-					if (!tile.IsEmpty) {
+					if (!tile.IsEmpty && IsTileVisible.Invoke(col, row)) {
 						r.Batch.Draw(Tileset.Texture, dest, Tileset.GetCell(tile.Id), Color.White, 0, Vector2.Zero, tile.Effect, 0);
 					}
 					dest.Y += cellsize.Y;
