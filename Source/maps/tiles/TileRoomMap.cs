@@ -10,41 +10,59 @@ using static Toybox.maps.tiles.Tilemap;
 
 namespace Toybox.maps.tiles {
 
-	public class TileVisionMap {
+	public class TileRoomMap {
 
-		private int[] Data;
+		private readonly int[] Data;
 		public const int Blocked = -1;
 		private const int Unexplored = 0;
 		private int NextGroupId = 1;
 		private readonly Queue<int> Queue = new();
 
-		public int Columns { get; private set; }
-		public int Rows { get; private set; }
+		public readonly int Columns;
+		public readonly int Rows;
+		private readonly int[] TouchingOffsets;
 
-		public TileVisionMap(int columns, int rows) {
+		public TileRoomMap(int columns, int rows) {
 			Data = new int[columns * rows];
 			Columns = columns;
 			Rows = rows;
+			TouchingOffsets = new int[] { 0, -1, 1, Columns, -Columns, -Columns - 1, -Columns + 1, Columns - 1, Columns + 1 };
 		}
 
 		public int Get(int col, int row) {
-			return Data[col + (row * Columns)];
+			var i = col + (row * Columns);
+			if (i < 0 || i >= Data.Length) return Blocked;
+			return Data[i];
 		}
 
-		public bool IsTouching(int col, int row, List<int> values, bool doDiagonals = true) {
-			var i = col + (row * Columns);
-			if (values.Contains(Data[i - 1]) || values.Contains(Data[i + 1]) || values.Contains(Data[i - Columns]) || values.Contains(Data[i + Columns])) {
-				return true;
+		public void GetTouching(int col, int row, HashSet<int> output, bool doDiagonals) {
+			var pos = col + (row * Columns);
+			var stop = TouchingOffsets.Length;
+			if (!doDiagonals) stop = 4;
+
+			for (int i = 0; i < stop; i++) {
+				var select = pos + TouchingOffsets[i];
+				if (select < 0 || select >= Data.Length) continue;
+				var value = Data[select];
+				if (value == Blocked) continue;
+				output.Add(value);
 			}
-			if (doDiagonals) {
-				if (values.Contains(Data[i - Columns - 1]) || values.Contains(Data[i - Columns + 1]) || values.Contains(Data[i + Columns - 1]) || values.Contains(Data[i + Columns + 1])) {
-					return true;
-				}
+		}
+
+		public bool IsTouching(int col, int row, HashSet<int> values, bool doDiagonals) {
+			var pos = col + (row * Columns);
+			var stop = TouchingOffsets.Length;
+			if (!doDiagonals) stop = 4;
+
+			for (int i = 0; i < stop; i++) {
+				var select = pos + TouchingOffsets[i];
+				if (select < 0 || select >= Data.Length) continue;
+				if (values.Contains(Data[select])) return true;
 			}
 			return false;
 		}
 
-		public void SolveVision(Tilemap collisionMap, Tile[] blockingTiles) {
+		public void SolveRooms(Tilemap collisionMap, Tile[] blockingTiles) {
 			NextGroupId = 1;
 			int x = 0, y = 0;
 
