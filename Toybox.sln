@@ -5,8 +5,6 @@ VisualStudioVersion = 17.3.32811.315
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Toybox", "Source\Toybox.csproj", "{54628363-9D04-4F4A-B717-A40B13E6CD3B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utils", "..\Utils\Source\Utils.csproj", "{A73F1EC6-9DFE-4BB9-956E-52B4998FD75B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{54628363-9D04-4F4A-B717-A40B13E6CD3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54628363-9D04-4F4A-B717-A40B13E6CD3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{54628363-9D04-4F4A-B717-A40B13E6CD3B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A73F1EC6-9DFE-4BB9-956E-52B4998FD75B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A73F1EC6-9DFE-4BB9-956E-52B4998FD75B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A73F1EC6-9DFE-4BB9-956E-52B4998FD75B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A73F1EC6-9DFE-4BB9-956E-52B4998FD75B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
