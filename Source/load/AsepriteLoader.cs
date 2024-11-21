@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using Toybox.graphic;
 
 namespace Toybox.load {
-	public static class AsepriteData {
+	public class AsepriteLoader:IAssetLoader<SpriteMap> {
 
 		private class RootRef {
 			public Dictionary<string, FrameRef> Frames { get; set; }
@@ -24,20 +25,33 @@ namespace Toybox.load {
 		}
 		private class MetaRef {
 			public List<TagRef> FrameTags { get; set; }
+			public List<SliceRef> Slices { get; set; }
 		}
 		private class TagRef {
 			public string Name { get; set; }
 			public int From { get; set; }
 			public int To { get; set; }
 		}
-
-		public static SpriteMap Load(string graphicName) {
-			var graphic = Resources.Content.Load<Texture2D>(graphicName);
-			var path = Resources.Content.RootDirectory + graphicName + ".json";
-			return Load(graphic, path);
+		private class SliceRef {
+			public string Name { get; set; }
+			public List<KeyRef> Keys { get; set; }
+		}
+		private class KeyRef {
+			public RectRef Bounds { get; set; }
 		}
 
-		public static SpriteMap Load(Texture2D graphic, string filepath) {
+		/// <summary> Filepath must include Content.RootDirectory and .xnb file extension. </summary>
+		public SpriteMap Load(string filepath) {
+			filepath = filepath.Substring(0, filepath.Length - 4);
+			string contentName = filepath.Substring(Resources.Content.RootDirectory.Length);
+			while (contentName.First() == Path.DirectorySeparatorChar) contentName = contentName.Substring(1);
+			var graphic = Resources.Content.Load<Texture2D>(contentName);
+			filepath = filepath + ".json";
+			return Load(graphic, filepath);
+		}
+
+		/// <summary> Filepath must include Content.RootDirectory and .json file extension. </summary>
+		public SpriteMap Load(Texture2D graphic, string filepath) {
 			string json = File.ReadAllText(filepath);
 			var data = JsonSerializer.Deserialize<RootRef>(json, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
 
@@ -69,8 +83,20 @@ namespace Toybox.load {
 				animations.Add(tag.Name, new Animation(aframes, aframetime) { Name = tag.Name });
 			}
 
-			return new SpriteMap(graphic, frames, animations);
+			var origin = Point.Empty;
+			if (data.Meta.Slices.Count > 0 && data.Meta.Slices[0].Keys.Count > 0) {
+				origin = new Point(data.Meta.Slices[0].Keys[0].Bounds.X, data.Meta.Slices[0].Keys[0].Bounds.Y);
+			}
+
+			return new SpriteMap(graphic, frames, animations) { Origin = origin };
 		}
 
+		/// <summary> Filepath must include Content.RootDirectory and .xnb file extension. </summary>
+		public bool IsLoadable(string filepath) {
+			if (!filepath.EndsWith(".xnb")) return false;
+			filepath = filepath.Substring(0, filepath.Length - 4);
+			if (!File.Exists($@"{filepath}.json")) return false;
+			return true;
+		}
 	}
 }
