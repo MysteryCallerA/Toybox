@@ -23,9 +23,9 @@ namespace Toybox.graphic {
 			Animations = animations;
 		}
 
-		public void GetDrawRects(int frame, int destX, int destY, int scale, out Rectangle source, out Rectangle dest) {
+		public void GetDrawRects(int frame, int destX, int destY, out Rectangle source, out Rectangle dest) {
 			source = Frames[frame];
-			dest = new Rectangle(destX - (Origin.X * scale), destY - (Origin.Y * scale), source.Width * scale, source.Height * scale);
+			dest = new Rectangle(destX - Origin.X, destY - Origin.Y, source.Width, source.Height);
 		}
 
 	}
