@@ -1,6 +1,6 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -83,7 +83,7 @@ namespace Toybox.load {
 				animations.Add(tag.Name, new Animation(aframes, aframetime) { Name = tag.Name });
 			}
 
-			var origin = Point.Empty;
+			var origin = Point.Zero;
 			if (data.Meta.Slices.Count > 0 && data.Meta.Slices[0].Keys.Count > 0) {
 				origin = new Point(data.Meta.Slices[0].Keys[0].Bounds.X, data.Meta.Slices[0].Keys[0].Bounds.Y);
 			}
