@@ -23,7 +23,6 @@ namespace Toybox {
 		public static Random Random;
 		public static DebugManager Debug;
 		public static GameTime GameTime;
-		public static Text TextRenderer;
 
 		public static float DeltaTime = 0;
 

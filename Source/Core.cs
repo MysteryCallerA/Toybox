@@ -78,6 +78,12 @@ namespace Toybox {
 
 			base.Initialize();
 
+			Resources.Blank = new Texture2D(GraphicsDevice, 1, 1);
+			Resources.Blank.SetData(new Color[] { Color.White });
+
+			var textrenderer = new TextRenderer(GetDefaultFont());
+			Renderer = new Renderer(new SpriteBatch(GraphicsDevice), Resources.Blank, textrenderer);
+
 			Init();
 
 			Graphics.PreferredBackBufferHeight = Camera.Height;
@@ -86,20 +92,10 @@ namespace Toybox {
 			Camera.ApplyChanges(GraphicsDevice);
 
 			Resources.Debug = new DebugManager(GetDefaultFont());
-			Resources.TextRenderer = new Text(GetDefaultFont());
 		}
 
 		/// <summary> Called after LoadContent() </summary>
 		protected abstract void Init();
-
-		protected override void LoadContent() {
-			base.LoadContent();
-
-			Resources.Blank = new Texture2D(GraphicsDevice, 1, 1);
-			Resources.Blank.SetData(new Color[] { Color.White });
-
-			Renderer = new Renderer(new SpriteBatch(GraphicsDevice), Resources.Blank);
-		}
 
 		/// <summary> Internal Update logic. Override DoUpdate() instead </summary>
 		protected sealed override void Update(GameTime gameTime) {

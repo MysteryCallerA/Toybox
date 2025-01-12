@@ -177,7 +177,7 @@ namespace Toybox.components.pathing {
 			}
 			foreach (var node in OpenNodes) {
 				var rect = r.DrawRect(new Rectangle(node.Position * scale, scale), ColorOpen, c, Camera.Space.Scaled);
-				Resources.TextRenderer.Draw(r.Batch, Color.White, rect.Location, $"{node.Total}");
+				r.DrawTextDirect(rect.Location, Color.White, $"{node.Total}");
 			}
 		}
 

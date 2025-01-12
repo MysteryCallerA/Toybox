@@ -28,7 +28,7 @@ namespace Toybox.tools {
 		public Point Position {
 			set {
 				ArrowText.Position = value;
-				var size = ArrowText.GetSize();
+				var size = ArrowText.Size;
 				Text.Position = new Point(value.X + size.X, value.Y); 
 			}
 		}
@@ -59,8 +59,8 @@ namespace Toybox.tools {
 		}
 
 		public void Draw(Renderer r, Camera c) {
-			ArrowText.Draw(r.Batch);
-			Text.Draw(r.Batch);
+			ArrowText.Draw(r);
+			Text.Draw(r);
 		}
 
 	}

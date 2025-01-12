@@ -51,15 +51,15 @@ namespace Toybox.utils.text {
 			get { return Updating; }
 		}
 
-		public override void Draw(SpriteBatch s, Color c) {
-			base.Draw(s, c);
+		public override void Draw(Renderer r, Color c) {
+			base.Draw(r, c);
 
 			if (Measurer.Outdated) Measurer.Update(this);
 
 			if (SelectingBlock && SelectionStart != Selection) {
-				DrawSelectionBlock(s);
+				DrawSelectionBlock(r);
 			} else if (CaretEnabled && CaretIsDrawable) {
-				DrawCaret(s);
+				DrawCaret(r.Batch);
 			}
 
 			if (!Updating) {
@@ -94,31 +94,31 @@ namespace Toybox.utils.text {
 			}
 		}
 
-		protected virtual void DrawSelectionBlock(SpriteBatch s) { //TODO test replacing this with new BackColor
+		protected virtual void DrawSelectionBlock(Renderer r) { //TODO test replacing this with new BackColor
 			int start = Math.Min(SelectionStart, Selection);
 			int end = Math.Max(SelectionStart, Selection);
 			end--;
 			for (int i = start; i < end && i < Content.Length; i++) {
 				if (Content[i] == Font.Newline) {
-					DrawSelectionBlockLine(s, start, i);
+					DrawSelectionBlockLine(r, start, i);
 					start = i + 1;
 				}
 			}
 			if (end >= Content.Length) end = Content.Length - 1;
 			if (start >= Content.Length) start = Content.Length - 1;
-			DrawSelectionBlockLine(s, start, end);
+			DrawSelectionBlockLine(r, start, end);
 		}
 
-		private void DrawSelectionBlockLine(SpriteBatch s, int start, int end) {
+		private void DrawSelectionBlockLine(Renderer rend, int start, int end) {
 			var r = Rectangle.Union(Measurer.GetCharRect(start), Measurer.GetCharRect(end));
 			var textlocation = r.Location;
 			r.Y -= Scale;
 			r.Height += Scale;
-			s.Draw(Font.Graphic, r, Font.Pixel, ColorSelectBack);
+			rend.Batch.Draw(Font.Graphic, r, Font.Pixel, ColorSelectBack);
 			string text = Content.Substring(start, end - start + 1);
 			var backColor = BackColor;
 			BackColor = null;
-			Draw(s, ColorSelectText, textlocation, text);
+			Draw(rend, ColorSelectText, textlocation, text);
 			BackColor = backColor;
 		}
 

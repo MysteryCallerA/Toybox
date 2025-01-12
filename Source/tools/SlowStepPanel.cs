@@ -85,7 +85,7 @@ namespace Toybox.tools {
 				r.DrawRectDirect(HoverRect, Color.Gray);
 			}
 
-			TextRenderer.Draw(r.Batch);
+			TextRenderer.Draw(r);
 		}
 
 	}

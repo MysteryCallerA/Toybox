@@ -91,7 +91,7 @@ namespace Toybox.debug {
 			if (TextRenderer.Content == "" || Target == null) return;
 
 			if (HoverRect != Rectangle.Empty) r.DrawRectDirect(HoverRect, Color.Black);
-			TextRenderer.Draw(r.Batch);
+			TextRenderer.Draw(r);
 			if (EditField.Active) EditField.Draw(r, c);
 		}
 
