@@ -26,6 +26,20 @@ namespace Toybox.utils.text {
 			Font = f;
 		}
 
+		public TextRenderer(TextRenderer t) {
+			Font = t.Font;
+			Scale = t.Scale;
+			Color = t.Color;
+			BackColor = t.BackColor;
+			Mask = t.Mask;
+			UseMask = t.UseMask;
+			GreedyMask = t.GreedyMask;
+			WordSpace = t.WordSpace;
+			LineSpace = t.LineSpace;
+			LetterSpace = t.LetterSpace;
+			QuoteSpace = t.QuoteSpace;
+		}
+
 		public virtual void Draw(Renderer r, Point pos, string text, Color? color = null, int? scale = null) { //TODO would be nice if this could output the drawn bounds also
 			if (!color.HasValue) color = Color;
 			if (!scale.HasValue) scale = Scale;
