@@ -29,7 +29,25 @@ namespace Toybox.utils.text {
 			}
 		}
 
-		public Point Size {
+		public virtual int X {
+			get; set;
+		}
+
+		public virtual int Y {
+			get; set;
+		}
+
+		public Point Position {
+			get {
+				return new Point(X, Y);
+			}
+			set {
+				X = value.X;
+				Y = value.Y;
+			}
+		}
+
+		public virtual Point Size {
 			get {
 				if (SizeUnknown) {
 					_size = GetSize(Content);

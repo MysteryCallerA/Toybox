@@ -11,7 +11,6 @@ namespace Toybox.utils.text {
 
 		public virtual Font Font { get; set; }
 		public int Scale = 1;
-		public Point Position;
 		public Color Color = Color.White;
 		public Color? BackColor = null;
 		public Rectangle Mask;
@@ -24,16 +23,6 @@ namespace Toybox.utils.text {
 		public virtual int QuoteSpace { get; set; } = 1;
 
 		public Point Scroll = Point.Zero;
-
-		public int X {
-			get { return Position.X; }
-			set { Position.X = value; }
-		}
-
-		public int Y {
-			get { return Position.Y; }
-			set { Position.Y = value; }
-		}
 
 		public TextRenderer(Font f) {
 			Font = f;
