@@ -22,13 +22,14 @@ namespace Toybox.utils.text {
 		public virtual int LetterSpace { get; set; } = 1;
 		public virtual int QuoteSpace { get; set; } = 1;
 
-		public Point Scroll = Point.Zero;
-
 		public TextRenderer(Font f) {
 			Font = f;
 		}
 
-		public void Draw(Renderer r, Color color, Point pos, string text) { //TODO would be nice if this could output the drawn bounds also
+		public virtual void Draw(Renderer r, Point pos, string text, Color? color = null, int? scale = null) { //TODO would be nice if this could output the drawn bounds also
+			if (!color.HasValue) color = Color;
+			if (!scale.HasValue) scale = Scale;
+
 			Rectangle draw = new Rectangle(pos.X, pos.Y, 0, 0);
 			char prev = ' ';
 
@@ -37,47 +38,40 @@ namespace Toybox.utils.text {
 
 				if (prev == Font.Newline) {
 					draw.X = pos.X;
-					draw.Y += (Font.CharHeight + LineSpace) * Scale;
+					draw.Y += (Font.CharHeight + LineSpace) * scale.Value;
 					draw.Width = 0;
 				} else if (i != 0) {
-					draw.X += LetterSpace * Scale;
+					draw.X += LetterSpace * scale.Value;
 				}
 
-				draw = DrawChar(r.Batch, c, new Point(draw.Right, draw.Y), color);
+				draw = DrawChar(r.Batch, c, new Point(draw.Right, draw.Y), color.Value, scale.Value);
 				prev = c;
 			}
 		}
 
-		public void Draw(Renderer r, Color color, Point pos, string text, int scale) {
-			var old = Scale;
-			Scale = scale;
-			Draw(r, color, pos, text);
-			Scale = old;
-		}
-
-		private Rectangle DrawChar(SpriteBatch s, char c, Point pos, Color color) {
+		private Rectangle DrawChar(SpriteBatch s, char c, Point pos, Color color, int scale) {
 			if (c == '\r') return new Rectangle(pos, Point.Zero);
 			if (c == ' ' || c == Font.Newline) {
-				var r = GetCharDest(c, pos);
-				if (BackColor.HasValue && c == ' ') s.Draw(Font.Graphic, new Rectangle(r.X, r.Y, r.Width + LetterSpace * Scale, r.Height), Font.Pixel, BackColor.Value);
+				var r = GetCharDest(c, pos, scale);
+				if (BackColor.HasValue && c == ' ') s.Draw(Font.Graphic, new Rectangle(r.X, r.Y, r.Width + LetterSpace * scale, r.Height), Font.Pixel, BackColor.Value);
 				return r;
 			}
 			if (c == '\"') {
-				var output = DrawChar(s, '\'', pos, color);
-				pos.X += output.Width + (QuoteSpace * Scale);
-				var output2 = DrawChar(s, '\'', pos, color);
+				var output = DrawChar(s, '\'', pos, color, scale);
+				pos.X += output.Width + (QuoteSpace * scale);
+				var output2 = DrawChar(s, '\'', pos, color, scale);
 				return Rectangle.Union(output, output2);
 			}
 
 			Rectangle source = GetCharSource(c);
-			Rectangle dest = GetCharDest(c, pos, source);
+			Rectangle dest = GetCharDest(c, pos, source, scale);
 			var unmasked = dest;
 
 			if (UseMask) {
-				ApplyMask(ref dest, ref source);
+				ApplyMask(ref dest, ref source, scale);
 			}
 
-			if (BackColor.HasValue) s.Draw(Font.Graphic, new Rectangle(dest.X, dest.Y, dest.Width + LetterSpace * Scale, dest.Height), Font.Pixel, BackColor.Value);
+			if (BackColor.HasValue) s.Draw(Font.Graphic, new Rectangle(dest.X, dest.Y, dest.Width + LetterSpace * scale, dest.Height), Font.Pixel, BackColor.Value);
 			s.Draw(Font.Graphic, dest, source, color);
 			return unmasked;
 		}
@@ -94,31 +88,31 @@ namespace Toybox.utils.text {
 			}
 		}
 
-		internal Rectangle GetCharDest(char c, Point pos) {
-			return GetCharDest(c, pos, GetCharSource(c));
+		internal Rectangle GetCharDest(char c, Point pos, int scale) {
+			return GetCharDest(c, pos, GetCharSource(c), scale);
 		}
 
-		internal Rectangle GetCharDest(char c, Point pos, Rectangle source) {
+		internal Rectangle GetCharDest(char c, Point pos, Rectangle source, int scale) {
 			if (c == ' ') {
-				return new Rectangle(pos.X, pos.Y, WordSpace * Scale, Font.CharHeight * Scale);
+				return new Rectangle(pos.X, pos.Y, WordSpace * scale, Font.CharHeight * scale);
 			}
 			if (c == Font.Newline) {
-				return new Rectangle(pos.X, pos.Y, Scale, Font.CharHeight * Scale);
+				return new Rectangle(pos.X, pos.Y, scale, Font.CharHeight * scale);
 			}
 			if (c == '\"') {
-				var output = GetCharDest('\'', pos, source);
-				pos.X += output.Width + (QuoteSpace * Scale);
-				var output2 = GetCharDest('\'', pos, source);
+				var output = GetCharDest('\'', pos, source, scale);
+				pos.X += output.Width + (QuoteSpace * scale);
+				var output2 = GetCharDest('\'', pos, source, scale);
 				return Rectangle.Union(output, output2);
 			}
 
-			return new Rectangle(pos.X, pos.Y, source.Width * Scale, source.Height * Scale);
+			return new Rectangle(pos.X, pos.Y, source.Width * scale, source.Height * scale);
 		}
 
-		private void ApplyMask(ref Rectangle dest, ref Rectangle source) {
+		private void ApplyMask(ref Rectangle dest, ref Rectangle source, int scale) {
 			var mask = Mask;
 			if (!GreedyMask) {
-				//mask.Inflate(-Scale, -Scale);
+				//mask.Inflate(-scale, -scale);
 			}
 
 			var masked = Rectangle.Intersect(dest, mask);
@@ -128,26 +122,27 @@ namespace Toybox.utils.text {
 			}
 			if (masked == dest) return;
 
-			int right = (dest.Right - masked.Right) / Scale;
-			int left = (masked.Left - dest.Left) / Scale;
-			int top = (masked.Top - dest.Top) / Scale;
-			int bot = (dest.Bottom - masked.Bottom) / Scale;
+			int right = (dest.Right - masked.Right) / scale;
+			int left = (masked.Left - dest.Left) / scale;
+			int top = (masked.Top - dest.Top) / scale;
+			int bot = (dest.Bottom - masked.Bottom) / scale;
 			source = new Rectangle(source.X + left, source.Y + top, source.Width - (left + right), source.Height - (top + bot));
 
 			//Correct distortions
-			masked.X = math.MathOps.FloorMultiple(masked.X - dest.X, Scale) + dest.X;
-			masked.Y = math.MathOps.FloorMultiple(masked.Y - dest.Y, Scale) + dest.Y;
-			masked.Width = source.Width * Scale;
-			masked.Height = source.Height * Scale;
+			masked.X = math.MathOps.FloorMultiple(masked.X - dest.X, scale) + dest.X;
+			masked.Y = math.MathOps.FloorMultiple(masked.Y - dest.Y, scale) + dest.Y;
+			masked.Width = source.Width * scale;
+			masked.Height = source.Height * scale;
 			dest = masked;
 		}
 
-		/// <summary> Accounts for scale. </summary>
 		public int LineHeight {
-			get { return Font.CharHeight * Scale; }
+			get { return Font.CharHeight; }
 		}
 
-		public Point GetSize(string t) {
+		public Point GetSize(string t, int? scale = null) {
+			if (!scale.HasValue) scale = Scale;
+
 			Point output = new();
 			output.Y += LineHeight;
 			Point currentline = new Point();
@@ -159,15 +154,15 @@ namespace Toybox.utils.text {
 					continue;
 				}
 				if (currentline.X != 0) {
-					currentline.X += LetterSpace * Scale;
+					currentline.X += LetterSpace;
 				}
 
-				var rect = GetCharDest(t[i], currentline);
+				var rect = GetCharDest(t[i], currentline, 1);
 				currentline.X = rect.Right;
 			}
 
 			if (currentline.X > output.X) output.X = currentline.X;
-			return output;
+			return output * new Point(scale.Value);
 		}
 
 	}

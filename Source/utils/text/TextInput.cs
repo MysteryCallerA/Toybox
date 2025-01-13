@@ -51,8 +51,8 @@ namespace Toybox.utils.text {
 			get { return Updating; }
 		}
 
-		public override void Draw(Renderer r, Color c) {
-			base.Draw(r, c);
+		public override void Draw(Renderer r) {
+			base.Draw(r);
 
 			if (Measurer.Outdated) Measurer.Update(this);
 
@@ -118,7 +118,7 @@ namespace Toybox.utils.text {
 			string text = Content.Substring(start, end - start + 1);
 			var backColor = BackColor;
 			BackColor = null;
-			Draw(rend, ColorSelectText, textlocation, text);
+			Draw(rend, textlocation, text, ColorSelectText);
 			BackColor = backColor;
 		}
 

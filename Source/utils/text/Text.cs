@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 namespace Toybox.utils.text {
 	public class Text:TextRenderer {
 
+		public Point Scroll = Point.Zero;
+
 		private bool SizeUnknown = true;
 		private Point _size;
 
@@ -50,7 +52,7 @@ namespace Toybox.utils.text {
 		public virtual Point Size {
 			get {
 				if (SizeUnknown) {
-					_size = GetSize(Content);
+					_size = GetSize(Content, Scale);
 				}
 				return _size;
 			}
@@ -62,15 +64,9 @@ namespace Toybox.utils.text {
 			}
 		}
 
-		public void Draw(Renderer r) {
-			Draw(r, Color, Position - Scroll, Content);
+		public virtual void Draw(Renderer r) {
+			Draw(r, Position - Scroll, Content);
 		}
-
-		public virtual void Draw(Renderer r, Color color) {
-			Draw(r, color, Position - Scroll, Content);
-		}
-
-
 
 		public override Font Font {
 			set {

@@ -30,6 +30,8 @@ namespace Toybox.utils.text {
 		}
 
 		public void Update(Text t) {
+			Measured = t;
+
 			int start = 0;
 			char prev = ' ';
 			while (start < t.Content.Length) { //Skip unchanged characters
@@ -54,23 +56,22 @@ namespace Toybox.utils.text {
 					draw.X += t.LetterSpace * t.Scale;
 				}
 
-				draw = t.GetCharDest(c, new Point(draw.Right, draw.Y));
+				draw = t.GetCharDest(c, new Point(draw.Right, draw.Y), Measured.Scale);
 				Characters.Add(draw);
 				prev = c;
 			}
 
 			MeasuredContent = t.Content;
-			Measured = t;
 			UpdateGroupedBounds();
 		}
 
 		private void UpdateGroupedBounds() {
 			Words.Clear();
 			Lines.Clear();
-			var newsize = new Point(0, Measured.LineHeight);
+			var newsize = new Point(0, Measured.LineHeight * Measured.Scale);
 
-			var word = new Rectangle(0, 0, 0, Measured.LineHeight);
-			var line = new Rectangle(0, 0, 0, Measured.LineHeight);
+			var word = new Rectangle(0, 0, 0, Measured.LineHeight * Measured.Scale);
+			var line = new Rectangle(0, 0, 0, Measured.LineHeight * Measured.Scale);
 			for (int i = 0; i < Characters.Count; i++) {
 				line.Width += Characters[i].Right - line.Right;
 				if (MeasuredContent[i] == ' ' || MeasuredContent[i] == Font.Newline) {
@@ -79,7 +80,7 @@ namespace Toybox.utils.text {
 					if (MeasuredContent[i] == Font.Newline) {
 						Lines.Add(line);
 						if (newsize.X < line.Width) newsize.X = line.Width;
-						newsize.Y += Measured.LineHeight + Measured.LineSpace * Measured.Scale;
+						newsize.Y += (Measured.LineHeight + Measured.LineSpace) * Measured.Scale;
 						line.Y += line.Height + Measured.LineSpace * Measured.Scale;
 						line.Width = 0;
 						word.Y += line.Height + Measured.LineSpace * Measured.Scale;

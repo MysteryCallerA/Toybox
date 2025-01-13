@@ -88,19 +88,19 @@ namespace Toybox {
 
 		/// <summary> Draw text without any projection. </summary>
 		public void DrawTextDirect(Point pos, Color c, string text) {
-			TextRenderer.Draw(this, c, pos, text);
+			TextRenderer.Draw(this, pos, text, c);
 		}
 
 		/// <summary> Draw text, projecting to render space. </summary>
 		public void DrawText(Point pos, Color c, string text, Camera cam, Camera.Space fromSpace) {
 			pos = cam.Project(fromSpace, Camera.Space.Render, pos);
-			TextRenderer.Draw(this, c, pos, text, cam.PixelScale);
+			TextRenderer.Draw(this, pos, text, c, cam.PixelScale);
 		}
 
 		/// <summary> Draw text, projecting to pixel space to ignore camera offset. </summary>
 		public void DrawTextStatic(Point pos, Color c, string text, Camera cam, Camera.Space fromSpace) {
 			pos = cam.Project(fromSpace, Camera.Space.Pixel, pos);
-			TextRenderer.Draw(this, c, pos, text, cam.PixelScale);
+			TextRenderer.Draw(this, pos, text, c, cam.PixelScale);
 		}
 	
 	}
