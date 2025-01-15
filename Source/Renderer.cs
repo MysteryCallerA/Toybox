@@ -35,6 +35,11 @@ namespace Toybox {
 		}
 
 		/// <summary> Draw rectangle, projecting to pixel space to ignore camera offset. </summary>
+		public void DrawRectStatic(Rectangle r, Color c) {
+			Batch.Draw(Blank, r, c);
+		}
+
+		/// <summary> Draw rectangle, projecting to pixel space to ignore camera offset. </summary>
 		public void DrawRectStatic(Rectangle r, Color c, Camera cam, Camera.Space fromSpace) {
 			r = cam.Project(fromSpace, Camera.Space.Pixel, r);
 			Batch.Draw(Blank, r, c);
