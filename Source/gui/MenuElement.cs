@@ -35,45 +35,43 @@ namespace Toybox.gui {
 		}
 
 		/// <summary> Anything the element does, goes here. Call UpdateFunction on any contained elements. </summary>
-		protected abstract void UpdateFunction();
+		protected internal abstract void UpdateFunction();
 
-		protected void UpdateSize(Point containerSize) {
-			var innerSize = new Point(containerSize.X - HWhitespace, containerSize.Y - VWhitespace);
-			int totalx = 0, totaly = 0;
-
+		protected internal void UpdateSize(Point containerSize) {
 			if (HFit == FitType.FitOuter) {
-				totalx = containerSize.X;
+				TotalSize = new Point(containerSize.X, TotalSize.Y);
+				InnerSize.X = containerSize.X - HWhitespace;
 			} else if (HFit == FitType.Static) {
-				innerSize.X = InnerSize.X;
-				totalx = InnerSize.X + HWhitespace;
+				TotalSize = new Point(InnerSize.X + HWhitespace, TotalSize.Y);
 			}
 			if (VFit == FitType.FitOuter) {
-				totaly = containerSize.Y;
+				TotalSize = new Point(TotalSize.X, containerSize.Y);
+				InnerSize.Y = containerSize.Y - VWhitespace;
 			} else if (VFit == FitType.Static) {
-				innerSize.Y = InnerSize.Y;
-				totaly = InnerSize.Y + VWhitespace;
+				TotalSize = new Point(TotalSize.X, InnerSize.Y + VWhitespace);
 			}
 
-			GetContentSize(innerSize, out Point contentSize);
+			GetContentSize(out Point contentSize);
 
 			if (HFit == FitType.FitContent) {
-				innerSize.X = contentSize.X;
-				totalx = contentSize.X + HWhitespace;
+				TotalSize = new Point(contentSize.X + HWhitespace, TotalSize.Y);
+				InnerSize.X = contentSize.X;
 			}
 			if (VFit == FitType.FitContent) {
-				innerSize.Y = contentSize.Y;
-				totaly = contentSize.Y + VWhitespace;
+				TotalSize = new Point(TotalSize.X, contentSize.Y + VWhitespace);
+				InnerSize.Y = contentSize.Y;
 			}
-
-			TotalSize = new Point(totalx, totaly);
-			InnerSize = innerSize;
+			FinalizeSize();
 		}
 
+		/// <summary> Update size of things that need the final calculated size (eg. BackPanels) </summary>
+		protected virtual void FinalizeSize() { }
+
 		/// <summary> Set Position of any contained elements based on their alignment settings. Call UpdateContainedElementPositions on each element. </summary>
-		protected abstract void UpdateContainedElementPositions();
+		protected internal abstract void UpdateContainedElementPositions();
 
 		/// <summary> Call UpdateSize of any contained MenuElements. Output the total size of all content. </summary>
-		protected abstract void GetContentSize(Point innerSize, out Point contentSize);
+		protected abstract void GetContentSize(out Point contentSize);
 
 		public Point ContentOrigin {
 			get { return new Point(Position.X + MarginLeft + PaddingLeft, Position.Y + MarginTop + PaddingTop); }
@@ -81,8 +79,14 @@ namespace Toybox.gui {
 		public Rectangle ContentBounds {
 			get { return new Rectangle(ContentOrigin, InnerSize); }
 		}
+		public Point PanelOrigin {
+			get { return new Point(Position.X + MarginLeft, Position.Y + MarginTop); }
+		}
+		public Point PanelSize {
+			get { return new Point(InnerSize.X + PaddingLeft + PaddingRight, InnerSize.Y + PaddingTop + PaddingBottom); }
+		}
 		public Rectangle PanelBounds {
-			get { return new Rectangle(new Point(Position.X + MarginLeft, Position.Y + MarginTop), new Point(InnerSize.X + PaddingLeft + PaddingRight, InnerSize.Y + PaddingTop + PaddingBottom)); }
+			get { return new Rectangle(PanelOrigin, PanelSize); }
 		}
 
 		// -------- Multi-Properties --------
