@@ -5,14 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Toybox.gui.core;
+using Toybox.gui.layout;
 
-namespace Toybox.gui {
+namespace Toybox.gui
+{
 
-	public class Menu:MenuElement {
+    public class Menu:MenuElement {
 
 		public List<MenuElement> Content = new();
 		public MenuElement BackPanel;
-		public IMenuLayout Layout;
+		public IMenuLayout Layout = new MenuVerticalLayout();
 
 		public Menu() {
 
@@ -29,7 +31,7 @@ namespace Toybox.gui {
 			foreach (var e in Content) {
 				e.UpdateFunction();
 			}
-			BackPanel.UpdateFunction();
+			BackPanel?.UpdateFunction();
 		}
 
 		protected override void GetContentSize(out Point contentSize) {
@@ -37,12 +39,12 @@ namespace Toybox.gui {
 		}
 
 		protected override void FinalizeSize() {
-			BackPanel.UpdateSize(PanelSize);
+			BackPanel?.UpdateSize(PanelSize);
 		}
 
 		protected internal override void UpdateContainedElementPositions() {
 			Layout.UpdateContentPosition(Content, this);
-			BackPanel.Position = PanelOrigin;
+			if (BackPanel != null) BackPanel.Position = PanelOrigin;
 		}
 	}
 }

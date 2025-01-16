@@ -5,8 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Toybox.gui {
+namespace Toybox.gui.core {
 	public abstract class MenuElement {
+
+		public bool Selectable = false;
 
 		public Point TotalSize { get; private set; }
 		public Point InnerSize;
@@ -25,7 +27,7 @@ namespace Toybox.gui {
 		public HAlignType HAlign = HAlignType.Left;
 
 		/// <summary> Call Update on only the outermost element to update the entire menu structure. </summary>
-		public void Update() {
+		public virtual void Update() {
 			UpdateFunction();
 			UpdateSize(Resources.Camera.Bounds.Size);
 			UpdateContainedElementPositions();

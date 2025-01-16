@@ -6,10 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Toybox.gui.core;
 
-namespace Toybox.gui.layout {
-	public class MenuVerticalLayout:IMenuLayout {
+namespace Toybox.gui.layout
+{
+    public class MenuVerticalLayout:IMenuLayout {
 
 		public int Spacing = 0;
+
+		public bool IsLinear { get { return true; } }
 
 		public void UpdateContentSize(List<MenuElement> content, MenuElement container, out Point contentSize) {
 			if (content.Count == 0) {
@@ -81,5 +84,26 @@ namespace Toybox.gui.layout {
 			}
 		}
 
+		public void SelectDown(List<MenuElement> content, int selection, out int newSelection) {
+			newSelection = selection + 1;
+			if (newSelection >= content.Count) {
+				newSelection = 0;
+			}
+		}
+
+		public void SelectUp(List<MenuElement> content, int selection, out int newSelection) {
+			newSelection = selection - 1;
+			if (newSelection < 0) {
+				newSelection = content.Count - 1;
+			}
+		}
+
+		public void SelectLeft(List<MenuElement> content, int selection, out int newSelection) {
+			newSelection = selection;
+		}
+
+		public void SelectRight(List<MenuElement> content, int selection, out int newSelection) {
+			newSelection = selection;
+		}
 	}
 }

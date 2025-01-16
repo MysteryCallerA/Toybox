@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 using Toybox.gui.core;
 using Toybox.utils.math;
 
-namespace Toybox.gui.graphic {
-	public class MenuBoxGraphic:MenuElement {
+namespace Toybox.gui.graphic
+{
+    public class MenuBoxGraphic:MenuElement {
 
 		public Color BackColor = Color.Gray;
 		public Color BorderColor = Color.Transparent;

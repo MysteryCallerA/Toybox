@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 using Toybox.gui.core;
 using Toybox.utils.text;
 
-namespace Toybox.gui.content {
-	public class MenuText:MenuElement {
+namespace Toybox.gui.content
+{
+    public class MenuText:MenuElement {
 
 		public Text TextRenderer;
 
