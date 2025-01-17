@@ -49,6 +49,13 @@ namespace Toybox.gui.content
 			}
 		}
 
+		public override string Name {
+			get {
+				if (base.Name != "") return base.Name;
+				return Content;
+			}
+		}
+
 		public string Content {
 			get { return TextRenderer.Content; }
 			set { TextRenderer.Content = value; }

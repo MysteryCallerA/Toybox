@@ -9,6 +9,7 @@ namespace Toybox.gui.core {
 	public abstract class MenuElement {
 
 		public bool Selectable = false;
+		public virtual string Name { get; set; } = "";
 
 		public Point TotalSize { get; private set; }
 		public Point InnerSize;
@@ -29,6 +30,12 @@ namespace Toybox.gui.core {
 		/// <summary> Call Update on only the outermost element to update the entire menu structure. </summary>
 		public virtual void Update() {
 			UpdateFunction();
+			UpdateSize(Resources.Camera.Bounds.Size);
+			UpdateContainedElementPositions();
+		}
+
+		/// <summary> Updates size and positions of menu structure without allowing any interaction. </summary>
+		public virtual void PartialUpdate() {
 			UpdateSize(Resources.Camera.Bounds.Size);
 			UpdateContainedElementPositions();
 		}

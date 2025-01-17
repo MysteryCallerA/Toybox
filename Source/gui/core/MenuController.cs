@@ -28,6 +28,12 @@ namespace Toybox.gui.core {
 			if (KeyRight != null && KeyRight.Pressed) {
 				PressRight(m);
 			}
+			if (KeyConfirm != null && KeyConfirm.Pressed) {
+				PressConfirm(m);
+			}
+			if (KeyCancel != null && KeyCancel.Pressed) {
+				PressCancel(m);
+			}
 		}
 
 		public void PressUp(SelectMenu m) {
@@ -44,6 +50,14 @@ namespace Toybox.gui.core {
 
 		public void PressRight(SelectMenu m) {
 			m.Layout.SelectRight(m.Content, m.SelectionId, out m.SelectionId);
+		}
+
+		public void PressConfirm(SelectMenu m) {
+			m.PressConfirm();
+		}
+
+		public void PressCancel(SelectMenu m) {
+			m.PressCancel();
 		}
 
 	}
