@@ -9,116 +9,55 @@ using System.Threading.Tasks;
 namespace Toybox.utils.input {
 	public class GameInputManager<T> where T : Enum {
 
-		private KeyboardState KState;
 		private MouseState MState;
 		private MouseState OMState;
-		private GamePadState GState;
 
 		public Dictionary<T, VirtualKey> VirtualKeys = new Dictionary<T, VirtualKey>(); //TODO when a key is forced down, it should stay down until released and pressed again. inverse when forced up
-
-		public bool BlockedKeyboard {
-			get; private set;
-		}
 
 		public VirtualKey this[T id] {
 			get { return VirtualKeys[id]; }
 		}
 
-		public void UpdateControlStates(KeyboardState kstate, MouseState mstate) {
+		public void UpdateControlStates(KeyboardState kstate, MouseState mstate, GamePadState? gstate = null) {
 			OMState = MState;
-			KState = kstate;
 			MState = mstate;
 
 			foreach (var k in VirtualKeys.Values) {
-				k.WasDown = k.Down;
-				k.Down = false;
-
-				foreach (var input in k.Keys) {
-					if (KState.IsKeyDown(input)) {
-						k.Down = true;
-						break;
-					}
+				var next = GetNextState(k, kstate, mstate, gstate);
+				if (!k.DroppedPress) {
+					k.WasDown = k.Down;
+					k.Down = next;
+					continue;
 				}
-				if (k.Down) continue;
-
-				if (k.LeftMouse && MState.LeftButton == ButtonState.Pressed) {
-					k.Down = true; continue;
-				}
-				if (k.RightMouse && MState.RightButton == ButtonState.Pressed) {
-					k.Down = true; continue;
-				}
-				if (k.MiddleMouse && MState.MiddleButton == ButtonState.Pressed) {
-					k.Down = true; continue;
-				}
-				if (k.Mouse4 && MState.XButton1 == ButtonState.Pressed) {
-					k.Down = true; continue;
-				}
-				if (k.Mouse5 && MState.XButton2 == ButtonState.Pressed) {
-					k.Down = true; continue;
-				}
-
-				int scroll = MState.ScrollWheelValue - OMState.ScrollWheelValue;
-				if (k.ScrollDown && scroll < 0) {
-					k.Down = true; continue;
-				}
-				if (k.ScrollUp && scroll > 0) {
-					k.Down = true; continue;
-				}
-			}
-			BlockedKeyboard = false;
-		}
-
-		public void UpdateControlStates(KeyboardState kstate, MouseState mstate, GamePadState gstate) {
-			UpdateControlStates(kstate, mstate);
-
-			GState = gstate;
-
-			foreach (var k in VirtualKeys.Values) {
-				if (k.Down) continue;
-
-				foreach (var input in k.Buttons) {
-					if (GState.IsButtonDown(input)) {
-						k.Down = true;
-						break;
-					}
+				if (next == false) {
+					k.DroppedPress = false;
 				}
 			}
 		}
 
-		public bool Down(T key) {
-			var k = VirtualKeys[key];
-			return k.Down;
-		}
+		private bool GetNextState(VirtualKey k, KeyboardState kstate, MouseState mstate, GamePadState? gstate = null) {
+			foreach (var input in k.Keys) {
+				if (kstate.IsKeyDown(input)) {
+					return true;
+				}
+			}
 
-		public bool Up(T key) {
-			var k = VirtualKeys[key];
-			return !k.Down;
-		}
+			if (k.LeftMouse && MState.LeftButton == ButtonState.Pressed) return true;
+			if (k.RightMouse && MState.RightButton == ButtonState.Pressed) return true;
+			if (k.MiddleMouse && MState.MiddleButton == ButtonState.Pressed) return true;
+			if (k.Mouse4 && MState.XButton1 == ButtonState.Pressed) return true;
+			if (k.Mouse5 && MState.XButton2 == ButtonState.Pressed) return true;
 
-		public bool WasDown(T key) {
-			return VirtualKeys[key].WasDown;
-		}
+			int scroll = MState.ScrollWheelValue - OMState.ScrollWheelValue;
+			if (k.ScrollDown && scroll < 0) return true;
+			if (k.ScrollUp && scroll > 0) return true;
 
-		public bool WasUp(T key) {
-			return !WasDown(key);
-		}
+			if (!gstate.HasValue) return false;
+			foreach (var input in k.Buttons) {
+				if (gstate.Value.IsButtonDown(input)) return true;
+			}
 
-		public bool Pressed(T key) {
-			var k = VirtualKeys[key];
-			return k.Down && !k.WasDown;
-		}
-
-		public bool Released(T key) {
-			var k = VirtualKeys[key];
-			return !k.Down && k.WasDown;
-		}
-
-		public void ForceDown(T key) {
-			VirtualKeys[key].Down = true;
-		}
-
-		public void ForceUp(T key) {
-			VirtualKeys[key].Down = false;
+			return false;
 		}
 
 		public Point MousePosition {
@@ -129,10 +68,6 @@ namespace Toybox.utils.input {
 			get { return OMState.Position; }
 		}
 
-		public void BlockKeyboard() {
-			BlockedKeyboard = true;
-		}
-
 		public void Add(T t, VirtualKey v) {
 			VirtualKeys.Add(t, v);
 		}
@@ -140,8 +75,10 @@ namespace Toybox.utils.input {
 	}
 
 	public class VirtualKey {
+
 		public bool Down = false;
 		public bool WasDown = false;
+		internal bool DroppedPress = false;
 
 		public List<Keys> Keys = new List<Keys>();
 		public List<Buttons> Buttons = new List<Buttons>();
@@ -163,6 +100,12 @@ namespace Toybox.utils.input {
 
 		public bool Released {
 			get { return !Down && WasDown; }
+		}
+
+		public void DropPress() {
+			DroppedPress = true;
+			Down = false;
+			WasDown = false;
 		}
 	}
 }
