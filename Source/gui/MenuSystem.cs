@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,8 @@ using Toybox.utils.input;
 namespace Toybox.gui {
 	public class MenuSystem {
 
-		public bool Enabled = true;
+		public bool Enabled = false;
+		public Point Position = Point.Zero;
 		private SelectMenu _ActiveMenu;
 		protected List<SelectMenu> Menus = new();
 		public Stack<SelectMenu> History = new();
@@ -23,8 +25,9 @@ namespace Toybox.gui {
 		public SelectMenu ActiveMenu {
 			get { return _ActiveMenu; }
 			set {
-				if (_ActiveMenu == value) return;
+				if (_ActiveMenu == value || value == null) return;
 				_ActiveMenu = value;
+				_ActiveMenu.Position = Position;
 				_ActiveMenu.PartialUpdate();
 			}
 		}
@@ -36,8 +39,10 @@ namespace Toybox.gui {
 
 		public virtual void Update() {
 			UpdateControl();
-			if (!Enabled) return;
-			ActiveMenu?.Update(this);
+			if (!Enabled || ActiveMenu == null) return;
+
+			ActiveMenu.Position = Position;
+			ActiveMenu.Update(this);
 		}
 
 		protected virtual void UpdateControl() {
