@@ -12,7 +12,7 @@ namespace Toybox.utils.input {
 		private MouseState MState;
 		private MouseState OMState;
 
-		public Dictionary<T, VirtualKey> VirtualKeys = new Dictionary<T, VirtualKey>(); //TODO when a key is forced down, it should stay down until released and pressed again. inverse when forced up
+		private Dictionary<T, VirtualKey> VirtualKeys = new Dictionary<T, VirtualKey>();
 
 		public VirtualKey this[T id] {
 			get { return VirtualKeys[id]; }
