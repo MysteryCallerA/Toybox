@@ -12,24 +12,39 @@ namespace Toybox.gui {
 
 		public bool Enabled = false;
 		public Point Position = Point.Zero;
-		private SelectMenu _ActiveMenu;
+		public SelectMenu ActiveMenu { get; protected set; }
 		protected List<SelectMenu> Menus = new();
 		public Stack<SelectMenu> History = new();
 
-		public MenuController SharedController;
+		public MenuControls SharedControls;
 		public MenuSelector SharedSelector;
 		public VirtualKey KeyOpenMenu;
 		public VirtualKey KeyCloseMenu;
-		public VirtualKey KeyBack;
 
-		public SelectMenu ActiveMenu {
-			get { return _ActiveMenu; }
-			set {
-				if (_ActiveMenu == value || value == null) return;
-				_ActiveMenu = value;
-				_ActiveMenu.Position = Position;
-				_ActiveMenu.PartialUpdate();
+		public virtual void AddMenu(SelectMenu m, string name = "") {
+			Menus.Add(m);
+			if (name != "") m.Name = name;
+			if (SharedControls != null) m.Controls = SharedControls;
+			if (SharedSelector != null) m.Selector = SharedSelector;
+		}
+
+		public void SwitchMenu(SelectMenu m, bool addToHistory) {
+			if (m == ActiveMenu) return;
+			if (addToHistory) History.Push(ActiveMenu);
+			ActiveMenu = m;
+			if (m == null) return;
+
+			ActiveMenu.Position = Position;
+			ActiveMenu.PartialUpdate();
+		}
+
+		public bool TrySwitchMenu(string name, bool addToHistory) {
+			foreach (var m in Menus) {
+				if (m.Name != name) continue;
+				SwitchMenu(m, addToHistory);
+				return true;
 			}
+			return false;
 		}
 
 		public virtual void Draw(Renderer r) {
@@ -47,40 +62,21 @@ namespace Toybox.gui {
 
 		protected virtual void UpdateControl() {
 			if (!Enabled) {
-				if (KeyOpenMenu != null && KeyOpenMenu.Pressed) OpenMenu();
+				if (KeyOpenMenu != null && KeyOpenMenu.Pressed) {
+					OpenMenu();
+					KeyOpenMenu.DropPress();
+				}
 				return;
 			}
 
-			if (KeyCloseMenu != null && KeyCloseMenu.Pressed) CloseMenu();
-			if (KeyBack != null && KeyBack.Pressed) BackMenu();
-		}
-
-		public virtual void AddMenu(SelectMenu m, string name = "") {
-			Menus.Add(m);
-			if (name != "") m.Name = name;
-			if (SharedController != null) m.Controller = SharedController;
-			if (SharedSelector != null) m.Selector = SharedSelector;
-		}
-
-		protected internal virtual void PressedConfirm(MenuElement e, int selectionPos) {
-			var name = e.Name;
-			foreach (var m in Menus) {
-				if (m.Name != name) continue;
-				History.Push(ActiveMenu);
-				ActiveMenu = m;
-				return;
-			}
-		}
-
-		protected internal virtual void PressedCancel(MenuElement e, int selectionPos) {
-			if (History.Count > 0) {
-				ActiveMenu = History.Pop();
+			if (KeyCloseMenu != null && KeyCloseMenu.Pressed) {
+				CloseMenu();
+				KeyCloseMenu.DropPress();
 			}
 		}
 
 		public virtual void OpenMenu() {
 			Enabled = true;
-			KeyOpenMenu?.DropPress();
 		}
 
 		public virtual void CloseMenu() {
@@ -91,7 +87,6 @@ namespace Toybox.gui {
 				menu = History.Pop();
 			}
 			ActiveMenu = menu;
-			KeyCloseMenu?.DropPress();
 		}
 
 		public virtual void BackMenu() {
@@ -100,7 +95,6 @@ namespace Toybox.gui {
 			} else {
 				CloseMenu();
 			}
-			KeyBack?.DropPress();
 		}
 
 	}
