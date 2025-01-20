@@ -89,6 +89,14 @@ namespace Toybox {
 			Batch.Draw(Blank, rect.Location.ToVector2(), null, c, angle, Vector2.Zero, new Vector2(dist, 1), SpriteEffects.None, 0);
 		}
 
+		/// <summary> Draw line, projecting to pixel space to ignore camera offset. </summary>
+		public void DrawLineStatic(Vector2 start, Vector2 end, Color c) {
+			var rect = new Rectangle(start.ToPoint(), (end - start).ToPoint());
+			var dist = (float)Math.Sqrt(rect.Width * rect.Width + rect.Height * rect.Height);
+			var angle = (float)Math.Atan2(rect.Height, rect.Width);
+			Batch.Draw(Blank, rect.Location.ToVector2(), null, c, angle, Vector2.Zero, new Vector2(dist, 1), SpriteEffects.None, 0);
+		}
+
 
 
 		/// <summary> Draw text without any projection. </summary>
