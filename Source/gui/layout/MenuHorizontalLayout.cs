@@ -2,12 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
 using Toybox.gui.core;
 
 namespace Toybox.gui.layout {
-	public class MenuVerticalLayout:IMenuLayout {
+	public class MenuHorizontalLayout:IMenuLayout {
 
 		public int Spacing = 0;
 
@@ -18,19 +19,19 @@ namespace Toybox.gui.layout {
 			}
 
 			var bounds = container.ContentBounds.Size;
-			int vsize = Spacing * (content.Count - 1);
-			int hsize = 0;
+			int hsize = Spacing * (content.Count - 1);
+			int vsize = 0;
 			int fitouterCount = 0;
 
 			foreach (var e in content) {
-				if (e.VFit == MenuElement.FitType.FitOuter) {
+				if (e.HFit == MenuElement.FitType.FitOuter) {
 					fitouterCount++;
 					continue;
 				}
 				e.UpdateSize(bounds);
 				var esize = e.TotalSize;
-				vsize += esize.Y;
-				if (esize.X > hsize) hsize = esize.X;
+				hsize += esize.X;
+				if (esize.Y > vsize) vsize = esize.Y;
 			}
 
 			if (fitouterCount == 0) {
@@ -38,16 +39,16 @@ namespace Toybox.gui.layout {
 				return;
 			}
 
-			bounds.Y -= vsize;
+			bounds.X -= hsize;
 			foreach (var e in content) {
-				if (e.VFit != MenuElement.FitType.FitOuter) {
+				if (e.HFit != MenuElement.FitType.FitOuter) {
 					continue;
 				}
-				e.UpdateSize(new Point(bounds.X, bounds.Y / fitouterCount));
+				e.UpdateSize(new Point(bounds.X / fitouterCount, bounds.Y));
 				var esize = e.TotalSize;
-				bounds.Y -= esize.Y;
-				vsize += esize.Y;
-				if (esize.X > hsize) hsize = esize.X;
+				bounds.X -= esize.X;
+				hsize += esize.X;
+				if (esize.Y > vsize) vsize = esize.Y;
 			}
 
 			contentSize = new Point(hsize, vsize);
@@ -57,50 +58,50 @@ namespace Toybox.gui.layout {
 			if (content.Count == 0) return;
 
 			var bounds = container.ContentBounds;
-			int y = bounds.Y;
+			int x = bounds.X;
 
 			foreach (var e in content) {
-				if (e.HAlign == MenuElement.HAlignType.Left) {
-					e.Position = new Point(bounds.X, y);
-				} else if (e.HAlign == MenuElement.HAlignType.Right) {
-					e.Position = new Point(bounds.Right - e.TotalSize.X, y);
-				} else if (e.HAlign == MenuElement.HAlignType.Center) {
-					e.Position = new Point(bounds.Center.X - (e.TotalSize.X / 2), y);
+				if (e.VAlign == MenuElement.VAlignType.Top) {
+					e.Position = new Point(x, bounds.Top);
+				} else if (e.VAlign == MenuElement.VAlignType.Bottom) {
+					e.Position = new Point(x, bounds.Bottom - e.TotalSize.Y);
+				} else if (e.VAlign == MenuElement.VAlignType.Center) {
+					e.Position = new Point(x, bounds.Center.Y - (e.TotalSize.Y / 2));
 				}
-				y += e.TotalSize.Y + Spacing;
+				x += e.TotalSize.X + Spacing;
 			}
 
-			y = bounds.Bottom;
+			x = bounds.Right;
 			for (int i = content.Count - 1; i >= 0; i--) {
 				var e = content[i];
-				if (e.VAlign == MenuElement.VAlignType.Bottom) {
-					e.Position = new Point(e.Position.X, y - e.TotalSize.Y);
+				if (e.HAlign == MenuElement.HAlignType.Right) {
+					e.Position = new Point(x - e.TotalSize.X, e.Position.Y);
 				}
 				e.UpdateContainedElementPositions();
-				y = e.Position.Y - Spacing;
+				x = e.Position.X - Spacing;
 			}
 		}
 
 		public void SelectDown(List<MenuElement> content, int selection, out int newSelection) {
+			newSelection = selection;
+		}
+
+		public void SelectUp(List<MenuElement> content, int selection, out int newSelection) {
+			newSelection = selection;
+		}
+
+		public void SelectLeft(List<MenuElement> content, int selection, out int newSelection) {
 			newSelection = selection + 1;
 			if (newSelection >= content.Count) {
 				newSelection = 0;
 			}
 		}
 
-		public void SelectUp(List<MenuElement> content, int selection, out int newSelection) {
+		public void SelectRight(List<MenuElement> content, int selection, out int newSelection) {
 			newSelection = selection - 1;
 			if (newSelection < 0) {
 				newSelection = content.Count - 1;
 			}
-		}
-
-		public void SelectLeft(List<MenuElement> content, int selection, out int newSelection) {
-			newSelection = selection;
-		}
-
-		public void SelectRight(List<MenuElement> content, int selection, out int newSelection) {
-			newSelection = selection;
 		}
 	}
 }
