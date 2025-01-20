@@ -6,26 +6,25 @@ using System.Threading.Tasks;
 using Toybox.gui.core;
 
 namespace Toybox.gui {
-	public class SelectMenu:MenuBox {
+	public class SelectMenu:InteractiveMenu {
 
 		public int SelectionId = 0;
 
 		public MenuSelector Selector = new MenuSelector();
 		public MenuControls Controls = new MenuControls();
-		private MenuSystem CurrentParent;
+		public Action<MenuElement> OnOptionConfirm;
 
 		public SelectMenu() {
+		}
+
+		public override void InheritSystemProps(MenuSystem m) {
+			if (m.SharedControls != null) Controls = m.SharedControls;
+			if (m.SharedSelector != null) Selector = m.SharedSelector;
 		}
 
 		public override void Draw(Renderer r) {
 			base.Draw(r);
 			Selector?.Draw(r);
-		}
-
-		public void Update(MenuSystem parent) {
-			CurrentParent = parent;
-			Update();
-			CurrentParent = null;
 		}
 
 		public override void Update() {
@@ -68,14 +67,18 @@ namespace Toybox.gui {
 		}
 
 		public virtual void PressConfirm() {
-			if (CurrentParent != null) {
-				CurrentParent.TrySwitchMenu(Content[SelectionId].Name, true);
+			bool activated = Content[SelectionId].Activate();
+			if (activated) return;
+
+			OnOptionConfirm?.Invoke(Content[SelectionId]);
+			if (ParentSystem != null) {
+				ParentSystem.TrySwitchMenu(Content[SelectionId].Name, true);
 			}
 		}
 
 		public virtual void PressBack() {
-			if (CurrentParent != null) {
-				CurrentParent.BackMenu();
+			if (ParentSystem != null) {
+				ParentSystem.BackMenu();
 			}
 		}
 

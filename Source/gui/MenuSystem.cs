@@ -12,23 +12,22 @@ namespace Toybox.gui {
 
 		public bool Enabled = false;
 		public Point Position = Point.Zero;
-		public SelectMenu ActiveMenu { get; protected set; }
-		protected List<SelectMenu> Menus = new();
-		public Stack<SelectMenu> History = new();
+		public InteractiveMenu ActiveMenu { get; protected set; }
+		protected List<InteractiveMenu> Menus = new();
+		public Stack<InteractiveMenu> History = new();
 
 		public MenuControls SharedControls;
 		public MenuSelector SharedSelector;
 		public VirtualKey KeyOpenMenu;
 		public VirtualKey KeyCloseMenu;
 
-		public virtual void AddMenu(SelectMenu m, string name = "") {
+		public virtual void AddMenu(InteractiveMenu m, string name = "") {
 			Menus.Add(m);
 			if (name != "") m.Name = name;
-			if (SharedControls != null) m.Controls = SharedControls;
-			if (SharedSelector != null) m.Selector = SharedSelector;
+			m.InheritSystemProps(this);
 		}
 
-		public void SwitchMenu(SelectMenu m, bool addToHistory) {
+		public void SwitchMenu(InteractiveMenu m, bool addToHistory) {
 			if (m == ActiveMenu) return;
 			if (addToHistory) History.Push(ActiveMenu);
 			ActiveMenu = m;

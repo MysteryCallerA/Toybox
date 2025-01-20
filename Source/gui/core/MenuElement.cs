@@ -82,6 +82,11 @@ namespace Toybox.gui.core {
 		/// <summary> Call UpdateSize of any contained MenuElements. Output the total size of all content. </summary>
 		protected abstract void GetContentSize(out Point contentSize);
 
+		/// <summary> Activates element and any contained elements. Returns true if element-type is activatable. </summary>
+		public virtual bool Activate() {
+			return false;
+		}
+
 		public Point ContentOrigin {
 			get { return new Point(Position.X + MarginLeft + PaddingLeft, Position.Y + MarginTop + PaddingTop); }
 		}

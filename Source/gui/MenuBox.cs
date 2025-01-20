@@ -45,5 +45,13 @@ namespace Toybox.gui {
 			Layout.UpdateContentPosition(Content, this);
 			if (BackPanel != null) BackPanel.Position = PanelOrigin;
 		}
+
+		public override bool Activate() {
+			bool output = false;
+			foreach (var e in Content) {
+				output = output || e.Activate();
+			}
+			return output;
+		}
 	}
 }
