@@ -20,6 +20,7 @@ namespace Toybox.gui.content {
 
 		public MenuToggle() {
 			Fit = FitType.FitContent;
+			VAlign = VAlignType.Center;
 		}
 
 		public override void Draw(Renderer r) {
