@@ -33,8 +33,14 @@ namespace Toybox.gui.content {
 		}
 
 		protected override void GetContentSize(out Point contentSize) {
-			CurrentState.UpdateSize(Point.Zero);
-			contentSize = CurrentState.TotalSize;
+			int x = 0, y = 0;
+			foreach (var e in States) {
+				e.UpdateSize(Point.Zero);
+				var size = e.TotalSize;
+				x = Math.Max(size.X, x);
+				y = Math.Max(size.Y, y);
+			}
+			contentSize = new Point(x, y);
 		}
 
 		protected internal override void UpdateContainedElementPositions() {
