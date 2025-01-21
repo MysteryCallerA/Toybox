@@ -26,11 +26,13 @@ namespace Toybox.gui {
 			}
 		}
 
-		protected internal override void UpdateFunction() {
+		protected internal override void UpdateFunction(MenuControls c) {
+			var control = Controls ?? c;
+
 			foreach (var e in Content) {
-				e.UpdateFunction();
+				e.UpdateFunction(control);
 			}
-			BackPanel?.UpdateFunction();
+			BackPanel?.UpdateFunction(control);
 		}
 
 		protected override void UpdateContentSize(Point contentContainerSize, out Point contentSize) {

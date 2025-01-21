@@ -22,7 +22,7 @@ namespace Toybox.gui.content
 			TextRenderer.Draw(r);
 		}
 
-		protected internal override void UpdateFunction() {
+		protected internal override void UpdateFunction(MenuControls c) {
 		}
 
 		protected override void UpdateContentSize(Point contentContainerSize, out Point contentSize) {

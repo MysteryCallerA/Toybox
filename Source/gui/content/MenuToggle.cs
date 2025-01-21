@@ -28,8 +28,7 @@ namespace Toybox.gui.content {
 			CurrentState.Draw(r);
 		}
 
-		protected internal override void UpdateFunction() {
-			CurrentState.UpdateFunction();
+		protected internal override void UpdateFunction(MenuControls c) {
 		}
 
 		protected override void UpdateContentSize(Point contentContainerSize, out Point contentSize) {

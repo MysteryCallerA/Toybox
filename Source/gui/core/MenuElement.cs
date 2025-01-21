@@ -10,6 +10,7 @@ namespace Toybox.gui.core {
 
 		public bool Selectable = false;
 		public virtual string Name { get; set; } = "";
+		public MenuControls Controls = null;
 
 		public Point TotalSize { get; private set; }
 		public Point InnerSize;
@@ -29,7 +30,7 @@ namespace Toybox.gui.core {
 
 		/// <summary> Call Update on only the outermost element to update the entire menu structure. </summary>
 		public virtual void Update() {
-			UpdateFunction();
+			UpdateFunction(Controls);
 			UpdateSize(Resources.Camera.Bounds.Size);
 			UpdateContainedElementPositions();
 		}
@@ -43,8 +44,8 @@ namespace Toybox.gui.core {
 		public virtual void Draw(Renderer r) {
 		}
 
-		/// <summary> Anything the element does, goes here. Call UpdateFunction on any contained elements. </summary>
-		protected internal abstract void UpdateFunction();
+		/// <summary> Anything the element does, goes here. Call UpdateFunction(Controls ?? c) on any contained elements. </summary>
+		protected internal abstract void UpdateFunction(MenuControls c);
 
 		protected internal void UpdateSize(Point containerSize) {
 			if (HFit == FitType.FillOuter) {
@@ -74,7 +75,8 @@ namespace Toybox.gui.core {
 		}
 
 		/// <summary> Call UpdateSize(contentContainerSize) on any contained MenuElements.<br>
-		/// </br> Output the total minimum size of all content. </summary>
+		/// </br> Output the total minimum size of all content. <br>
+		/// </br> If the contained elements can be any size (eg. resizable graphics), output contentSize can be zero.</summary>
 		protected abstract void UpdateContentSize(Point contentContainerSize, out Point contentSize);
 
 		/// <summary> Set Position of any contained elements based on their alignment settings. Call UpdateContainedElementPositions on each element. </summary>

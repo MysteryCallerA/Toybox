@@ -13,10 +13,17 @@ namespace Toybox.gui.layout
 		public void UpdateContentSize(List<MenuElement> content, MenuElement container, out Point contentSize);
 		public void UpdateContentPosition(List<MenuElement> content, MenuElement container);
 
-		public void SelectDown(List<MenuElement> content, int selection, out int newSelection);
-		public void SelectUp(List<MenuElement> content, int selection, out int newSelection);
-		public void SelectLeft(List<MenuElement> content, int selection, out int newSelection);
-		public void SelectRight(List<MenuElement> content, int selection, out int newSelection);
+		/// <summary> Attempts to adjust selection down. If possible, return true. </summary>
+		public bool SelectDown(List<MenuElement> content, int selection, out int newSelection);
+
+		/// <summary> Attempts to adjust selection up. If possible, return true. </summary>
+		public bool SelectUp(List<MenuElement> content, int selection, out int newSelection);
+
+		/// <summary> Attempts to adjust selection left. If possible, return true. </summary>
+		public bool SelectLeft(List<MenuElement> content, int selection, out int newSelection);
+
+		/// <summary> Attempts to adjust selection right. If possible, return true. </summary>
+		public bool SelectRight(List<MenuElement> content, int selection, out int newSelection);
 
 	}
 }

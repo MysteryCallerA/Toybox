@@ -11,7 +11,6 @@ namespace Toybox.gui {
 		public int SelectionId = 0;
 
 		public MenuSelector Selector = new MenuSelector();
-		public MenuControls Controls = new MenuControls();
 		public Action<MenuElement> OnOptionConfirm;
 
 		public SelectMenu() {
@@ -28,9 +27,9 @@ namespace Toybox.gui {
 		}
 
 		public override void Update() {
-			base.Update();
-
 			UpdateControls();
+
+			base.Update();
 			
 			if (Selector != null) {
 				if (SelectionId < 0) Selector.Update(null);
@@ -41,29 +40,37 @@ namespace Toybox.gui {
 		public virtual void UpdateControls() {
 			if (Controls == null) return;
 
-			if (Controls.KeyUp != null && Controls.KeyUp.Pressed) PressUp();
-			if (Controls.KeyDown != null && Controls.KeyDown.Pressed) PressDown();
-			if (Controls.KeyLeft != null && Controls.KeyLeft.Pressed) PressLeft();
-			if (Controls.KeyRight != null && Controls.KeyRight.Pressed) PressRight();
+			if (Controls.KeyUp != null && Controls.KeyUp.Pressed) {
+				if (PressUp()) Controls.KeyUp.DropPress();
+			}
+			if (Controls.KeyDown != null && Controls.KeyDown.Pressed) {
+				if (PressDown()) Controls.KeyDown.DropPress();
+			}
+			if (Controls.KeyLeft != null && Controls.KeyLeft.Pressed) {
+				if (PressLeft()) Controls.KeyLeft.DropPress();
+			}
+			if (Controls.KeyRight != null && Controls.KeyRight.Pressed) {
+				if (PressRight()) Controls.KeyRight.DropPress();
+			}
 
 			if (Controls.KeyConfirm != null && Controls.KeyConfirm.Pressed) PressConfirm();
 			if (Controls.KeyBack != null && Controls.KeyBack.Pressed) PressBack();
 		}
 
-		public virtual void PressUp() {
-			Layout.SelectUp(Content, SelectionId, out SelectionId);
+		public virtual bool PressUp() {
+			return Layout.SelectUp(Content, SelectionId, out SelectionId);
 		}
 
-		public virtual void PressDown() {
-			Layout.SelectDown(Content, SelectionId, out SelectionId);
+		public virtual bool PressDown() {
+			return Layout.SelectDown(Content, SelectionId, out SelectionId);
 		}
 
-		public virtual void PressLeft() {
-			Layout.SelectLeft(Content, SelectionId, out SelectionId);
+		public virtual bool PressLeft() {
+			return Layout.SelectLeft(Content, SelectionId, out SelectionId);
 		}
 
-		public virtual void PressRight() {
-			Layout.SelectRight(Content, SelectionId, out SelectionId);
+		public virtual bool PressRight() {
+			return Layout.SelectRight(Content, SelectionId, out SelectionId);
 		}
 
 		public virtual void PressConfirm() {
