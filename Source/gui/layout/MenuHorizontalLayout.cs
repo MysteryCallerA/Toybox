@@ -24,7 +24,7 @@ namespace Toybox.gui.layout {
 			int fitouterCount = 0;
 
 			foreach (var e in content) {
-				if (e.HFit == MenuElement.FitType.FitOuter) {
+				if (e.HFit == MenuElement.FitType.FillOuter) {
 					fitouterCount++;
 					continue;
 				}
@@ -41,7 +41,7 @@ namespace Toybox.gui.layout {
 
 			bounds.X -= hsize;
 			foreach (var e in content) {
-				if (e.HFit != MenuElement.FitType.FitOuter) {
+				if (e.HFit != MenuElement.FitType.FillOuter) {
 					continue;
 				}
 				e.UpdateSize(new Point(bounds.X / fitouterCount, bounds.Y));

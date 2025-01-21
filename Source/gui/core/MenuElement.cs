@@ -15,7 +15,7 @@ namespace Toybox.gui.core {
 		public Point InnerSize;
 		public Point Position;
 
-		public enum FitType { Static, FitContent, FitOuter }
+		public enum FitType { Static, FitContent, FillOuter }
 		public FitType HFit = FitType.FitContent;
 		public FitType VFit = FitType.FitContent;
 
@@ -47,40 +47,38 @@ namespace Toybox.gui.core {
 		protected internal abstract void UpdateFunction();
 
 		protected internal void UpdateSize(Point containerSize) {
-			if (HFit == FitType.FitOuter) {
+			if (HFit == FitType.FillOuter) {
 				TotalSize = new Point(containerSize.X, TotalSize.Y);
 				InnerSize.X = containerSize.X - HWhitespace;
 			} else if (HFit == FitType.Static) {
 				TotalSize = new Point(InnerSize.X + HWhitespace, TotalSize.Y);
 			}
-			if (VFit == FitType.FitOuter) {
+			if (VFit == FitType.FillOuter) {
 				TotalSize = new Point(TotalSize.X, containerSize.Y);
 				InnerSize.Y = containerSize.Y - VWhitespace;
 			} else if (VFit == FitType.Static) {
 				TotalSize = new Point(TotalSize.X, InnerSize.Y + VWhitespace);
 			}
 
-			GetContentSize(out Point contentSize);
+			UpdateContentSize(InnerSize, out Point contentSize);
 
-			if (HFit == FitType.FitContent) {
+			if (HFit == FitType.FitContent || (HFit == FitType.FillOuter && contentSize.X > InnerSize.X)) {
 				TotalSize = new Point(contentSize.X + HWhitespace, TotalSize.Y);
 				InnerSize.X = contentSize.X;
 			}
-			if (VFit == FitType.FitContent) {
+			if (VFit == FitType.FitContent || (VFit == FitType.FillOuter && contentSize.Y > InnerSize.Y)) {
 				TotalSize = new Point(TotalSize.X, contentSize.Y + VWhitespace);
 				InnerSize.Y = contentSize.Y;
 			}
-			FinalizeSize();
+			UpdateContentSize(InnerSize, out _);
 		}
 
-		/// <summary> Update size of things that need the final calculated size (eg. BackPanels) </summary>
-		protected virtual void FinalizeSize() { }
+		/// <summary> Call UpdateSize(contentContainerSize) on any contained MenuElements.<br>
+		/// </br> Output the total minimum size of all content. </summary>
+		protected abstract void UpdateContentSize(Point contentContainerSize, out Point contentSize);
 
 		/// <summary> Set Position of any contained elements based on their alignment settings. Call UpdateContainedElementPositions on each element. </summary>
 		protected internal abstract void UpdateContainedElementPositions();
-
-		/// <summary> Call UpdateSize of any contained MenuElements. Output the total size of all content. </summary>
-		protected abstract void GetContentSize(out Point contentSize);
 
 		/// <summary> Activates element and any contained elements. Returns true if element-type is activatable. </summary>
 		public virtual bool Activate() {

@@ -23,7 +23,7 @@ namespace Toybox.gui.layout {
 			int fitouterCount = 0;
 
 			foreach (var e in content) {
-				if (e.VFit == MenuElement.FitType.FitOuter) {
+				if (e.VFit == MenuElement.FitType.FillOuter) {
 					fitouterCount++;
 					continue;
 				}
@@ -40,7 +40,7 @@ namespace Toybox.gui.layout {
 
 			bounds.Y -= vsize;
 			foreach (var e in content) {
-				if (e.VFit != MenuElement.FitType.FitOuter) {
+				if (e.VFit != MenuElement.FitType.FillOuter) {
 					continue;
 				}
 				e.UpdateSize(new Point(bounds.X, bounds.Y / fitouterCount));

@@ -33,11 +33,8 @@ namespace Toybox.gui {
 			BackPanel?.UpdateFunction();
 		}
 
-		protected override void GetContentSize(out Point contentSize) {
+		protected override void UpdateContentSize(Point contentContainerSize, out Point contentSize) {
 			Layout.UpdateContentSize(Content, this, out contentSize);
-		}
-
-		protected override void FinalizeSize() {
 			BackPanel?.UpdateSize(PanelSize);
 		}
 

@@ -57,7 +57,7 @@ namespace Toybox.gui.graphic {
 		protected internal override void UpdateFunction() {
 		}
 
-		protected override void GetContentSize(out Point contentSize) {
+		protected override void UpdateContentSize(Point contentContainerSize, out Point contentSize) {
 			contentSize = Point.Zero;
 		}
 

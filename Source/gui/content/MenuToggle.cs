@@ -32,10 +32,10 @@ namespace Toybox.gui.content {
 			CurrentState.UpdateFunction();
 		}
 
-		protected override void GetContentSize(out Point contentSize) {
+		protected override void UpdateContentSize(Point contentContainerSize, out Point contentSize) {
 			int x = 0, y = 0;
 			foreach (var e in States) {
-				e.UpdateSize(Point.Zero);
+				e.UpdateSize(contentContainerSize);
 				var size = e.TotalSize;
 				x = Math.Max(size.X, x);
 				y = Math.Max(size.Y, y);

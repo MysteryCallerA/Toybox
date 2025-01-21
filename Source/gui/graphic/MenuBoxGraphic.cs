@@ -21,7 +21,7 @@ namespace Toybox.gui.graphic
 		}
 
 		public MenuBoxGraphic() {
-			Fit = FitType.FitOuter;
+			Fit = FitType.FillOuter;
 		}
 
 		public override void Draw(Renderer r) {
@@ -45,7 +45,7 @@ namespace Toybox.gui.graphic
 		protected internal override void UpdateContainedElementPositions() {
 		}
 
-		protected override void GetContentSize(out Point contentSize) {
+		protected override void UpdateContentSize(Point contentContainerSize, out Point contentSize) {
 			contentSize = Point.Zero;
 		}
 	}
