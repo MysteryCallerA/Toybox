@@ -11,13 +11,13 @@ namespace Toybox.gui.layout {
 
 		public int Spacing = 0;
 
-		public void UpdateContentSize(List<MenuElement> content, MenuElement container, out Point contentSize) {
+		public void UpdateContentSize(List<MenuElement> content, Point contentContainerSize, out Point contentSize) {
 			if (content.Count == 0) {
 				contentSize = Point.Zero;
 				return;
 			}
 
-			var bounds = container.ContentBounds.Size;
+			var bounds = contentContainerSize;
 			int vsize = Spacing * (content.Count - 1);
 			int hsize = 0;
 			int fitouterCount = 0;

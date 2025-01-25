@@ -14,6 +14,7 @@ namespace Toybox.gui.core {
 
 		/// <summary> (0,0) = TopLeft, (1,1) = BottomRight </summary>
 		public Vector2 AttachSide = Vector2.Zero;
+		public bool MatchSelectionSize = false;
 
 		private bool NoSelection = true;
 
@@ -39,6 +40,11 @@ namespace Toybox.gui.core {
 			var pos = new Point(bounds.X + (int)(bounds.Width * AttachSide.X), bounds.Y + (int)(bounds.Height * AttachSide.Y));
 			pos -= Origin;
 			Content.Position = pos;
+
+			if (MatchSelectionSize) {
+				Content.InnerSize = selection.InnerSize;
+				Content.Fit = MenuElement.FitType.Static;
+			}
 
 			Content.Update();
 		}

@@ -10,20 +10,23 @@ namespace Toybox.gui {
 
 		public int SelectionId = 0;
 
-		public MenuSelector Selector = new MenuSelector();
+		public MenuSelector Selector;
 		public Action<MenuElement> OnOptionConfirm;
 
 		public SelectMenu() {
 		}
 
 		public override void InheritSystemProps(MenuSystem m) {
-			if (m.SharedControls != null) Controls = m.SharedControls;
-			if (m.SharedSelector != null) Selector = m.SharedSelector;
+			if (Controls == null) Controls = m.SharedControls;
+			if (Selector == null) Selector = m.SharedSelector;
 		}
 
 		public override void Draw(Renderer r) {
-			base.Draw(r);
+			BackPanel?.Draw(r);
 			Selector?.Draw(r);
+			foreach (var e in Content) {
+				e.Draw(r);
+			}
 		}
 
 		public override void Update() {

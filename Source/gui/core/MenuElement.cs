@@ -61,7 +61,7 @@ namespace Toybox.gui.core {
 				TotalSize = new Point(TotalSize.X, InnerSize.Y + VWhitespace);
 			}
 
-			UpdateContentSize(InnerSize, out Point contentSize);
+			UpdateContentSize(Point.Zero, out Point contentSize);
 
 			if (HFit == FitType.FitContent || (HFit == FitType.FillOuter && contentSize.X > InnerSize.X)) {
 				TotalSize = new Point(contentSize.X + HWhitespace, TotalSize.Y);
@@ -76,7 +76,9 @@ namespace Toybox.gui.core {
 
 		/// <summary> Call UpdateSize(contentContainerSize) on any contained MenuElements.<br>
 		/// </br> Output the total minimum size of all content. <br>
-		/// </br> If the contained elements can be any size (eg. resizable graphics), output contentSize can be zero.</summary>
+		/// </br> If the contained elements can be any size (eg. resizable graphics), output contentSize can be zero.<br>
+		/// </br> This is called twice when updating size. First time contentContainerSize = Point.Zero.<br>
+		/// </br> On the first call, you should treat FillOuter as FitContent.</summary>
 		protected abstract void UpdateContentSize(Point contentContainerSize, out Point contentSize);
 
 		/// <summary> Set Position of any contained elements based on their alignment settings. Call UpdateContainedElementPositions on each element. </summary>

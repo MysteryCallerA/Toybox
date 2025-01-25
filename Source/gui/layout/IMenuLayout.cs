@@ -10,7 +10,7 @@ namespace Toybox.gui.layout
 {
     public interface IMenuLayout {
 
-		public void UpdateContentSize(List<MenuElement> content, MenuElement container, out Point contentSize);
+		public void UpdateContentSize(List<MenuElement> content, Point contentContainerSize, out Point contentSize);
 		public void UpdateContentPosition(List<MenuElement> content, MenuElement container);
 
 		/// <summary> Attempts to adjust selection down. If possible, return true. </summary>
