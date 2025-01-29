@@ -34,15 +34,15 @@ namespace Toybox.gui.content {
 
 		protected internal override void UpdateFunction(MenuControls c) {
 			c = Controls ?? c;
-			if (c.KeyLeft.Pressed) {
+			if (c.Left.Pressed) {
 				CurrentValue -= StepSize;
 				if (CurrentValue < MinValue) CurrentValue = MinValue;
-				c.KeyLeft.DropPress();
+				c.Left.DropPress();
 			}
-			if (c.KeyRight.Pressed) {
+			if (c.Right.Pressed) {
 				CurrentValue += StepSize;
 				if (CurrentValue > MaxValue) CurrentValue = MaxValue;
-				c.KeyRight.DropPress();
+				c.Right.DropPress();
 			}
 		}
 

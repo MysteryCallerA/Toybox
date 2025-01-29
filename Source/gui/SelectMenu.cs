@@ -6,19 +6,17 @@ using System.Threading.Tasks;
 using Toybox.gui.core;
 
 namespace Toybox.gui {
-	public class SelectMenu:InteractiveMenu {
+	public class SelectMenu:MenuBox {
 
 		public int SelectionId = 0;
 
 		public MenuSelector Selector;
-		public Action<MenuElement> OnOptionConfirm;
+
+		public bool AllowBack = true;
+		public bool AllowClose = true;
+		public bool AllowAutoSwitch = true;
 
 		public SelectMenu() {
-		}
-
-		public override void InheritSystemProps(MenuSystem m) {
-			if (Controls == null) Controls = m.SharedControls;
-			if (Selector == null) Selector = m.SharedSelector;
 		}
 
 		public override void Draw(Renderer r) {
@@ -29,35 +27,58 @@ namespace Toybox.gui {
 			}
 		}
 
-		public override void Update() {
-			UpdateControls();
+		protected internal override void UpdateFunction(MenuControls c) {
+			if (Controls != null) c = Controls;
+			UpdateDirectionalControls(c);
 
-			base.Update();
-			
+			if (Content.Count > 0) {
+				Content[SelectionId].UpdateFunction(c);
+			}
+
+			UpdateInteractionControls(c);
+		}
+
+		protected internal override void UpdateContainedElementPositions() {
+			base.UpdateContainedElementPositions();
+
 			if (Selector != null) {
 				if (SelectionId < 0) Selector.Update(null);
 				else Selector.Update(Content[SelectionId]);
 			}
 		}
 
-		public virtual void UpdateControls() {
-			if (Controls == null) return;
+		protected virtual void UpdateDirectionalControls(MenuControls c) {
+			if (c == null) return;
 
-			if (Controls.KeyUp != null && Controls.KeyUp.Pressed) {
-				if (PressUp()) Controls.KeyUp.DropPress();
+			if (c.Up != null && c.Up.Pressed) {
+				if (PressUp()) c.Up.DropPress();
 			}
-			if (Controls.KeyDown != null && Controls.KeyDown.Pressed) {
-				if (PressDown()) Controls.KeyDown.DropPress();
+			if (c.Down != null && c.Down.Pressed) {
+				if (PressDown()) c.Down.DropPress();
 			}
-			if (Controls.KeyLeft != null && Controls.KeyLeft.Pressed) {
-				if (PressLeft()) Controls.KeyLeft.DropPress();
+			if (c.Left != null && c.Left.Pressed) {
+				if (PressLeft()) c.Left.DropPress();
 			}
-			if (Controls.KeyRight != null && Controls.KeyRight.Pressed) {
-				if (PressRight()) Controls.KeyRight.DropPress();
+			if (c.Right != null && c.Right.Pressed) {
+				if (PressRight()) c.Right.DropPress();
 			}
+		}
 
-			if (Controls.KeyConfirm != null && Controls.KeyConfirm.Pressed) PressConfirm();
-			if (Controls.KeyBack != null && Controls.KeyBack.Pressed) PressBack();
+		protected virtual void UpdateInteractionControls(MenuControls c) {
+			if (c == null) return;
+
+			if (AllowClose && c.CloseMenu != null && c.CloseMenu.Pressed) {
+				if (PressClose()) {
+					c.CloseMenu.DropPress();
+					return;
+				}
+			}
+			if (AllowBack && c.Back != null && c.Back.Pressed) {
+				if (PressBack()) c.Back.DropPress();
+			}
+			if (AllowAutoSwitch && c.Confirm != null && c.Confirm.Pressed) {
+				if (PressSwitchMenu()) c.Confirm.DropPress();
+			}
 		}
 
 		public virtual bool PressUp() {
@@ -76,20 +97,27 @@ namespace Toybox.gui {
 			return Layout.SelectRight(Content, SelectionId, out SelectionId);
 		}
 
-		public virtual void PressConfirm() {
-			bool activated = Content[SelectionId].Activate();
-			if (activated) return;
-
-			OnOptionConfirm?.Invoke(Content[SelectionId]);
+		public virtual bool PressSwitchMenu() {
 			if (ParentSystem != null) {
-				ParentSystem.TrySwitchMenu(Content[SelectionId].Name, true);
+				return ParentSystem.TrySwitchMenu(Content[SelectionId].Name, true);
 			}
+			return false;
 		}
 
-		public virtual void PressBack() {
+		public virtual bool PressBack() {
 			if (ParentSystem != null) {
 				ParentSystem.BackMenu();
+				return true;
 			}
+			return false;
+		}
+
+		public virtual bool PressClose() {
+			if (ParentSystem != null) {
+				ParentSystem.CloseMenu();
+				return true;
+			}
+			return false;
 		}
 
 	}

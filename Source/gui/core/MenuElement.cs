@@ -11,6 +11,7 @@ namespace Toybox.gui.core {
 		public bool Selectable = false;
 		public virtual string Name { get; set; } = "";
 		public MenuControls Controls = null;
+		protected internal MenuSystem ParentSystem;
 
 		public Point TotalSize { get; private set; }
 		public Point InnerSize;
@@ -83,11 +84,6 @@ namespace Toybox.gui.core {
 
 		/// <summary> Set Position of any contained elements based on their alignment settings. Call UpdateContainedElementPositions on each element. </summary>
 		protected internal abstract void UpdateContainedElementPositions();
-
-		/// <summary> Activates element and any contained elements. Returns true if element-type is activatable. </summary>
-		public virtual bool Activate() {
-			return false;
-		}
 
 		public Point ContentOrigin {
 			get { return new Point(Position.X + MarginLeft + PaddingLeft, Position.Y + MarginTop + PaddingTop); }

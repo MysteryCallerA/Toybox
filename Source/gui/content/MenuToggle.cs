@@ -29,6 +29,13 @@ namespace Toybox.gui.content {
 		}
 
 		protected internal override void UpdateFunction(MenuControls c) {
+			c = Controls ?? c;
+			if (c == null) return;
+
+			if (c.Confirm != null && c.Confirm.Pressed) {
+				Activate();
+				c.Confirm.DropPress();
+			}
 		}
 
 		protected override void UpdateContentSize(Point contentContainerSize, out Point contentSize) {
@@ -47,11 +54,10 @@ namespace Toybox.gui.content {
 			CurrentState.UpdateContainedElementPositions();
 		}
 
-		public override bool Activate() {
+		public void Activate() {
 			StateId++;
 			if (StateId >= States.Count) StateId = 0;
 			PartialUpdate();
-			return true;
 		}
 
 		public static MenuToggle GetSimpleCheckbox() {

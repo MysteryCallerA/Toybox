@@ -12,22 +12,18 @@ namespace Toybox.gui {
 
 		public bool Enabled = false;
 		public Point Position = Point.Zero;
-		public InteractiveMenu ActiveMenu { get; protected set; }
-		protected List<InteractiveMenu> Menus = new();
-		public Stack<InteractiveMenu> History = new();
+		public MenuElement ActiveMenu { get; protected set; }
+		protected List<MenuElement> Menus = new();
+		public Stack<MenuElement> History = new();
 
-		public MenuControls SharedControls;
-		public MenuSelector SharedSelector;
-		public VirtualKey KeyOpenMenu;
-		public VirtualKey KeyCloseMenu;
+		public MenuControls Controls;
 
-		public virtual void AddMenu(InteractiveMenu m, string name = "") {
+		public virtual void AddMenu(MenuElement m, string name = "") {
 			Menus.Add(m);
 			if (name != "") m.Name = name;
-			m.InheritSystemProps(this);
 		}
 
-		public void SwitchMenu(InteractiveMenu m, bool addToHistory) {
+		public void SwitchMenu(MenuElement m, bool addToHistory) {
 			if (m == ActiveMenu) return;
 			if (addToHistory) History.Push(ActiveMenu);
 			ActiveMenu = m;
@@ -52,26 +48,20 @@ namespace Toybox.gui {
 		}
 
 		public virtual void Update() {
-			UpdateControl();
+			if (!Enabled) {
+				if (Controls != null && Controls.OpenMenu != null && Controls.OpenMenu.Pressed) {
+					OpenMenu();
+					Controls.OpenMenu.DropPress();
+				}
+			}
+
 			if (!Enabled || ActiveMenu == null) return;
 
+			ActiveMenu.ParentSystem = this;
 			ActiveMenu.Position = Position;
-			ActiveMenu.Update(this);
-		}
-
-		protected virtual void UpdateControl() {
-			if (!Enabled) {
-				if (KeyOpenMenu != null && KeyOpenMenu.Pressed) {
-					OpenMenu();
-					KeyOpenMenu.DropPress();
-				}
-				return;
-			}
-
-			if (KeyCloseMenu != null && KeyCloseMenu.Pressed) {
-				CloseMenu();
-				KeyCloseMenu.DropPress();
-			}
+			ActiveMenu.UpdateFunction(Controls);
+			ActiveMenu.UpdateSize(Resources.Camera.Bounds.Size);
+			ActiveMenu.UpdateContainedElementPositions();
 		}
 
 		public virtual void OpenMenu() {

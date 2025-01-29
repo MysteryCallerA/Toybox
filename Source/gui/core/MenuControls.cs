@@ -8,12 +8,14 @@ using Toybox.utils.input;
 namespace Toybox.gui.core {
 	public class MenuControls {
 
-		public VirtualKey KeyUp;
-		public VirtualKey KeyDown;
-		public VirtualKey KeyLeft;
-		public VirtualKey KeyRight;
-		public VirtualKey KeyConfirm;
-		public VirtualKey KeyBack;
+		public VirtualKey Up;
+		public VirtualKey Down;
+		public VirtualKey Left;
+		public VirtualKey Right;
+		public VirtualKey Confirm;
+		public VirtualKey Back;
+		public VirtualKey CloseMenu;
+		public VirtualKey OpenMenu;
 
 	}
 }

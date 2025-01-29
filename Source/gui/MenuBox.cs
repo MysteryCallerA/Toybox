@@ -32,7 +32,6 @@ namespace Toybox.gui {
 			foreach (var e in Content) {
 				e.UpdateFunction(control);
 			}
-			BackPanel?.UpdateFunction(control);
 		}
 
 		protected override void UpdateContentSize(Point contentContainerSize, out Point contentSize) {
@@ -43,14 +42,6 @@ namespace Toybox.gui {
 		protected internal override void UpdateContainedElementPositions() {
 			Layout.UpdateContentPosition(Content, this);
 			if (BackPanel != null) BackPanel.Position = PanelOrigin;
-		}
-
-		public override bool Activate() {
-			bool output = false;
-			foreach (var e in Content) {
-				output = output || e.Activate();
-			}
-			return output;
 		}
 	}
 }
