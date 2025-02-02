@@ -23,9 +23,29 @@ namespace Toybox.graphic {
 			Animations = animations;
 		}
 
-		public void GetDrawRects(int frame, int destX, int destY, out Rectangle source, out Rectangle dest) {
+		public void GetDrawRects(int frame, Point destPos, out Rectangle source, out Rectangle dest) {
 			source = Frames[frame];
-			dest = new Rectangle(destX - Origin.X, destY - Origin.Y, source.Width, source.Height);
+			dest = new Rectangle(destPos.X - Origin.X, destPos.Y - Origin.Y, source.Width, source.Height);
+		}
+
+	}
+
+	public class SpriteMapState:IGraphicState {
+		public SpriteMap SpriteMap;
+		public int Frame;
+
+		public SpriteMapState(SpriteMap s) {
+			SpriteMap = s;
+		}
+
+		public List<Rectangle> Frames {	get { return SpriteMap.Frames; } }
+		public Dictionary<string, Animation> Animations { get { return SpriteMap.Animations; } }
+		public Texture2D Graphic { get { return SpriteMap.Graphic; } }
+		public Point Origin { get { return SpriteMap.Origin; } }
+
+		public void GetDrawData(Point destPos, out Texture2D graphic, out Rectangle source, out Rectangle dest) {
+			SpriteMap.GetDrawRects(Frame, destPos, out source, out dest);
+			graphic = SpriteMap.Graphic;
 		}
 
 	}

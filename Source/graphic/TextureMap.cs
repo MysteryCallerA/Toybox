@@ -7,36 +7,52 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Toybox.graphic {
-	public class TextureMap:TextureObject {
+	public class TextureMap {
 
+		public Texture2D Graphic;
 		public List<TextureMapFrame> Frames = new List<TextureMapFrame>();
-		public int SelectedFrame = 0;
 
-		public TextureMap(Texture2D t):base(t) {
-		}
-
-		public override Rectangle Source {
-			get { return Frames[SelectedFrame].Bounds; }
+		public TextureMap(Texture2D t) {
+			Graphic = t;
 		}
 
 		public TextureMapFrame this[int i] {
 			get { return Frames[i]; }
 		}
+	}
 
-		public struct TextureMapFrame {
+	public struct TextureMapFrame {
 
-			public Rectangle Bounds;
-			public Point Origin = Point.Zero;
+		public Rectangle Bounds;
+		public Point Origin = Point.Zero;
 
-			public TextureMapFrame(Rectangle bounds) {
-				Bounds = bounds;
-			}
+		public TextureMapFrame(Rectangle bounds) {
+			Bounds = bounds;
+		}
 
-			public void GetDrawRects(int x, int y, int scale, out Rectangle source, out Rectangle dest) {
-				source = Bounds;
-				dest = new Rectangle(x - (Origin.X * scale), y - (Origin.Y * scale), source.Width * scale, source.Height * scale);
-			}
+		public void GetDrawRects(Point destPos, out Rectangle source, out Rectangle dest) {
+			source = Bounds;
+			dest = new Rectangle(destPos.X - Origin.X, destPos.Y - Origin.Y, source.Width, source.Height);
+		}
 
+	}
+
+	public class TextureMapState:IGraphicState {
+
+		public TextureMap TextureMap;
+		public int Frame;
+
+		public TextureMapState(TextureMap t) {
+			TextureMap = t;
+		}
+
+		public List<TextureMapFrame> Frames { get { return TextureMap.Frames; } }
+		public TextureMapFrame this[int i] { get { return TextureMap.Frames[i]; } }
+		public Texture2D Graphic { get { return TextureMap.Graphic; } }
+
+		public void GetDrawData(Point destPos, out Texture2D graphic, out Rectangle source, out Rectangle dest) {
+			TextureMap.Frames[Frame].GetDrawRects(destPos, out source, out dest);
+			graphic = TextureMap.Graphic;
 		}
 	}
 }

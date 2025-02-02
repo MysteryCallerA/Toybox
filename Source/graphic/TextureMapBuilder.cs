@@ -27,7 +27,7 @@ namespace Toybox.graphic {
 					var frame = BuildFrame(frameXStart, x, y, ref pixels, t.Width, backColor, originColor, out bool validFrame, out Point origin);
 
 					if (validFrame) {
-						map.Frames.Add(new TextureMap.TextureMapFrame(frame) { Origin = origin });
+						map.Frames.Add(new TextureMapFrame(frame) { Origin = origin });
 					}
 					frameXStart = x + 1;
 

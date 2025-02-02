@@ -7,13 +7,19 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Toybox.graphic {
-	public class TextureFull:TextureObject {
+	public class TextureFull:IGraphicState {
 
-		public TextureFull(Texture2D texture):base(texture) {
+		public Texture2D Graphic;
+		public Point Origin;
+
+		public TextureFull(Texture2D g) {
+			Graphic = g;
 		}
 
-		public override Rectangle Source {
-			get { return Texture.Bounds; }
+		public void GetDrawData(Point destPos, out Texture2D graphic, out Rectangle source, out Rectangle dest) {
+			source = Graphic.Bounds;
+			dest = new Rectangle(destPos.X - Origin.X, destPos.Y - Origin.Y, source.Width, source.Height);
+			graphic = Graphic;
 		}
 	}
 }

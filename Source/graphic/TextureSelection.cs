@@ -7,20 +7,21 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Toybox.graphic {
-	public class TextureSelection:TextureObject {
+	public class TextureSelection:IGraphicState {
 
 		public Rectangle Selection;
+		public Texture2D Graphic;
+		public Point Origin;
 
-		public TextureSelection(Texture2D t, Rectangle selection):base(t) {
+		public TextureSelection(Texture2D t, Rectangle selection) {
 			Selection = selection;
+			Graphic = t;
 		}
 
-		public TextureSelection(Texture2D t):base(t) {
-			Selection = Texture.Bounds;
-		}
-
-		public override Rectangle Source {
-			get { return Selection; }
+		public void GetDrawData(Point destPos, out Texture2D graphic, out Rectangle source, out Rectangle dest) {
+			source = Selection;
+			dest = new Rectangle(destPos - Origin, source.Size);
+			graphic = Graphic;
 		}
 	}
 }
