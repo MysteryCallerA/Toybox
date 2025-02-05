@@ -48,5 +48,8 @@ namespace Toybox.graphic {
 			graphic = SpriteMap.Graphic;
 		}
 
+		public Point GetSize() {
+			return SpriteMap.Frames[Frame].Size;
+		}
 	}
 }

@@ -21,5 +21,9 @@ namespace Toybox.graphic {
 			dest = new Rectangle(destPos.X - Origin.X, destPos.Y - Origin.Y, source.Width, source.Height);
 			graphic = Graphic;
 		}
+
+		public Point GetSize() {
+			return Graphic.Bounds.Size;
+		}
 	}
 }

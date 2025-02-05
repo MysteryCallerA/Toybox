@@ -9,7 +9,8 @@ using System.Threading.Tasks;
 namespace Toybox.graphic {
 	public interface IGraphicState {
 
-		public void GetDrawData(Point destPos, out Texture2D graphic, out Rectangle source, out Rectangle dest); 
+		public void GetDrawData(Point destPos, out Texture2D graphic, out Rectangle source, out Rectangle dest);
+		public Point GetSize();
 
 	}
 }

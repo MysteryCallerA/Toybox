@@ -54,5 +54,9 @@ namespace Toybox.graphic {
 			TextureMap.Frames[Frame].GetDrawRects(destPos, out source, out dest);
 			graphic = TextureMap.Graphic;
 		}
+
+		public Point GetSize() {
+			return TextureMap.Frames[Frame].Bounds.Size;
+		}
 	}
 }

@@ -48,7 +48,7 @@ namespace Toybox.maps.tiles {
 				for (int row = topleft.Y; row < botright.Y; row++) {
 					var tile = Map[col][row];
 					if (!tile.IsEmpty && IsTileVisible.Invoke(col, row)) {
-						r.Batch.Draw(Tileset.Texture, dest, Tileset.GetCell(tile.Id), Color.White, 0, Vector2.Zero, tile.Effect, 0);
+						r.Batch.Draw(Tileset.Graphic, dest, Tileset.GetCell(tile.Id), Color.White, 0, Vector2.Zero, tile.Effect, 0);
 					}
 					dest.Y += cellsize.Y;
 				}

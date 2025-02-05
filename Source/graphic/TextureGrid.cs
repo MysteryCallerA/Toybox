@@ -33,6 +33,10 @@ namespace Toybox.graphic {
 			return new TextureSelection(Graphic, GetCell(cell));
 		}
 
+		public TextureSelection ToTextureSelection(int frame) {
+			return ToTextureSelection(FrameIdToCellId(frame));
+		}
+
 		public Point CellSize {
 			get { return new Point(CellWidth, CellHeight); }
 		}
@@ -41,6 +45,15 @@ namespace Toybox.graphic {
 			source = GetCell(cell);
 			dest = new Rectangle(destPos.X - Origin.X, destPos.Y - Origin.Y, source.Width, source.Height);
 		}
+
+		public int CellIdToFrameId(Point cell) { return (cell.Y * Columns) + cell.X; }
+
+		public Point FrameIdToCellId(int frame) {
+			var r = Math.DivRem(frame, Columns);
+			return new Point(r.Remainder, r.Quotient);
+		}
+
+		public int Frames { get { return Columns * Rows; } }
 
 	}
 
@@ -56,6 +69,15 @@ namespace Toybox.graphic {
 		public void GetDrawData(Point destPos, out Texture2D graphic, out Rectangle source, out Rectangle dest) {
 			GetDrawRects(Cell, destPos, out source, out dest);
 			graphic = Graphic;
+		}
+
+		public Point GetSize() {
+			return new Point(CellWidth, CellHeight);
+		}
+
+		public int Frame {
+			get { return CellIdToFrameId(Cell); }
+			set { Cell = FrameIdToCellId(value); }
 		}
 	}
 }

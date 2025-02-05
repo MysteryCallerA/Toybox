@@ -23,5 +23,9 @@ namespace Toybox.graphic {
 			dest = new Rectangle(destPos - Origin, source.Size);
 			graphic = Graphic;
 		}
+
+		public Point GetSize() {
+			return Selection.Size;
+		}
 	}
 }
