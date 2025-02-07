@@ -10,6 +10,7 @@ using Toybox.gui.core;
 namespace Toybox.gui.content {
 	public class MenuGraphic:MenuElement {
 
+		public const string TypeName = "Graphic";
 		public IGraphicState Content;
 		public Color Color = Color.White;
 		public int Scale = 0;
@@ -44,6 +45,13 @@ namespace Toybox.gui.content {
 		}
 
 		protected internal override void UpdateContainedElementPositions() {
+		}
+
+		public override string GetTypeName() {
+			return TypeName;
+		}
+
+		public override void Cascade(Action<MenuElement> a) {
 		}
 	}
 }

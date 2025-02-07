@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Toybox.gui.style;
 
 namespace Toybox.gui.core {
 	public abstract class MenuElement {
@@ -12,6 +13,9 @@ namespace Toybox.gui.core {
 		public virtual string Name { get; set; } = "";
 		public MenuControls Controls = null;
 		protected internal MenuSystem ParentSystem;
+
+		public static StyleGroup Styles = new();
+		public MenuStateManager State;
 
 		public Point TotalSize { get; private set; }
 		public Point InnerSize;
@@ -28,6 +32,10 @@ namespace Toybox.gui.core {
 		public enum HAlignType { Left, Right, Center }
 		public VAlignType VAlign = VAlignType.Top;
 		public HAlignType HAlign = HAlignType.Left;
+
+		public MenuElement() {
+			State = new MenuStateManager(this);
+		}
 
 		/// <summary> Call Update on only the outermost element to update the entire menu structure. </summary>
 		public virtual void Update() {
@@ -114,5 +122,34 @@ namespace Toybox.gui.core {
 
 		private int HWhitespace { get { return PaddingLeft + PaddingRight + MarginLeft + MarginRight; } }
 		private int VWhitespace { get { return PaddingTop + PaddingBottom + MarginTop + MarginBottom; } }
+		//------------------------------------
+
+		public void UpdateStyle() {
+			var style = Styles.GetFirstMatch(this);
+			if (style == null) return;
+
+			foreach (var value in style.GetRelevantValues(this)) {
+				ApplyStyleValue(value);
+			}
+		}
+
+		protected virtual void ApplyStyleValue(StyleValue v) {
+			if (v.Field.Equals(StyleField.Padding)) { Padding = v.Value; return; }
+			if (v.Field.Equals(StyleField.PaddingLeft)) { PaddingLeft = v.Value; return; }
+			if (v.Field.Equals(StyleField.PaddingRight)) { PaddingRight = v.Value; return; }
+			if (v.Field.Equals(StyleField.PaddingTop)) { PaddingTop = v.Value; return; }
+			if (v.Field.Equals(StyleField.PaddingBottom)) { PaddingBottom = v.Value; return; }
+
+			if (v.Field.Equals(StyleField.Margin)) { Margin = v.Value; return; }
+			if (v.Field.Equals(StyleField.MarginLeft)) { MarginLeft = v.Value; return; }
+			if (v.Field.Equals(StyleField.MarginRight)) { MarginRight = v.Value; return; }
+			if (v.Field.Equals(StyleField.MarginTop)) { MarginTop = v.Value; return; }
+			if (v.Field.Equals(StyleField.MarginBottom)) { MarginBottom = v.Value; return; }
+		}
+
+		public abstract string GetTypeName();
+
+		public abstract void Cascade(Action<MenuElement> a);
+
 	}
 }

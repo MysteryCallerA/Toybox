@@ -11,6 +11,7 @@ namespace Toybox.gui {
 
 	public class MenuBox:MenuElement {
 
+		public const string TypeName = "Box";
 		public List<MenuElement> Content = new();
 		public MenuElement BackPanel;
 		public IMenuLayout Layout = new MenuVerticalLayout();
@@ -42,6 +43,17 @@ namespace Toybox.gui {
 		protected internal override void UpdateContainedElementPositions() {
 			Layout.UpdateContentPosition(Content, this);
 			if (BackPanel != null) BackPanel.Position = PanelOrigin;
+		}
+
+		public override string GetTypeName() {
+			return TypeName;
+		}
+
+		public override void Cascade(Action<MenuElement> a) {
+			foreach (var e in Content) {
+				a.Invoke(e);
+				e.Cascade(a);
+			}
 		}
 	}
 }

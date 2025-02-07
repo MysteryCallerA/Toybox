@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 using Toybox.gui.core;
 using Toybox.utils.text;
 
-namespace Toybox.gui.content
-{
-    public class MenuText:MenuElement {
+namespace Toybox.gui.content {
+	public class MenuText:MenuElement {
 
+		public const string TypeName = "Text";
 		public Text TextRenderer;
 
 		public MenuText(Font f, string content = "") {
@@ -47,6 +47,13 @@ namespace Toybox.gui.content
 			} else if (VAlign == VAlignType.Center) {
 				TextRenderer.Y = contentbounds.Center.Y - (TextRenderer.Size.Y / 2);
 			}
+		}
+
+		public override string GetTypeName() {
+			return TypeName;
+		}
+
+		public override void Cascade(Action<MenuElement> a) {
 		}
 
 		public override string Name {

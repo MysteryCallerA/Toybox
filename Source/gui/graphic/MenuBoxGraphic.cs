@@ -9,8 +9,9 @@ using Toybox.utils.math;
 
 namespace Toybox.gui.graphic
 {
-    public class MenuBoxGraphic:MenuElement {
+	public class MenuBoxGraphic:MenuElement {
 
+		public const string TypeName = "BoxGraphic";
 		public Color BackColor = Color.Gray;
 		public Color BorderColor = Color.Transparent;
 		public int BorderSize = 0;
@@ -51,6 +52,13 @@ namespace Toybox.gui.graphic
 
 		protected override void UpdateContentSize(Point contentContainerSize, out Point contentSize) {
 			contentSize = Point.Zero;
+		}
+
+		public override string GetTypeName() {
+			return TypeName;
+		}
+
+		public override void Cascade(Action<MenuElement> a) {
 		}
 
 		public int HOverflow {

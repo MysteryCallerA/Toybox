@@ -11,7 +11,8 @@ namespace Toybox.gui.graphic {
 
 	public class CheckboxGraphic:MenuElement {
 
-		public bool State;
+		public const string TypeName = "CheckboxGraphic";
+		public bool CheckedState;
 		public int BorderThickness = 1;
 		public Color BoxColor = Color.White;
 		public Color CheckColor = Color.White;
@@ -19,11 +20,11 @@ namespace Toybox.gui.graphic {
 		public CheckboxGraphic(bool state) {
 			Fit = FitType.Static;
 			InnerSize = new Point(10, 10);
-			State = state;
+			CheckedState = state;
 		}
 
 		public override void Draw(Renderer r) {
-			if (State) {
+			if (CheckedState) {
 				DrawTrue(r);
 			} else {
 				DrawFalse(r);
@@ -64,5 +65,11 @@ namespace Toybox.gui.graphic {
 		protected internal override void UpdateContainedElementPositions() {
 		}
 
+		public override string GetTypeName() {
+			return TypeName;
+		}
+
+		public override void Cascade(Action<MenuElement> a) {
+		}
 	}
 }

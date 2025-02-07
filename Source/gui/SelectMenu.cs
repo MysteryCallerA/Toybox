@@ -4,11 +4,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Toybox.gui.core;
+using Toybox.gui.style;
 
 namespace Toybox.gui {
 	public class SelectMenu:MenuBox {
 
-		public int SelectionId = 0;
+		private int _selectionId;
+		public int SelectionId {
+			get { return _selectionId; }
+			set {
+				if (_selectionId >= 0 && _selectionId < Content.Count) {
+					var e = Content[_selectionId];
+					UnSelectElement(e);
+					e.Cascade(UnSelectElement);
+				}
+				_selectionId = value;
+				if (_selectionId >= 0 && _selectionId < Content.Count) {
+					var e = Content[_selectionId];
+					SelectElement(e);
+					e.Cascade(SelectElement);
+				}
+			}
+		}
 
 		public MenuSelector Selector;
 
@@ -17,6 +34,7 @@ namespace Toybox.gui {
 		public bool AllowAutoSwitch = true;
 
 		public SelectMenu() {
+			SelectionId = 0;
 		}
 
 		public override void Draw(Renderer r) {
@@ -82,19 +100,27 @@ namespace Toybox.gui {
 		}
 
 		public virtual bool PressUp() {
-			return Layout.SelectUp(Content, SelectionId, out SelectionId);
+			var output = Layout.SelectUp(Content, SelectionId, out var id);
+			SelectionId = id;
+			return output;
 		}
 
 		public virtual bool PressDown() {
-			return Layout.SelectDown(Content, SelectionId, out SelectionId);
+			var output = Layout.SelectDown(Content, SelectionId, out var id);
+			SelectionId = id;
+			return output;
 		}
 
 		public virtual bool PressLeft() {
-			return Layout.SelectLeft(Content, SelectionId, out SelectionId);
+			var output = Layout.SelectLeft(Content, SelectionId, out var id);
+			SelectionId = id;
+			return output;
 		}
 
 		public virtual bool PressRight() {
-			return Layout.SelectRight(Content, SelectionId, out SelectionId);
+			var output = Layout.SelectRight(Content, SelectionId, out var id);
+			SelectionId = id;
+			return output;
 		}
 
 		public virtual bool PressSwitchMenu() {
@@ -118,6 +144,14 @@ namespace Toybox.gui {
 				return true;
 			}
 			return false;
+		}
+
+		private static void UnSelectElement(MenuElement e) {
+			e.State.Remove(MenuState.Selected);
+		}
+
+		private static void SelectElement(MenuElement e) {
+			e.State.Add(MenuState.Selected);
 		}
 
 	}
