@@ -35,29 +35,11 @@ namespace Toybox.gui.style {
 		 */
 
 		public MenuState[] State;
-		public List<StyleValue> Values = new();
+		public Action<MenuElement> Value;
 
-		public Style(params MenuState[] state) {
+		public Style(Action<MenuElement> value, params MenuState[] state) {
 			State = state;
-		}
-
-		public void Add(ColorField f, Color c, string name = null, string type = null) {
-			Values.Add(new StyleValue(f.R, c.R, name, type));
-			Values.Add(new StyleValue(f.G, c.G, name, type));
-			Values.Add(new StyleValue(f.B, c.B, name, type));
-			Values.Add(new StyleValue(f.A, c.A, name, type));
-		}
-
-		public void Add(StyleField f, int v, string name = null, string type = null) {
-			Values.Add(new StyleValue(f, v, name, type));
-		}
-
-		public IEnumerable<StyleValue> GetRelevantValues(MenuElement e) {
-			foreach (var value in Values) {
-				if (value.Name != null && e.Name != value.Name) continue;
-				if (value.Type != null && e.GetTypeName() != value.Type) continue;
-				yield return value;
-			}
+			Value = value;
 		}
 
 	}

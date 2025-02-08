@@ -10,11 +10,13 @@ namespace Toybox.gui.style {
 
 		public List<Style> Content = new();
 
-		public Style GetFirstMatch(MenuElement e) {
+		public void UpdateStyle(MenuElement e) {
 			foreach (var s in Content) {
-				if (e.State.Matches(s.State)) return s;
+				if (e.State.Matches(s.State)) {
+					s.Value.Invoke(e);
+					return;
+				}
 			}
-			return null;
 		}
 
 		public void Add(Style s) {

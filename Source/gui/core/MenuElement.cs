@@ -14,7 +14,7 @@ namespace Toybox.gui.core {
 		public MenuControls Controls = null;
 		protected internal MenuSystem ParentSystem;
 
-		public static StyleGroup Styles = new();
+		public StyleGroup Styles;
 		public MenuStateManager State;
 
 		public Point TotalSize { get; private set; }
@@ -125,27 +125,12 @@ namespace Toybox.gui.core {
 		//------------------------------------
 
 		public void UpdateStyle() {
-			var style = Styles.GetFirstMatch(this);
-			if (style == null) return;
-
-			foreach (var value in style.GetRelevantValues(this)) {
-				ApplyStyleValue(value);
-			}
+			if (Styles == null) return;
+			Styles.UpdateStyle(this);
 		}
 
-		protected virtual void ApplyStyleValue(StyleValue v) {
-			if (v.Field.Equals(StyleField.Padding)) { Padding = v.Value; return; }
-			if (v.Field.Equals(StyleField.PaddingLeft)) { PaddingLeft = v.Value; return; }
-			if (v.Field.Equals(StyleField.PaddingRight)) { PaddingRight = v.Value; return; }
-			if (v.Field.Equals(StyleField.PaddingTop)) { PaddingTop = v.Value; return; }
-			if (v.Field.Equals(StyleField.PaddingBottom)) { PaddingBottom = v.Value; return; }
-
-			if (v.Field.Equals(StyleField.Margin)) { Margin = v.Value; return; }
-			if (v.Field.Equals(StyleField.MarginLeft)) { MarginLeft = v.Value; return; }
-			if (v.Field.Equals(StyleField.MarginRight)) { MarginRight = v.Value; return; }
-			if (v.Field.Equals(StyleField.MarginTop)) { MarginTop = v.Value; return; }
-			if (v.Field.Equals(StyleField.MarginBottom)) { MarginBottom = v.Value; return; }
-		}
+		public virtual void ApplyStyleValue(StyleField f, int v) { }
+		public virtual void ApplyStyleValue(ColorField f, Color c) { }
 
 		public abstract string GetTypeName();
 
