@@ -43,7 +43,7 @@ namespace Toybox.gui.content {
 			int x = 0, y = 0;
 			foreach (var e in States) {
 				e.UpdateSize(contentContainerSize);
-				var size = e.TotalSize;
+				var size = e.OuterSize;
 				x = Math.Max(size.X, x);
 				y = Math.Max(size.Y, y);
 			}

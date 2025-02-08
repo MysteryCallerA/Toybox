@@ -17,9 +17,14 @@ namespace Toybox.gui.core {
 		public StyleGroup Styles;
 		public MenuStateManager State;
 
-		public Point TotalSize { get; private set; }
-		public Point InnerSize;
+		/// <summary> Is set automatically during UpdateSize. Used for relative positioning of elements. </summary>
+		public Point OuterSize { get; private set; }
+		/// <summary> Is automatically set during UpdateSize. The size inner elements should conform to. </summary>
+		public Point InnerSize { get; private set; }
+		/// <summary> Is automatically set by container. Represents absolute outer position. </summary>
 		public Point Position;
+		/// <summary> Only used when Fit is Static. </summary>
+		public Point TargetInnerSize;
 
 		public enum FitType { Static, FitContent, FillOuter }
 		public FitType HFit = FitType.FitContent;
@@ -27,6 +32,8 @@ namespace Toybox.gui.core {
 
 		public int MarginLeft, MarginRight, MarginTop, MarginBottom;
 		public int PaddingLeft, PaddingRight, PaddingTop, PaddingBottom;
+		public int OverflowLeft, OverflowRight, OverflowTop, OverflowBottom;
+		public int XOffset, YOffset;
 
 		public enum VAlignType { Top, Bottom, Center }
 		public enum HAlignType { Left, Right, Center }
@@ -58,27 +65,29 @@ namespace Toybox.gui.core {
 
 		protected internal void UpdateSize(Point containerSize) {
 			if (HFit == FitType.FillOuter) {
-				TotalSize = new Point(containerSize.X, TotalSize.Y);
-				InnerSize.X = containerSize.X - HWhitespace;
+				OuterSize = new Point(containerSize.X, OuterSize.Y);
+				InnerSize = new Point(containerSize.X - HWhitespace + OverflowLeft + OverflowRight, InnerSize.Y);
 			} else if (HFit == FitType.Static) {
-				TotalSize = new Point(InnerSize.X + HWhitespace, TotalSize.Y);
+				OuterSize = new Point(TargetInnerSize.X + HWhitespace, OuterSize.Y);
+				InnerSize = new Point(TargetInnerSize.X + OverflowLeft + OverflowRight, InnerSize.Y);
 			}
 			if (VFit == FitType.FillOuter) {
-				TotalSize = new Point(TotalSize.X, containerSize.Y);
-				InnerSize.Y = containerSize.Y - VWhitespace;
+				OuterSize = new Point(OuterSize.X, containerSize.Y);
+				InnerSize = new Point(InnerSize.X, containerSize.Y - VWhitespace + OverflowTop + OverflowBottom);
 			} else if (VFit == FitType.Static) {
-				TotalSize = new Point(TotalSize.X, InnerSize.Y + VWhitespace);
+				OuterSize = new Point(OuterSize.X, TargetInnerSize.Y + VWhitespace);
+				InnerSize = new Point(InnerSize.X, TargetInnerSize.Y + OverflowTop + OverflowBottom);
 			}
 
 			UpdateContentSize(Point.Zero, out Point contentSize);
 
 			if (HFit == FitType.FitContent || (HFit == FitType.FillOuter && contentSize.X > InnerSize.X)) {
-				TotalSize = new Point(contentSize.X + HWhitespace, TotalSize.Y);
-				InnerSize.X = contentSize.X;
+				OuterSize = new Point(contentSize.X + HWhitespace, OuterSize.Y);
+				InnerSize = new Point(contentSize.X + OverflowLeft + OverflowRight, InnerSize.Y);
 			}
 			if (VFit == FitType.FitContent || (VFit == FitType.FillOuter && contentSize.Y > InnerSize.Y)) {
-				TotalSize = new Point(TotalSize.X, contentSize.Y + VWhitespace);
-				InnerSize.Y = contentSize.Y;
+				OuterSize = new Point(OuterSize.X, contentSize.Y + VWhitespace);
+				InnerSize = new Point(InnerSize.X, contentSize.Y + OverflowTop + OverflowBottom);
 			}
 			UpdateContentSize(InnerSize, out _);
 		}
@@ -94,13 +103,13 @@ namespace Toybox.gui.core {
 		protected internal abstract void UpdateContainedElementPositions();
 
 		public Point ContentOrigin {
-			get { return new Point(Position.X + MarginLeft + PaddingLeft, Position.Y + MarginTop + PaddingTop); }
+			get { return new Point(Position.X + MarginLeft + PaddingLeft - OverflowLeft + XOffset, Position.Y + MarginTop + PaddingTop - OverflowTop + YOffset); }
 		}
 		public Rectangle ContentBounds {
 			get { return new Rectangle(ContentOrigin, InnerSize); }
 		}
 		public Point PanelOrigin {
-			get { return new Point(Position.X + MarginLeft, Position.Y + MarginTop); }
+			get { return new Point(Position.X + MarginLeft - OverflowLeft + XOffset, Position.Y + MarginTop - OverflowTop + YOffset); }
 		}
 		public Point PanelSize {
 			get { return new Point(InnerSize.X + PaddingLeft + PaddingRight, InnerSize.Y + PaddingTop + PaddingBottom); }
@@ -122,6 +131,10 @@ namespace Toybox.gui.core {
 
 		private int HWhitespace { get { return PaddingLeft + PaddingRight + MarginLeft + MarginRight; } }
 		private int VWhitespace { get { return PaddingTop + PaddingBottom + MarginTop + MarginBottom; } }
+
+		public int HOverflow { set { OverflowLeft = value; OverflowRight = value; } }
+		public int VOverflow { set { OverflowTop = value; OverflowBottom = value; } }
+		public int Overflow { set { OverflowLeft = value; OverflowRight = value; OverflowTop = value; OverflowBottom = value; } }
 		//------------------------------------
 
 		public void UpdateStyle() {

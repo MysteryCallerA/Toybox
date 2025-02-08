@@ -19,7 +19,7 @@ namespace Toybox.gui.graphic {
 
 		public CheckboxGraphic(bool state) {
 			Fit = FitType.Static;
-			InnerSize = new Point(10, 10);
+			TargetInnerSize = new Point(10, 10);
 			CheckedState = state;
 		}
 

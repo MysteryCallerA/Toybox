@@ -35,7 +35,7 @@ namespace Toybox.gui.core {
 			NoSelection = false;
 
 			if (Pointer != null) {
-				var selectionBounds = new Rectangle(selection.Position, selection.TotalSize);
+				var selectionBounds = new Rectangle(selection.Position, selection.OuterSize);
 				var pos = new Point(selectionBounds.X + (int)(selectionBounds.Width * PointerAttachSide.X), selectionBounds.Y + (int)(selectionBounds.Height * PointerAttachSide.Y));
 				pos += PointerOffset;
 				Pointer.Position = pos;

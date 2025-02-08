@@ -17,14 +17,7 @@ namespace Toybox.gui.style {
 			return Name;
 		}
 
-		public static readonly StyleField Overflow = new("Overflow");
-		public static readonly StyleField OverflowLeft = new("OverflowLeft");
-		public static readonly StyleField OverflowRight = new("OverflowRight");
-		public static readonly StyleField OverflowTop = new("OverflowTop");
-		public static readonly StyleField OverflowBottom = new("OverflowBottom");
-
-		public static readonly StyleField OffsetX = new("OffsetX");
-		public static readonly StyleField OffsetY = new("OffsetY");
+		
 
 	}
 
@@ -42,6 +35,7 @@ namespace Toybox.gui.style {
 
 		public static readonly ColorField Text = new("Text");
 		public static readonly ColorField Back = new("Back");
+		public static readonly ColorField TextShadow = new("TextShadow");
 
 	}
 }

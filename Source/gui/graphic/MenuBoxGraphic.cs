@@ -15,10 +15,9 @@ namespace Toybox.gui.graphic
 		public Color BackColor = Color.Gray;
 		public Color BorderColor = Color.Transparent;
 		public int BorderSize = 0;
-		public int OverflowLeft, OverflowRight, OverflowTop, OverflowBottom;
 
 		public MenuBoxGraphic(Point size) {
-			InnerSize = size;
+			TargetInnerSize = size;
 			Fit = FitType.Static;
 		}
 
@@ -27,10 +26,7 @@ namespace Toybox.gui.graphic
 		}
 
 		public override void Draw(Renderer r) {
-			var pos = ContentOrigin;
-			pos = new Point(pos.X - OverflowLeft, pos.Y - OverflowTop);
-			var size = new Point(InnerSize.X + OverflowLeft + OverflowRight, InnerSize.Y + OverflowTop + OverflowBottom);
-			var bounds = new Rectangle(pos, size);
+			var bounds = ContentBounds;
 
 			var back = new Rectangle(bounds.X + BorderSize, bounds.Y + BorderSize, bounds.Width - BorderSize * 2, bounds.Height - BorderSize * 2);
 			r.DrawRectStatic(back, BackColor);
@@ -56,16 +52,6 @@ namespace Toybox.gui.graphic
 
 		public override string GetTypeName() {
 			return TypeName;
-		}
-
-		public int HOverflow {
-			set { OverflowLeft = value; OverflowRight = value; }
-		}
-		public int VOverflow {
-			set { OverflowTop = value; OverflowBottom = value; }
-		}
-		public int Overflow {
-			set { OverflowLeft = OverflowRight = OverflowBottom = OverflowTop = value; }
 		}
 
 	}

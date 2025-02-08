@@ -28,7 +28,7 @@ namespace Toybox.gui.layout {
 					continue;
 				}
 				e.UpdateSize(bounds);
-				var esize = e.TotalSize;
+				var esize = e.OuterSize;
 				vsize += esize.Y;
 				if (esize.X > hsize) hsize = esize.X;
 			}
@@ -44,7 +44,7 @@ namespace Toybox.gui.layout {
 					continue;
 				}
 				e.UpdateSize(new Point(bounds.X, bounds.Y / fitouterCount));
-				var esize = e.TotalSize;
+				var esize = e.OuterSize;
 				bounds.Y -= esize.Y;
 				vsize += esize.Y;
 				if (esize.X > hsize) hsize = esize.X;
@@ -63,18 +63,18 @@ namespace Toybox.gui.layout {
 				if (e.HAlign == MenuElement.HAlignType.Left) {
 					e.Position = new Point(bounds.X, y);
 				} else if (e.HAlign == MenuElement.HAlignType.Right) {
-					e.Position = new Point(bounds.Right - e.TotalSize.X, y);
+					e.Position = new Point(bounds.Right - e.OuterSize.X, y);
 				} else if (e.HAlign == MenuElement.HAlignType.Center) {
-					e.Position = new Point(bounds.Center.X - (e.TotalSize.X / 2), y);
+					e.Position = new Point(bounds.Center.X - (e.OuterSize.X / 2), y);
 				}
-				y += e.TotalSize.Y + Spacing;
+				y += e.OuterSize.Y + Spacing;
 			}
 
 			y = bounds.Bottom;
 			for (int i = content.Count - 1; i >= 0; i--) {
 				var e = content[i];
 				if (e.VAlign == MenuElement.VAlignType.Bottom) {
-					e.Position = new Point(e.Position.X, y - e.TotalSize.Y);
+					e.Position = new Point(e.Position.X, y - e.OuterSize.Y);
 				}
 				e.UpdateContainedElementPositions();
 				y = e.Position.Y - Spacing;

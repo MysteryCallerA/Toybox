@@ -21,7 +21,7 @@ namespace Toybox.gui.content {
 		public MenuValueBar() {
 			Fit = FitType.Static;
 			VAlign = VAlignType.Center;
-			InnerSize = new Point(50, 5);
+			TargetInnerSize = new Point(50, 5);
 			Padding = 1;
 
 			BackGraphic = new MenuBoxGraphic() { Fit = FitType.FillOuter, BackColor = Color.DarkGray };

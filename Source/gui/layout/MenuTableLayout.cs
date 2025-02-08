@@ -36,7 +36,7 @@ namespace Toybox.gui.layout {
 			foreach (var e in content) {
 				if (e != null) {
 					e.UpdateSize(contentContainerSize);
-					var size = e.TotalSize;
+					var size = e.OuterSize;
 					if (size.X > ColumnSizes[col]) {
 						ColumnSizes[col] = size.X;
 					}
@@ -123,14 +123,14 @@ namespace Toybox.gui.layout {
 					if (e.HAlign == MenuElement.HAlignType.Left) {
 						e.Position = new Point(cell.X, cell.Y);
 					} else if (e.HAlign == MenuElement.HAlignType.Right) {
-						e.Position = new Point(cell.Right - e.TotalSize.X, cell.Y);
+						e.Position = new Point(cell.Right - e.OuterSize.X, cell.Y);
 					} else if (e.HAlign == MenuElement.HAlignType.Center) {
-						e.Position = new Point(cell.Center.X - (e.TotalSize.X / 2), cell.Y);
+						e.Position = new Point(cell.Center.X - (e.OuterSize.X / 2), cell.Y);
 					}
 					if (e.VAlign == MenuElement.VAlignType.Bottom) {
-						e.Position = new Point(e.Position.X, cell.Bottom - e.TotalSize.Y);
+						e.Position = new Point(e.Position.X, cell.Bottom - e.OuterSize.Y);
 					} else if (e.VAlign == MenuElement.VAlignType.Center) {
-						e.Position = new Point(e.Position.X, cell.Center.Y - (e.TotalSize.Y / 2));
+						e.Position = new Point(e.Position.X, cell.Center.Y - (e.OuterSize.Y / 2));
 					}
 					e.UpdateContainedElementPositions();
 				}

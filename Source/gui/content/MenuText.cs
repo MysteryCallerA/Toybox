@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Toybox.gui.core;
+using Toybox.gui.style;
 using Toybox.utils.text;
 
 namespace Toybox.gui.content {
@@ -12,6 +13,8 @@ namespace Toybox.gui.content {
 
 		public const string TypeName = "Text";
 		public Text TextRenderer;
+		public Color? ShadowColor = null;
+		public Point ShadowOffset;
 
 		public MenuText(Font f, string content = "") {
 			TextRenderer = new Text(f);
@@ -19,6 +22,12 @@ namespace Toybox.gui.content {
 		}
 
 		public override void Draw(Renderer r) {
+			if (ShadowColor.HasValue) {
+				var pos = ShadowOffset;
+				if (pos == Point.Zero) pos = new Point(TextRenderer.Scale);
+				TextRenderer.Draw(r, TextRenderer.Position + pos, TextRenderer.Content, ShadowColor);
+			}
+
 			TextRenderer.Draw(r);
 		}
 
@@ -49,6 +58,19 @@ namespace Toybox.gui.content {
 			}
 		}
 
+		public override void ApplyStyleValue(ColorField f, Color c) {
+			if (f == ColorField.Text) { Color = c; return; }
+			if (f == ColorField.TextShadow) {
+				if (c == Color.Transparent) {
+					ShadowColor = null;
+					return;
+				}
+				ShadowColor = c; 
+				return; 
+			}
+			base.ApplyStyleValue(f, c);
+		}
+
 		public override string GetTypeName() {
 			return TypeName;
 		}
@@ -68,11 +90,6 @@ namespace Toybox.gui.content {
 		public Color Color {
 			get { return TextRenderer.Color; }
 			set { TextRenderer.Color = value; }
-		}
-
-		public Color? BackColor {
-			get { return TextRenderer.BackColor; }
-			set { TextRenderer.BackColor = value; }
 		}
 
 		public int Scale {
