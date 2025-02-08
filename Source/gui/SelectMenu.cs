@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,23 +10,8 @@ using Toybox.gui.style;
 namespace Toybox.gui {
 	public class SelectMenu:MenuBox {
 
-		private int _selectionId;
-		public int SelectionId {
-			get { return _selectionId; }
-			set {
-				if (_selectionId >= 0 && _selectionId < Content.Count) {
-					var e = Content[_selectionId];
-					UnSelectElement(e);
-					e.Cascade(UnSelectElement);
-				}
-				_selectionId = value;
-				if (_selectionId >= 0 && _selectionId < Content.Count) {
-					var e = Content[_selectionId];
-					SelectElement(e);
-					e.Cascade(SelectElement);
-				}
-			}
-		}
+		private int PrevSelectionId = -1;
+		public int SelectionId = 0;
 
 		public MenuSelector Selector;
 
@@ -34,7 +20,6 @@ namespace Toybox.gui {
 		public bool AllowAutoSwitch = true;
 
 		public SelectMenu() {
-			SelectionId = 0;
 		}
 
 		public override void Draw(Renderer r) {
@@ -54,6 +39,12 @@ namespace Toybox.gui {
 			}
 
 			UpdateInteractionControls(c);
+		}
+
+		protected override void UpdateContentSize(Point contentContainerSize, out Point contentSize) {
+			UpdateSelectedState();
+
+			base.UpdateContentSize(contentContainerSize, out contentSize);
 		}
 
 		protected internal override void UpdateContainedElementPositions() {
@@ -99,29 +90,10 @@ namespace Toybox.gui {
 			}
 		}
 
-		public virtual bool PressUp() {
-			var output = Layout.SelectUp(Content, SelectionId, out var id);
-			SelectionId = id;
-			return output;
-		}
-
-		public virtual bool PressDown() {
-			var output = Layout.SelectDown(Content, SelectionId, out var id);
-			SelectionId = id;
-			return output;
-		}
-
-		public virtual bool PressLeft() {
-			var output = Layout.SelectLeft(Content, SelectionId, out var id);
-			SelectionId = id;
-			return output;
-		}
-
-		public virtual bool PressRight() {
-			var output = Layout.SelectRight(Content, SelectionId, out var id);
-			SelectionId = id;
-			return output;
-		}
+		public virtual bool PressUp() { return Layout.SelectUp(Content, SelectionId, out SelectionId); }
+		public virtual bool PressDown() { return Layout.SelectDown(Content, SelectionId, out SelectionId); }
+		public virtual bool PressLeft() { return Layout.SelectLeft(Content, SelectionId, out SelectionId); }
+		public virtual bool PressRight() { return Layout.SelectRight(Content, SelectionId, out SelectionId); }
 
 		public virtual bool PressSwitchMenu() {
 			if (ParentSystem != null) {
@@ -144,6 +116,22 @@ namespace Toybox.gui {
 				return true;
 			}
 			return false;
+		}
+
+		private void UpdateSelectedState() {
+			if (SelectionId == PrevSelectionId) return;
+
+			if (PrevSelectionId >= 0 && PrevSelectionId < Content.Count) {
+				var e = Content[PrevSelectionId];
+				UnSelectElement(e);
+				e.Cascade(UnSelectElement);
+			}
+			if (SelectionId >= 0 && SelectionId < Content.Count) {
+				var e = Content[SelectionId];
+				SelectElement(e);
+				e.Cascade(SelectElement);
+			}
+			PrevSelectionId = SelectionId;
 		}
 
 		private static void UnSelectElement(MenuElement e) {

@@ -53,9 +53,6 @@ namespace Toybox.gui.content {
 			return TypeName;
 		}
 
-		public override void Cascade(Action<MenuElement> a) {
-		}
-
 		public override string Name {
 			get {
 				if (base.Name != "") return base.Name;

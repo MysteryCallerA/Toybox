@@ -149,7 +149,9 @@ namespace Toybox.gui.core {
 
 		public abstract string GetTypeName();
 
-		public abstract void Cascade(Action<MenuElement> a);
+		public virtual void Cascade(Action<MenuElement> a) {
+			a.Invoke(this);
+		}
 
 	}
 }

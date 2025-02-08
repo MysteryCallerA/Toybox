@@ -74,8 +74,7 @@ namespace Toybox.gui.content {
 		}
 
 		public override void Cascade(Action<MenuElement> a) {
-			a.Invoke(BackGraphic);
-			a.Invoke(FrontGraphic);
+			base.Cascade(a);
 			BackGraphic.Cascade(a);
 			FrontGraphic.Cascade(a);
 		}

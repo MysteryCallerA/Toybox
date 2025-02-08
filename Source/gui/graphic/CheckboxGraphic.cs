@@ -68,8 +68,5 @@ namespace Toybox.gui.graphic {
 		public override string GetTypeName() {
 			return TypeName;
 		}
-
-		public override void Cascade(Action<MenuElement> a) {
-		}
 	}
 }

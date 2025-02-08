@@ -58,9 +58,6 @@ namespace Toybox.gui.graphic
 			return TypeName;
 		}
 
-		public override void Cascade(Action<MenuElement> a) {
-		}
-
 		public int HOverflow {
 			set { OverflowLeft = value; OverflowRight = value; }
 		}

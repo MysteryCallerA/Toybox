@@ -73,8 +73,8 @@ namespace Toybox.gui.content {
 		}
 
 		public override void Cascade(Action<MenuElement> a) {
+			base.Cascade(a);
 			foreach (var s in States) {
-				a.Invoke(s);
 				s.Cascade(a);
 			}
 		}
