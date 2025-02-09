@@ -11,7 +11,6 @@ namespace Toybox.gui.graphic
 {
 	public class MenuBoxGraphic:MenuElement {
 
-		public const string TypeName = "BoxGraphic";
 		public Color BackColor = Color.Gray;
 		public Color BorderColor = Color.Transparent;
 		public int BorderSize = 0;
@@ -50,9 +49,6 @@ namespace Toybox.gui.graphic
 			contentSize = Point.Zero;
 		}
 
-		public override string GetTypeName() {
-			return TypeName;
-		}
 
 	}
 }

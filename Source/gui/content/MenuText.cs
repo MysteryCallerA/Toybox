@@ -11,7 +11,6 @@ using Toybox.utils.text;
 namespace Toybox.gui.content {
 	public class MenuText:MenuElement {
 
-		public const string TypeName = "Text";
 		public Text TextRenderer;
 		public Color? ShadowColor = null;
 		public Point ShadowOffset;
@@ -69,10 +68,6 @@ namespace Toybox.gui.content {
 				return; 
 			}
 			base.ApplyStyleValue(f, c);
-		}
-
-		public override string GetTypeName() {
-			return TypeName;
 		}
 
 		public override string Name {

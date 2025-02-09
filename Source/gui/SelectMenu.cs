@@ -41,10 +41,9 @@ namespace Toybox.gui {
 			UpdateInteractionControls(c);
 		}
 
-		protected override void UpdateContentSize(Point contentContainerSize, out Point contentSize) {
+		protected internal override void UpdateState() {
 			UpdateSelectedState();
-
-			base.UpdateContentSize(contentContainerSize, out contentSize);
+			base.UpdateState();
 		}
 
 		protected internal override void UpdateContainedElementPositions() {

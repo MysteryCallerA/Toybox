@@ -60,6 +60,7 @@ namespace Toybox.gui {
 			ActiveMenu.ParentSystem = this;
 			ActiveMenu.Position = Position;
 			ActiveMenu.UpdateFunction(Controls);
+			ActiveMenu.UpdateState();
 			ActiveMenu.UpdateSize(Resources.Camera.Bounds.Size);
 			ActiveMenu.UpdateContainedElementPositions();
 		}

@@ -11,7 +11,6 @@ namespace Toybox.gui.graphic {
 
 	public class CheckboxGraphic:MenuElement {
 
-		public const string TypeName = "CheckboxGraphic";
 		public bool CheckedState;
 		public int BorderThickness = 1;
 		public Color BoxColor = Color.White;
@@ -65,8 +64,5 @@ namespace Toybox.gui.graphic {
 		protected internal override void UpdateContainedElementPositions() {
 		}
 
-		public override string GetTypeName() {
-			return TypeName;
-		}
 	}
 }

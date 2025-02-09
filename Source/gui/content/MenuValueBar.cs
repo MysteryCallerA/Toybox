@@ -10,7 +10,6 @@ using Toybox.gui.graphic;
 namespace Toybox.gui.content {
 	public class MenuValueBar:MenuElement {
 
-		public const string TypeName = "ValueBar";
 		public float CurrentValue = 0.5f;
 		public float MaxValue = 1;
 		public float MinValue = 0;
@@ -47,6 +46,12 @@ namespace Toybox.gui.content {
 			}
 		}
 
+		protected internal override void UpdateState() {
+			base.UpdateState();
+			BackGraphic?.UpdateState();
+			FrontGraphic?.UpdateState();
+		}
+
 		protected override void UpdateContentSize(Point contentContainerSize, out Point contentSize) {
 			if (BackGraphic != null) {
 				BackGraphic.UpdateSize(PanelSize);
@@ -67,10 +72,6 @@ namespace Toybox.gui.content {
 				FrontGraphic.Position = ContentOrigin;
 				FrontGraphic.UpdateContainedElementPositions();
 			}
-		}
-
-		public override string GetTypeName() {
-			return TypeName;
 		}
 
 		public override void Cascade(Action<MenuElement> a) {

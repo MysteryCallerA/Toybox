@@ -11,7 +11,6 @@ using Toybox.utils.math;
 namespace Toybox.gui.content {
 	public class MenuToggle:MenuElement {
 
-		public const string TypeName = "Toggle";
 		public int StateId { get; private set; }
 		public List<MenuElement> States = new();
 
@@ -36,6 +35,13 @@ namespace Toybox.gui.content {
 			if (c.Confirm != null && c.Confirm.Pressed) {
 				Activate();
 				c.Confirm.DropPress();
+			}
+		}
+
+		protected internal override void UpdateState() {
+			base.UpdateState();
+			foreach (var e in States) {
+				e.UpdateState();
 			}
 		}
 
@@ -66,10 +72,6 @@ namespace Toybox.gui.content {
 			output.States.Add(new CheckboxGraphic(true));
 			output.States.Add(new CheckboxGraphic(false));
 			return output;
-		}
-
-		public override string GetTypeName() {
-			return TypeName;
 		}
 
 		public override void Cascade(Action<MenuElement> a) {

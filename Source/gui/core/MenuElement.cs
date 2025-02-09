@@ -16,6 +16,7 @@ namespace Toybox.gui.core {
 
 		public StyleGroup Styles;
 		public MenuStateManager State;
+		public MenuTweenManager Tweens = new();
 
 		/// <summary> Is set automatically during UpdateSize. Used for relative positioning of elements. </summary>
 		public Point OuterSize { get; private set; }
@@ -47,6 +48,7 @@ namespace Toybox.gui.core {
 		/// <summary> Call Update on only the outermost element to update the entire menu structure. </summary>
 		public virtual void Update() {
 			UpdateFunction(Controls);
+			UpdateState();
 			UpdateSize(Resources.Camera.Bounds.Size);
 			UpdateContainedElementPositions();
 		}
@@ -62,6 +64,12 @@ namespace Toybox.gui.core {
 
 		/// <summary> Anything the element does, goes here. Call UpdateFunction(Controls ?? c) on any contained elements. </summary>
 		protected internal abstract void UpdateFunction(MenuControls c);
+
+		/// <summary> Always called once per frame. Call base.UpdateState() and then UpdateState() on any contained elements.
+		/// <br></br> Used for updating Tweens and MenuState.</summary>
+		protected internal virtual void UpdateState() {
+			Tweens.UpdateTweens(this);
+		}
 
 		protected internal void UpdateSize(Point containerSize) {
 			if (HFit == FitType.FillOuter) {
@@ -142,10 +150,29 @@ namespace Toybox.gui.core {
 			Styles.UpdateStyle(this);
 		}
 
-		public virtual void ApplyStyleValue(StyleField f, int v) { }
-		public virtual void ApplyStyleValue(ColorField f, Color c) { }
+		public virtual void ApplyStyleValue(StyleField f, int v) {
+			if (f.Equals(StyleField.OffsetX)) { XOffset = v; return; }
+			if (f.Equals(StyleField.OffsetY)) { YOffset = v; return; }
 
-		public abstract string GetTypeName();
+			if (f.Equals(StyleField.Overflow)) { Overflow = v; return; }
+			if (f.Equals(StyleField.OverflowLeft)) { OverflowLeft = v; return; }
+			if (f.Equals(StyleField.OverflowRight)) { OverflowRight = v; return; }
+			if (f.Equals(StyleField.OverflowTop)) { OverflowTop = v; return; }
+			if (f.Equals(StyleField.OverflowBottom)) { OverflowBottom = v; return; }
+
+			if (f.Equals(StyleField.Padding)) { Padding = v; return; }
+			if (f.Equals(StyleField.PaddingLeft)) { PaddingLeft = v; return; }
+			if (f.Equals(StyleField.PaddingRight)) { PaddingRight = v; return; }
+			if (f.Equals(StyleField.PaddingTop)) { PaddingTop = v; return; }
+			if (f.Equals(StyleField.PaddingBottom)) { PaddingBottom = v; return; }
+
+			if (f.Equals(StyleField.Margin)) { Margin = v; return; }
+			if (f.Equals(StyleField.MarginLeft)) { MarginLeft = v; return; }
+			if (f.Equals(StyleField.MarginRight)) { MarginRight = v; return; }
+			if (f.Equals(StyleField.MarginTop)) { MarginTop = v; return; }
+			if (f.Equals(StyleField.MarginBottom)) { MarginBottom = v; return; }
+		}
+		public virtual void ApplyStyleValue(ColorField f, Color c) { }
 
 		public virtual void Cascade(Action<MenuElement> a) {
 			a.Invoke(this);
