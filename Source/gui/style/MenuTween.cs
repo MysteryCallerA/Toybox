@@ -16,15 +16,24 @@ namespace Toybox.gui.style {
 		public int End;
 		public bool Finished = false;
 
-		public MenuTween(Tween t, StyleField f, int start, int end) {
+		public MenuTween(Tween t, StyleField f, int endValue) {
 			Tween = t;
 			Field = f;
-			Start = start;
-			End = end;
+			End = endValue;
+		}
+
+		public MenuTween(Func<float, float> easingFunction, int frames, StyleField f, int endValue) {
+			Tween = new BasicTween(easingFunction, frames);
+			Field = f;
+			End = endValue;
 		}
 
 		public void Apply(MenuElement e) {
 			if (Finished) return;
+			if (Frame == 0) {
+				Start = e.GetStyleValue(Field);
+			}
+
 			Frame++;
 			int value = (int)Math.Round(Start + Tween.Get(Frame) * (End - Start));
 			e.ApplyStyleValue(Field, value);

@@ -145,7 +145,7 @@ namespace Toybox.gui.core {
 		public int Overflow { set { OverflowLeft = value; OverflowRight = value; OverflowTop = value; OverflowBottom = value; } }
 		//------------------------------------
 
-		public void UpdateStyle() {
+		protected internal void UpdateStyle() {
 			if (Styles == null) return;
 			Styles.UpdateStyle(this);
 		}
@@ -176,6 +176,30 @@ namespace Toybox.gui.core {
 
 		public virtual void Cascade(Action<MenuElement> a) {
 			a.Invoke(this);
+		}
+
+		public virtual int GetStyleValue(StyleField f) {
+			if (f.Equals(StyleField.OffsetX)) { return XOffset; }
+			if (f.Equals(StyleField.OffsetY)) { return YOffset; }
+
+			if (f.Equals(StyleField.Overflow)) { return OverflowLeft; }
+			if (f.Equals(StyleField.OverflowLeft)) { return OverflowLeft; }
+			if (f.Equals(StyleField.OverflowRight)) { return OverflowRight; }
+			if (f.Equals(StyleField.OverflowTop)) { return OverflowTop; }
+			if (f.Equals(StyleField.OverflowBottom)) { return OverflowBottom; }
+
+			if (f.Equals(StyleField.Padding)) { return PaddingLeft; }
+			if (f.Equals(StyleField.PaddingLeft)) { return PaddingLeft; }
+			if (f.Equals(StyleField.PaddingRight)) { return PaddingRight; }
+			if (f.Equals(StyleField.PaddingTop)) { return PaddingTop; }
+			if (f.Equals(StyleField.PaddingBottom)) { return PaddingBottom; }
+
+			if (f.Equals(StyleField.Margin)) { return MarginLeft; }
+			if (f.Equals(StyleField.MarginLeft)) { return MarginLeft; }
+			if (f.Equals(StyleField.MarginRight)) { return MarginRight; }
+			if (f.Equals(StyleField.MarginTop)) { return MarginTop; }
+			if (f.Equals(StyleField.MarginBottom)) { return MarginBottom; }
+			return 0;
 		}
 
 	}
