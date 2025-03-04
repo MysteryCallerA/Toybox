@@ -6,17 +6,21 @@ using System.Text;
 using System.Threading.Tasks;
 using Toybox.gui.core;
 using Toybox.gui.layout;
+using Toybox.utils.data;
 
 namespace Toybox.gui {
 
 	public class MenuBox:MenuElement {
 
-		public List<MenuElement> Content = new();
-		public MenuElement BackPanel;
-		public IMenuLayout Layout = new MenuVerticalLayout();
+		public ObservableList<MenuElement> Content = new();
+		private MenuElement _BackPanel;
+		public IMenuLayout Layout;
 
-		public MenuBox() {
-
+		public MenuBox():this(new MenuVerticalLayout()) { }
+		public MenuBox(IMenuLayout layout) {
+			Layout = layout;
+			Content.OnAdd = ElementAdded;
+			Content.OnRemove = ElementRemoved;
 		}
 
 		public override void Draw(Renderer r) {
@@ -55,6 +59,17 @@ namespace Toybox.gui {
 			base.Cascade(a);
 			foreach (var e in Content) {
 				e.Cascade(a);
+			}
+		}
+
+		private void ElementAdded(MenuElement e) { e.Parent = this; }
+		private void ElementRemoved(MenuElement e) { if (e.Parent == this) e.Parent = null; }
+
+		public MenuElement BackPanel {
+			get { return _BackPanel; }
+			set {
+				_BackPanel = value;
+				_BackPanel.Parent = this;
 			}
 		}
 	}

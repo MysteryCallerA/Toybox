@@ -10,6 +10,7 @@ namespace Toybox.gui.style {
 
 		private MenuElement Parent;
 		private readonly HashSet<MenuState> Content = new();
+		private readonly HashSet<MenuState> InheritedState = new();
 
 		public MenuStateManager(MenuElement e) {
 			Parent = e;
@@ -28,10 +29,22 @@ namespace Toybox.gui.style {
 		}
 
 		public bool Matches(MenuState[] s) {
+			UpdateInheritedState();
 			foreach (var state in s) {
-				if (!Content.Contains(state)) return false;
+				if (!InheritedState.Contains(state) && !Content.Contains(state)) return false;
 			}
 			return true;
+		}
+
+		private void UpdateInheritedState() {
+			InheritedState.Clear();
+			var pointer = Parent;
+			while (pointer.Parent != null) {
+				pointer = pointer.Parent;
+				foreach (var state in pointer.State.Content) {
+					InheritedState.Add(state);
+				}
+			}
 		}
 
 	}

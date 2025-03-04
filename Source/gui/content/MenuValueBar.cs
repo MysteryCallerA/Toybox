@@ -14,8 +14,8 @@ namespace Toybox.gui.content {
 		public float MaxValue = 1;
 		public float MinValue = 0;
 		public float StepSize = 0.1f;
-		public MenuElement BackGraphic;
-		public MenuElement FrontGraphic;
+		private MenuElement _BackGraphic;
+		private MenuElement _FrontGraphic;
 
 		public MenuValueBar() {
 			Fit = FitType.Static;
@@ -78,6 +78,22 @@ namespace Toybox.gui.content {
 			base.Cascade(a);
 			BackGraphic.Cascade(a);
 			FrontGraphic.Cascade(a);
+		}
+
+		public MenuElement FrontGraphic {
+			get { return _FrontGraphic; }
+			set {
+				_FrontGraphic = value;
+				_FrontGraphic.Parent = this;
+			}
+		}
+
+		public MenuElement BackGraphic {
+			get { return _BackGraphic; }
+			set {
+				_BackGraphic = value;
+				_BackGraphic.Parent = this;
+			}
 		}
 	}
 }

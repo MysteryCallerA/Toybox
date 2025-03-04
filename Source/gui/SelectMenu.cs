@@ -122,23 +122,13 @@ namespace Toybox.gui {
 
 			if (PrevSelectionId >= 0 && PrevSelectionId < Content.Count) {
 				var e = Content[PrevSelectionId];
-				UnSelectElement(e);
-				e.Cascade(UnSelectElement);
+				e.State.Remove(MenuState.Selected);
 			}
 			if (SelectionId >= 0 && SelectionId < Content.Count) {
 				var e = Content[SelectionId];
-				SelectElement(e);
-				e.Cascade(SelectElement);
+				e.State.Add(MenuState.Selected);
 			}
 			PrevSelectionId = SelectionId;
-		}
-
-		private static void UnSelectElement(MenuElement e) {
-			e.State.Remove(MenuState.Selected);
-		}
-
-		private static void SelectElement(MenuElement e) {
-			e.State.Add(MenuState.Selected);
 		}
 
 	}

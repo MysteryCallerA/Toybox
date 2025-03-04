@@ -13,6 +13,7 @@ namespace Toybox.gui.core {
 		public virtual string Name { get; set; } = "";
 		public MenuControls Controls = null;
 		protected internal MenuSystem ParentSystem;
+		protected internal MenuElement Parent;
 
 		public StyleGroup Styles;
 		public MenuStateManager State;
@@ -174,10 +175,6 @@ namespace Toybox.gui.core {
 		}
 		public virtual void ApplyStyleValue(ColorField f, Color c) { }
 
-		public virtual void Cascade(Action<MenuElement> a) {
-			a.Invoke(this);
-		}
-
 		public virtual int GetStyleValue(StyleField f) {
 			if (f.Equals(StyleField.OffsetX)) { return XOffset; }
 			if (f.Equals(StyleField.OffsetY)) { return YOffset; }
@@ -200,6 +197,10 @@ namespace Toybox.gui.core {
 			if (f.Equals(StyleField.MarginTop)) { return MarginTop; }
 			if (f.Equals(StyleField.MarginBottom)) { return MarginBottom; }
 			return 0;
+		}
+
+		public virtual void Cascade(Action<MenuElement> a) {
+			a.Invoke(this);
 		}
 
 	}

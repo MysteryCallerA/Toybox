@@ -6,13 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Toybox.gui.core;
 using Toybox.gui.graphic;
+using Toybox.utils.data;
 using Toybox.utils.math;
 
 namespace Toybox.gui.content {
 	public class MenuToggle:MenuElement {
 
 		public int StateId { get; private set; }
-		public List<MenuElement> States = new();
+		public ObservableList<MenuElement> States = new();
 
 		public MenuElement CurrentState {
 			get { return States[StateId]; }
@@ -21,6 +22,8 @@ namespace Toybox.gui.content {
 		public MenuToggle() {
 			Fit = FitType.FitContent;
 			VAlign = VAlignType.Center;
+			States.OnAdd = ElementAdded;
+			States.OnRemove = ElementRemoved;
 		}
 
 		public override void Draw(Renderer r) {
@@ -80,5 +83,8 @@ namespace Toybox.gui.content {
 				s.Cascade(a);
 			}
 		}
+
+		private void ElementAdded(MenuElement e) { e.Parent = this; }
+		private void ElementRemoved(MenuElement e) { if (e.Parent == this) e.Parent = null; }
 	}
 }
