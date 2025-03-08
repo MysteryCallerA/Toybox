@@ -31,9 +31,6 @@ namespace Toybox.gui.content {
 			r.DrawDirect(graphic, dest, source, Color, Microsoft.Xna.Framework.Graphics.SpriteEffects.None); 
 		}
 
-		protected internal override void UpdateFunction(MenuControls c) {
-		}
-
 		protected override void UpdateContentSize(Point contentContainerSize, out Point contentSize) {
 			contentSize = Content.GetSize();
 			if (Scale == 0) {
@@ -43,7 +40,7 @@ namespace Toybox.gui.content {
 			}
 		}
 
-		protected internal override void UpdateContainedElementPositions() {
+		protected internal override void UpdateContentPositions() {
 		}
 	}
 }

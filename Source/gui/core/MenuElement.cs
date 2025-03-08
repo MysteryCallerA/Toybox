@@ -10,8 +10,6 @@ namespace Toybox.gui.core {
 	public abstract class MenuElement {
 
 		public bool Selectable = false;
-		public virtual string Name { get; set; } = "";
-		public MenuControls Controls = null;
 		protected internal MenuSystem ParentSystem;
 		protected internal MenuElement Parent;
 
@@ -46,25 +44,11 @@ namespace Toybox.gui.core {
 			State = new MenuStateManager(this);
 		}
 
-		/// <summary> Call Update on only the outermost element to update the entire menu structure. </summary>
-		public virtual void Update() {
-			UpdateFunction(Controls);
-			UpdateState();
-			UpdateSize(Resources.Camera.Bounds.Size);
-			UpdateContainedElementPositions();
-		}
-
-		/// <summary> Updates size and positions of menu structure without allowing any interaction. </summary>
-		public virtual void PartialUpdate() {
-			UpdateSize(Resources.Camera.Bounds.Size);
-			UpdateContainedElementPositions();
-		}
-
 		public virtual void Draw(Renderer r) {
 		}
 
-		/// <summary> Anything the element does, goes here. Call UpdateFunction(Controls ?? c) on any contained elements. </summary>
-		protected internal abstract void UpdateFunction(MenuControls c);
+		/// <summary> Anything the element does, goes here. Call UpdateFunction on any contained elements. </summary>
+		protected internal virtual void UpdateFunction(MenuControlManager c, MenuSystem parent) { }
 
 		/// <summary> Always called once per frame. Call base.UpdateState() and then UpdateState() on any contained elements.
 		/// <br></br> Used for updating Tweens and MenuState.</summary>
@@ -109,7 +93,7 @@ namespace Toybox.gui.core {
 		protected abstract void UpdateContentSize(Point contentContainerSize, out Point contentSize);
 
 		/// <summary> Set Position of any contained elements based on their alignment settings. Call UpdateContainedElementPositions on each element. </summary>
-		protected internal abstract void UpdateContainedElementPositions();
+		protected internal abstract void UpdateContentPositions();
 
 		public Point ContentOrigin {
 			get { return new Point(Position.X + MarginLeft + PaddingLeft - OverflowLeft + XOffset, Position.Y + MarginTop + PaddingTop - OverflowTop + YOffset); }

@@ -132,7 +132,7 @@ namespace Toybox.gui.layout {
 					} else if (e.VAlign == MenuElement.VAlignType.Center) {
 						e.Position = new Point(e.Position.X, cell.Center.Y - (e.OuterSize.Y / 2));
 					}
-					e.UpdateContainedElementPositions();
+					e.UpdateContentPositions();
 				}
 
 				x = cell.Right + HSpacing;

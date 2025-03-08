@@ -76,7 +76,7 @@ namespace Toybox.gui.layout {
 				if (e.VAlign == MenuElement.VAlignType.Bottom) {
 					e.Position = new Point(e.Position.X, y - e.OuterSize.Y);
 				}
-				e.UpdateContainedElementPositions();
+				e.UpdateContentPositions();
 				y = e.Position.Y - Spacing;
 			}
 		}

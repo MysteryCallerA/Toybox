@@ -14,6 +14,7 @@ namespace Toybox.gui.content {
 
 		public int StateId { get; private set; }
 		public ObservableList<MenuElement> States = new();
+		public MenuControl InteractKey = MenuControl.Confirm;
 
 		public MenuElement CurrentState {
 			get { return States[StateId]; }
@@ -31,13 +32,13 @@ namespace Toybox.gui.content {
 			CurrentState.Draw(r);
 		}
 
-		protected internal override void UpdateFunction(MenuControls c) {
-			c = Controls ?? c;
+		protected internal override void UpdateFunction(MenuControlManager c, MenuSystem parent) {
 			if (c == null) return;
-
-			if (c.Confirm != null && c.Confirm.Pressed) {
-				Activate();
-				c.Confirm.DropPress();
+			if (c.TryGet(InteractKey, out var key)) {
+				if (key.Pressed) {
+					Activate();
+					key.DropPress();
+				}
 			}
 		}
 
@@ -59,15 +60,14 @@ namespace Toybox.gui.content {
 			contentSize = new Point(x, y);
 		}
 
-		protected internal override void UpdateContainedElementPositions() {
+		protected internal override void UpdateContentPositions() {
 			CurrentState.Position = Position;
-			CurrentState.UpdateContainedElementPositions();
+			CurrentState.UpdateContentPositions();
 		}
 
 		public void Activate() {
 			StateId++;
 			if (StateId >= States.Count) StateId = 0;
-			PartialUpdate();
 		}
 
 		public static MenuToggle GetSimpleCheckbox() {

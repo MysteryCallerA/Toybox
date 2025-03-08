@@ -5,87 +5,71 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Toybox.gui.core;
-using Toybox.utils.input;
+using Toybox.gui.select;
+using Toybox.gui.style;
+using Toybox.utils.data;
 
 namespace Toybox.gui {
 	public class MenuSystem {
 
-		public bool Enabled = false;
-		public Point Position = Point.Zero;
-		public MenuElement ActiveMenu { get; protected set; }
-		protected List<MenuElement> Menus = new();
-		public Stack<MenuElement> History = new();
+		private List<MenuBox> Content = new();
+		public Point Position;
+		public Point Size;
+		public MenuControlManager Controls = new();
+		public MenuSelector Selector;
 
-		public MenuControls Controls;
+		private List<MenuBox> ToAdd = new();
+		private List<MenuBox> ToRemove = new();
 
-		public virtual void AddMenu(MenuElement m, string name = "") {
-			Menus.Add(m);
-			if (name != "") m.Name = name;
+		public MenuSystem() {
 		}
 
-		public void SwitchMenu(MenuElement m, bool addToHistory) {
-			if (m == ActiveMenu) return;
-			if (addToHistory) History.Push(ActiveMenu);
-			ActiveMenu = m;
-			if (m == null) return;
-
-			ActiveMenu.Position = Position;
-			ActiveMenu.PartialUpdate();
-		}
-
-		public bool TrySwitchMenu(string name, bool addToHistory) {
-			foreach (var m in Menus) {
-				if (m.Name != name) continue;
-				SwitchMenu(m, addToHistory);
-				return true;
+		public void Draw(Renderer r) {
+			foreach (var m in Content) {
+				m.Draw(r);
 			}
-			return false;
 		}
 
-		public virtual void Draw(Renderer r) {
-			if (!Enabled) return;
-			ActiveMenu?.Draw(r);
+		public void Update() {
+			ApplyChanges();
+
+			foreach (var m in Content) {
+				m.UpdateFunction(Controls, this);
+				m.UpdateState();
+				m.UpdateSize(Size);
+				m.UpdateContentPositions();
+			}
+
+			ApplyChanges();
 		}
 
-		public virtual void Update() {
-			if (!Enabled) {
-				if (Controls != null && Controls.OpenMenu != null && Controls.OpenMenu.Pressed) {
-					OpenMenu();
-					Controls.OpenMenu.DropPress();
+		public void AddBox(MenuBox b) {
+			ToAdd.Add(b);
+		}
+
+		public void RemoveBox(string tag) {
+			foreach (var b in Content) {
+				if (b.Tags.Contains(tag)) {
+					ToRemove.Add(b);
 				}
 			}
-
-			if (!Enabled || ActiveMenu == null) return;
-
-			ActiveMenu.ParentSystem = this;
-			ActiveMenu.Position = Position;
-			ActiveMenu.UpdateFunction(Controls);
-			ActiveMenu.UpdateState();
-			ActiveMenu.UpdateSize(Resources.Camera.Bounds.Size);
-			ActiveMenu.UpdateContainedElementPositions();
 		}
 
-		public virtual void OpenMenu() {
-			Enabled = true;
-		}
-
-		public virtual void CloseMenu() {
-			Enabled = false;
-
-			var menu = ActiveMenu;
-			while (History.Count > 0) {
-				menu = History.Pop();
+		private void ApplyChanges() {
+			if (ToRemove.Count > 0) {
+				foreach (var b in ToRemove) {
+					Content.Remove(b);
+				}
+				ToRemove.Clear();
 			}
-			ActiveMenu = menu;
-		}
 
-		public virtual void BackMenu() {
-			if (History.Count > 0) {
-				ActiveMenu = History.Pop();
-			} else {
-				CloseMenu();
+			if (ToAdd.Count > 0) {
+				foreach (var b in ToAdd) {
+					Content.Add(b);
+				}
+				ToAdd.Clear();
 			}
 		}
-
+		
 	}
 }

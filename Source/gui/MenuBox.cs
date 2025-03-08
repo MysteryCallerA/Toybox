@@ -16,6 +16,9 @@ namespace Toybox.gui {
 		private MenuElement _BackPanel;
 		public IMenuLayout Layout;
 
+		public bool UseSystemPosition = true;
+		public HashSet<string> Tags = new();
+
 		public MenuBox():this(new MenuVerticalLayout()) { }
 		public MenuBox(IMenuLayout layout) {
 			Layout = layout;
@@ -30,11 +33,16 @@ namespace Toybox.gui {
 			}
 		}
 
-		protected internal override void UpdateFunction(MenuControls c) {
-			var control = Controls ?? c;
+		public void Update() {
+			UpdateFunction(null, null);
+			UpdateState();
+			UpdateSize(Point.Zero);
+			UpdateContentPositions();
+		}
 
+		protected internal override void UpdateFunction(MenuControlManager c, MenuSystem parent) {
 			foreach (var e in Content) {
-				e.UpdateFunction(control);
+				e.UpdateFunction(c, parent);
 			}
 		}
 
@@ -50,7 +58,7 @@ namespace Toybox.gui {
 			BackPanel?.UpdateSize(PanelSize);
 		}
 
-		protected internal override void UpdateContainedElementPositions() {
+		protected internal override void UpdateContentPositions() {
 			Layout.UpdateContentPosition(Content, this);
 			if (BackPanel != null) BackPanel.Position = PanelOrigin;
 		}

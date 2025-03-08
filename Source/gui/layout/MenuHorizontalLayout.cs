@@ -77,7 +77,7 @@ namespace Toybox.gui.layout {
 				if (e.HAlign == MenuElement.HAlignType.Right) {
 					e.Position = new Point(x - e.OuterSize.X, e.Position.Y);
 				}
-				e.UpdateContainedElementPositions();
+				e.UpdateContentPositions();
 				x = e.Position.X - Spacing;
 			}
 		}

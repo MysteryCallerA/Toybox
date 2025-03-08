@@ -39,10 +39,7 @@ namespace Toybox.gui.graphic
 			}
 		}
 
-		protected internal override void UpdateFunction(MenuControls c) {
-		}
-
-		protected internal override void UpdateContainedElementPositions() {
+		protected internal override void UpdateContentPositions() {
 		}
 
 		protected override void UpdateContentSize(Point contentContainerSize, out Point contentSize) {

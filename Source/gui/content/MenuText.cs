@@ -30,14 +30,11 @@ namespace Toybox.gui.content {
 			TextRenderer.Draw(r);
 		}
 
-		protected internal override void UpdateFunction(MenuControls c) {
-		}
-
 		protected override void UpdateContentSize(Point contentContainerSize, out Point contentSize) {
 			contentSize = TextRenderer.Size;
 		}
 
-		protected internal override void UpdateContainedElementPositions() {
+		protected internal override void UpdateContentPositions() {
 			var contentbounds = ContentBounds;
 
 			if (HAlign == HAlignType.Left) {
@@ -68,13 +65,6 @@ namespace Toybox.gui.content {
 				return; 
 			}
 			base.ApplyStyleValue(f, c);
-		}
-
-		public override string Name {
-			get {
-				if (base.Name != "") return base.Name;
-				return Content;
-			}
 		}
 
 		public string Content {

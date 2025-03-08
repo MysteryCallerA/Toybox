@@ -34,11 +34,8 @@ namespace Toybox.gui.style {
 			return Id.ToString();
 		}
 
-		public static readonly MenuState Initial = new("Initial");
-		public static readonly MenuState Default = new("Default");
 		public static readonly MenuState Selected = new("Selected");
 		public static readonly MenuState Pressed = new("Pressed");
-		public static readonly MenuState Disabled = new("Disabled");
 
 	}
 }

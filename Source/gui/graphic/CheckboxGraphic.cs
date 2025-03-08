@@ -54,14 +54,11 @@ namespace Toybox.gui.graphic {
 			r.DrawLineStatic(new Vector2(bounds.Right, bounds.Y), new Vector2(bounds.X, bounds.Bottom), CheckColor);
 		}
 
-		protected internal override void UpdateFunction(MenuControls c) {
-		}
-
 		protected override void UpdateContentSize(Point contentContainerSize, out Point contentSize) {
 			contentSize = Point.Zero;
 		}
 
-		protected internal override void UpdateContainedElementPositions() {
+		protected internal override void UpdateContentPositions() {
 		}
 
 	}

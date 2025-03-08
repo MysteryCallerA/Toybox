@@ -8,6 +8,8 @@ using Toybox.gui.core;
 namespace Toybox.gui.style {
 	public class MenuStateManager {
 
+		public bool StateChanged { get; private set; } = false;
+
 		private MenuElement Parent;
 		private readonly HashSet<MenuState> Content = new();
 		private readonly HashSet<MenuState> InheritedState = new();
@@ -19,13 +21,13 @@ namespace Toybox.gui.style {
 		public void Add(MenuState s) {
 			if (Content.Contains(s)) return;
 			Content.Add(s);
-			Parent.UpdateStyle();
+			StateChanged = true;
 		}
 
 		public void Remove(MenuState s) {
 			if (!Content.Contains(s)) return;
 			Content.Remove(s);
-			Parent.UpdateStyle();
+			StateChanged = true;
 		}
 
 		public bool Matches(MenuState[] s) {

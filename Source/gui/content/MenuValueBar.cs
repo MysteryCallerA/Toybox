@@ -16,6 +16,8 @@ namespace Toybox.gui.content {
 		public float StepSize = 0.1f;
 		private MenuElement _BackGraphic;
 		private MenuElement _FrontGraphic;
+		public MenuControl LeftKey = MenuControl.Left;
+		public MenuControl RightKey = MenuControl.Right;
 
 		public MenuValueBar() {
 			Fit = FitType.Static;
@@ -32,17 +34,21 @@ namespace Toybox.gui.content {
 			FrontGraphic?.Draw(r);
 		}
 
-		protected internal override void UpdateFunction(MenuControls c) {
-			c = Controls ?? c;
-			if (c.Left.Pressed) {
-				CurrentValue -= StepSize;
-				if (CurrentValue < MinValue) CurrentValue = MinValue;
-				c.Left.DropPress();
+		protected internal override void UpdateFunction(MenuControlManager c, MenuSystem parent) {
+			if (c == null) return;
+			if (c.TryGet(LeftKey, out var left)) {
+				if (left.Pressed) {
+					CurrentValue -= StepSize;
+					if (CurrentValue < MinValue) CurrentValue = MinValue;
+					left.DropPress();
+				}
 			}
-			if (c.Right.Pressed) {
-				CurrentValue += StepSize;
-				if (CurrentValue > MaxValue) CurrentValue = MaxValue;
-				c.Right.DropPress();
+			if (c.TryGet(RightKey, out var right)) {
+				if (right.Pressed) {
+					CurrentValue += StepSize;
+					if (CurrentValue > MaxValue) CurrentValue = MaxValue;
+					right.DropPress();
+				}
 			}
 		}
 
@@ -63,14 +69,14 @@ namespace Toybox.gui.content {
 			contentSize = Point.Zero;
 		}
 
-		protected internal override void UpdateContainedElementPositions() {
+		protected internal override void UpdateContentPositions() {
 			if (BackGraphic != null) {
 				BackGraphic.Position = PanelOrigin;
-				BackGraphic.UpdateContainedElementPositions();
+				BackGraphic.UpdateContentPositions();
 			}
 			if (FrontGraphic != null) {
 				FrontGraphic.Position = ContentOrigin;
-				FrontGraphic.UpdateContainedElementPositions();
+				FrontGraphic.UpdateContentPositions();
 			}
 		}
 
