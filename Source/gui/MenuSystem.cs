@@ -18,8 +18,8 @@ namespace Toybox.gui {
 		public MenuControlManager Controls = new();
 		public MenuSelector Selector;
 
-		private List<MenuBox> ToAdd = new();
-		private List<MenuBox> ToRemove = new();
+		private readonly List<MenuBox> ToAdd = new();
+		private readonly List<MenuBox> ToRemove = new();
 
 		public MenuSystem() {
 		}
@@ -28,17 +28,21 @@ namespace Toybox.gui {
 			foreach (var m in Content) {
 				m.Draw(r);
 			}
+			Selector.Draw(r);
 		}
 
 		public void Update() {
 			ApplyChanges();
 
 			foreach (var m in Content) {
-				m.UpdateFunction(Controls, this);
+				if (m.UseSystemPosition) m.Position = Position;
+
+				//m.UpdateFunction(Controls, this);
 				m.UpdateState();
 				m.UpdateSize(Size);
 				m.UpdateContentPositions();
 			}
+			Selector.Update(Controls, this);
 
 			ApplyChanges();
 		}

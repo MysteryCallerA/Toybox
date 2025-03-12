@@ -13,9 +13,9 @@ namespace Toybox.gui.core {
 		protected internal MenuSystem ParentSystem;
 		protected internal MenuElement Parent;
 
-		public StyleGroup Styles;
-		public MenuStateManager State;
-		public MenuTweenManager Tweens = new();
+		public readonly MenuStateManager State;
+		public Action<MenuElement> OnStateChanged;
+		public readonly MenuTweenManager Tweens = new();
 
 		/// <summary> Is set automatically during UpdateSize. Used for relative positioning of elements. </summary>
 		public Point OuterSize { get; private set; }
@@ -53,6 +53,7 @@ namespace Toybox.gui.core {
 		/// <summary> Always called once per frame. Call base.UpdateState() and then UpdateState() on any contained elements.
 		/// <br></br> Used for updating Tweens and MenuState.</summary>
 		protected internal virtual void UpdateState() {
+			State.Update();
 			Tweens.UpdateTweens(this);
 		}
 
@@ -129,11 +130,6 @@ namespace Toybox.gui.core {
 		public int VOverflow { set { OverflowTop = value; OverflowBottom = value; } }
 		public int Overflow { set { OverflowLeft = value; OverflowRight = value; OverflowTop = value; OverflowBottom = value; } }
 		//------------------------------------
-
-		protected internal void UpdateStyle() {
-			if (Styles == null) return;
-			Styles.UpdateStyle(this);
-		}
 
 		public virtual void ApplyStyleValue(StyleField f, int v) {
 			if (f.Equals(StyleField.OffsetX)) { XOffset = v; return; }
