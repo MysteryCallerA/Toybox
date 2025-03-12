@@ -22,25 +22,26 @@ namespace Toybox.gui.select {
 		private Dictionary<MenuBox, int> SelectionMemory = new();
 		private MenuStack SelectedStack;
 		private MenuBox SelectedBox;
-
-		private MenuElement SelectedElement {
-			get {
-				if (SelectionId < 0 || SelectionId >= SelectedBox.Content.Count) return null;
-				return SelectedBox.Content[SelectionId];
-			}
-		}
-
 		private int SelectionId;
+		private MenuElement PrevSelectedElement;
 
 		public MenuSelector(MenuElement graphic) {
 			Graphic = graphic;
 		}
 
 		public MenuSelector(Font f) {
-			Graphic = new MenuText(f, ">");
-			Graphic.VAlign = MenuElement.VAlignType.Center;
+			Graphic = new MenuText(f, ">") {
+				VAlign = MenuElement.VAlignType.Center
+			};
 			Graphic.UpdateSize(Point.Zero);
 			Graphic.XOffset = -Graphic.OuterSize.X - 5;
+		}
+
+		private MenuElement SelectedElement {
+			get {
+				if (SelectionId < 0 || SelectionId >= SelectedBox.Content.Count) return null;
+				return SelectedBox.Content[SelectionId];
+			}
 		}
 
 		public void Draw(Renderer r) {
@@ -62,6 +63,7 @@ namespace Toybox.gui.select {
 			SelectedElement?.UpdateFunction(c, parent, SelectedStack);
 
 			CheckIfBoxChanged();
+			UpdateSelectedState();
 		}
 
 		internal void UpdateGraphic() {
@@ -138,10 +140,6 @@ namespace Toybox.gui.select {
 			}
 		}
 
-		private void UpdateSelectedState() {
-
-		}
-
 		private void CheckIfBoxChanged() {
 			if (SelectedStack.Top == SelectedBox) return;
 
@@ -152,6 +150,13 @@ namespace Toybox.gui.select {
 			} else {
 				SelectionId = 0;
 			}
+		}
+
+		private void UpdateSelectedState() {
+			if (SelectedElement == PrevSelectedElement) return;
+			PrevSelectedElement?.State.Remove(MenuState.Selected);
+			SelectedElement?.State.Add(MenuState.Selected);
+			PrevSelectedElement = SelectedElement;
 		}
 
 

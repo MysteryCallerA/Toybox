@@ -10,7 +10,7 @@ namespace Toybox.gui.content {
 	public class MenuLink:MenuElement {
 
 		public MenuBox Link;
-		public MenuElement Content;
+		private MenuElement _Content;
 		public MenuControl ConfirmKey = MenuControl.Confirm;
 
 		public MenuLink(MenuBox link, MenuElement content) {
@@ -62,6 +62,14 @@ namespace Toybox.gui.content {
 		public void Activate(MenuStack stack) {
 			if (Link == null) return;
 			stack.Push(Link);
+		}
+
+		public MenuElement Content {
+			get { return _Content; }
+			set {
+				_Content = value;
+				_Content.Parent = this;
+			}
 		}
 	}
 }
