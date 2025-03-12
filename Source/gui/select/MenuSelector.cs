@@ -13,13 +13,24 @@ namespace Toybox.gui.select {
 	public class MenuSelector {
 
 		public MenuElement Graphic;
-		public MenuBox SelectedBox { get; private set; }
-		public int SelectionId { get; private set; }
-
 		public MenuControl UpKey = MenuControl.Up;
 		public MenuControl DownKey = MenuControl.Down;
 		public MenuControl LeftKey = MenuControl.Left;
 		public MenuControl RightKey = MenuControl.Right;
+		public MenuControl BackKey = MenuControl.Back;
+
+		private Dictionary<MenuBox, int> SelectionMemory = new();
+		private MenuStack SelectedStack;
+		private MenuBox SelectedBox;
+
+		private MenuElement SelectedElement {
+			get {
+				if (SelectionId < 0 || SelectionId >= SelectedBox.Content.Count) return null;
+				return SelectedBox.Content[SelectionId];
+			}
+		}
+
+		private int SelectionId;
 
 		public MenuSelector(MenuElement graphic) {
 			Graphic = graphic;
@@ -33,14 +44,31 @@ namespace Toybox.gui.select {
 		}
 
 		public void Draw(Renderer r) {
+			if (SelectedStack == null) return;
+			if (SelectedElement == null) return;
 			Graphic.Draw(r);
 		}
 
-		public void Update(MenuControlManager c, MenuSystem parent) {
-			UpdateControls(c, parent);
+		internal void UpdateFunction(MenuControlManager c, MenuSystem parent) {
+			if (SelectedStack == null) {
+				Init(parent);
+				return;
+			}
 
-			var s = GetSelected();
-			var bounds = s.PanelBounds;
+			CheckIfBoxChanged();
+			if (SelectionId >= SelectedBox.Content.Count) SelectionId = SelectedBox.Content.Count - 1;
+
+			UpdateControls(c, parent);
+			SelectedElement?.UpdateFunction(c, parent, SelectedStack);
+
+			CheckIfBoxChanged();
+		}
+
+		internal void UpdateGraphic() {
+			if (SelectedStack == null) return;
+			if (SelectedElement == null) return;
+
+			var bounds = SelectedElement.PanelBounds;
 			Graphic.Position = bounds.Location;
 			Graphic.UpdateState();
 			Graphic.UpdateSize(bounds.Size);
@@ -49,57 +77,83 @@ namespace Toybox.gui.select {
 
 		private void UpdateControls(MenuControlManager c, MenuSystem parent) {
 			if (c == null) return;
-			if (SelectedBox == null) return;
 
+			if (c.TryGet(BackKey, out var back) && back.Pressed) {
+				if (Back()) back.DropPress();
+			}
 			if (c.TryGet(UpKey, out var up) && up.Pressed) {
-				SelectUp();
-				up.DropPress();
+				if (SelectUp()) up.DropPress();
 			}
 			if (c.TryGet(DownKey, out var down) && down.Pressed) {
-				SelectDown();
-				down.DropPress();
+				if (SelectDown()) down.DropPress();
 			}
 			if (c.TryGet(LeftKey, out var left) && left.Pressed) {
-				SelectLeft();
-				left.DropPress();
+				if (SelectLeft()) left.DropPress();
 			}
 			if (c.TryGet(RightKey, out var right) && right.Pressed) {
-				SelectRight();
-				right.DropPress();
+				if (SelectRight()) right.DropPress();
 			}
 		}
 
-		public void SelectUp() {
-			SelectedBox.Layout.SelectUp(SelectedBox.Content, SelectionId, out var nextid);
-			SelectionId = nextid;
+		public bool SelectUp() {
+			SelectedBox.GetSelectionUp(SelectionId, out SelectionId, out var output);
+			return output;
 		}
 
-		public void SelectDown() {
-			SelectedBox.Layout.SelectDown(SelectedBox.Content, SelectionId, out var nextid);
-			SelectionId = nextid;
+		public bool SelectDown() {
+			SelectedBox.GetSelectionDown(SelectionId, out SelectionId, out var output);
+			return output;
 		}
 
-		public void SelectLeft() {
-			SelectedBox.Layout.SelectLeft(SelectedBox.Content, SelectionId, out var nextid);
-			SelectionId = nextid;
+		public bool SelectLeft() {
+			SelectedBox.GetSelectionLeft(SelectionId, out SelectionId, out var output);
+			return output;
 		}
 
-		public void SelectRight() {
-			SelectedBox.Layout.SelectRight(SelectedBox.Content, SelectionId, out var nextid);
-			SelectionId = nextid;
+		public bool SelectRight() {
+			SelectedBox.GetSelectionRight(SelectionId, out SelectionId, out var output);
+			return output;
 		}
 
-		public void Focus(MenuBox b) {
-			SelectedBox = b;
-			if (b.Content.Count == 0) return;
-			SelectionId = 0;
+		public bool Back() {
+			if (SelectedStack.Count <= 1) return false;
+			SelectedStack.Drop();
+			return true;
 		}
 
-		public MenuElement GetSelected() {
-			if (SelectedBox == null) return null;
-			if (SelectionId < 0 || SelectionId >= SelectedBox.Content.Count) return null;
-			return SelectedBox.Content[SelectionId];
+		private void Init(MenuSystem parent) {
+			if (parent.Content.Count == 0) return;
+			var stack = parent.Content[0];
+			if (stack.Count == 0) return;
+			var box = stack.Top;
+
+			for (int id = 0; id < box.Content.Count; id++) {
+				var e = box.Content[id];
+				if (e.Selectable) {
+					SelectionId = id;
+					SelectedStack = stack;
+					SelectedBox = box;
+					return;
+				}
+			}
 		}
+
+		private void UpdateSelectedState() {
+
+		}
+
+		private void CheckIfBoxChanged() {
+			if (SelectedStack.Top == SelectedBox) return;
+
+			SelectionMemory[SelectedBox] = SelectionId;
+			SelectedBox = SelectedStack.Top;
+			if (SelectionMemory.TryGetValue(SelectedBox, out int id)) {
+				SelectionId = id;
+			} else {
+				SelectionId = 0;
+			}
+		}
+
 
 	}
 }

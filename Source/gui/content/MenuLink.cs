@@ -12,25 +12,23 @@ namespace Toybox.gui.content {
 		public MenuBox Link;
 		public MenuElement Content;
 		public MenuControl ConfirmKey = MenuControl.Confirm;
-		public string RemoveTag;
 
 		public MenuLink(MenuBox link, MenuElement content) {
 			Link = link;
 			Content = content;
-			if (link != null && link.Tags.Count > 0) RemoveTag = link.Tags.First();
 		}
 
 		public override void Draw(Renderer r) {
 			Content.Draw(r);
 		}
 
-		protected internal override void UpdateFunction(MenuControlManager c, MenuSystem parent) {
-			Content.UpdateFunction(c, parent);
+		protected internal override void UpdateFunction(MenuControlManager c, MenuSystem system, MenuStack stack) {
+			Content.UpdateFunction(c, system, stack);
 
-			if (c == null || parent == null) return;
+			if (c == null || stack == null) return;
 			if (c.TryGet(ConfirmKey, out var key)) {
 				if (key.Pressed) {
-					Activate(parent);
+					Activate(stack);
 					key.DropPress();
 				}
 			}
@@ -61,10 +59,9 @@ namespace Toybox.gui.content {
 			Content.Cascade(a);
 		}
 
-		public void Activate(MenuSystem parent) {
+		public void Activate(MenuStack stack) {
 			if (Link == null) return;
-			parent.RemoveBox(RemoveTag);
-			parent.AddBox(Link);
+			stack.Push(Link);
 		}
 	}
 }
