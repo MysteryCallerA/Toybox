@@ -11,26 +11,29 @@ namespace Toybox.gui {
 
 		private Stack<MenuBox> Content = new();
 		public Point Position;
+		public MenuBox Top { get; private set; }
+
+		public void UpdateStart() {
+			if (Content.Count == 0) {
+				Top = null;
+				return;
+			}
+			Top = Content.Peek();
+		}
 
 		public void Update() {
-			if (Content.Count == 0) return;
+			if (Top == null) return;
 
-			var box = Content.Peek();
-			box.Position = Position;
-			box.UpdateState();
-			box.UpdateSize(Point.Zero);
-			box.UpdateContentPositions();
+			Top.Position = Position;
+			Top.UpdateState();
+			Top.UpdateSize(Point.Zero);
+			Top.UpdateContentPositions();
 		}
 
 		public void Draw(Renderer r) {
-			if (Content.Count == 0) return;
+			if (Top == null) return;
 
-			var box = Content.Peek();
-			box.Draw(r);
-		}
-
-		public MenuBox Top {
-			get { return Content.Peek(); }
+			Top.Draw(r);
 		}
 
 		public void Push(MenuBox b) {

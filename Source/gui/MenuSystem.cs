@@ -28,6 +28,9 @@ namespace Toybox.gui
 		}
 
 		public void Update() {
+			foreach (var stack in Content) {
+				stack.UpdateStart();
+			}
 			Selector.UpdateFunction(Controls, this);
 			foreach (var stack in Content) {
 				stack.Update();

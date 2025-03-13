@@ -62,7 +62,6 @@ namespace Toybox.gui.select {
 			UpdateControls(c, parent);
 			SelectedElement?.UpdateFunction(c, parent, SelectedStack);
 
-			CheckIfBoxChanged();
 			UpdateSelectedState();
 		}
 
@@ -126,7 +125,7 @@ namespace Toybox.gui.select {
 		private void Init(MenuSystem parent) {
 			if (parent.Content.Count == 0) return;
 			var stack = parent.Content[0];
-			if (stack.Count == 0) return;
+			if (stack.Top == null) return;
 			var box = stack.Top;
 
 			for (int id = 0; id < box.Content.Count; id++) {

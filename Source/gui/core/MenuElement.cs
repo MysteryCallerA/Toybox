@@ -15,7 +15,6 @@ namespace Toybox.gui.core {
 		protected internal MenuElement Parent;
 
 		public readonly MenuStateManager State;
-		public Action<MenuElement> OnStateChanged;
 		public readonly MenuTweenManager Tweens = new();
 
 		/// <summary> Is set automatically during UpdateSize. Used for relative positioning of elements. </summary>

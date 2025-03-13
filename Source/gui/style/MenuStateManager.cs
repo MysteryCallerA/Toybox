@@ -8,6 +8,8 @@ using Toybox.gui.core;
 namespace Toybox.gui.style {
 	public class MenuStateManager {
 
+		public Action<MenuElement> OnChanged;
+
 		private bool StateChanged = false;
 		private bool ParentStateChanged = false;
 
@@ -57,7 +59,7 @@ namespace Toybox.gui.style {
 			if (!StateChanged && !ParentStateChanged) return;
 
 			UpdateInheritedState();
-			Parent.OnStateChanged?.Invoke(Parent);
+			OnChanged?.Invoke(Parent);
 			if (StateChanged) Parent.Cascade(ApplyParentStateChanged);
 
 			StateChanged = false;
