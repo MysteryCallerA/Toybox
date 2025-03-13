@@ -12,18 +12,19 @@ using Toybox.utils.text;
 namespace Toybox.gui.select {
 	public class MenuSelector {
 
-		public MenuElement Graphic;
 		public MenuControl UpKey = MenuControl.Up;
 		public MenuControl DownKey = MenuControl.Down;
 		public MenuControl LeftKey = MenuControl.Left;
 		public MenuControl RightKey = MenuControl.Right;
 		public MenuControl BackKey = MenuControl.Back;
 
-		private Dictionary<MenuBox, int> SelectionMemory = new();
-		private MenuStack SelectedStack;
-		private MenuBox SelectedBox;
-		private int SelectionId;
+		public MenuElement Graphic;
+		public int SelectionId;
+		public MenuStack SelectedStack;
+		public readonly Dictionary<MenuBox, int> SelectionMemory = new();
+
 		private MenuElement PrevSelectedElement;
+		private MenuBox PrevSelectedBox;
 
 		public MenuSelector(MenuElement graphic) {
 			Graphic = graphic;
@@ -37,46 +38,67 @@ namespace Toybox.gui.select {
 			Graphic.XOffset = -Graphic.OuterSize.X - 5;
 		}
 
-		private MenuElement SelectedElement {
-			get {
-				if (SelectionId < 0 || SelectionId >= SelectedBox.Content.Count) return null;
-				return SelectedBox.Content[SelectionId];
-			}
+		public MenuElement GetSelected() {
+			if (SelectedStack == null || SelectedStack.Top == null) return null;
+			if (SelectionId < 0 || SelectionId >= SelectedStack.Top.Content.Count) return null;
+			return SelectedStack.Top.Content[SelectionId];
 		}
 
-		public void Draw(Renderer r) {
-			if (SelectedStack == null) return;
-			if (SelectedElement == null) return;
-			Graphic.Draw(r);
-		}
-
-		internal void UpdateFunction(MenuControlManager c, MenuSystem parent) {
+		internal void UpdateFunction(MenuControlManager c, MenuSystem system) {
 			if (SelectedStack == null) {
-				Init(parent);
-				return;
+				if (system.Content.Count > 0) SelectedStack = system.Content[0];
+				else return;
 			}
+			
+			if (SelectedStack.Top != PrevSelectedBox) RememberSelection();
+			SelectionId = Math.Clamp(SelectionId, 0, SelectedStack.Top.Content.Count - 1);
 
-			CheckIfBoxChanged();
-			if (SelectionId >= SelectedBox.Content.Count) SelectionId = SelectedBox.Content.Count - 1;
+			var select = GetSelected();
+			if (select == null) return;
 
-			UpdateControls(c, parent);
-			SelectedElement?.UpdateFunction(c, parent, SelectedStack);
+			UpdateControls(c);
+			select.UpdateFunction(c, system, SelectedStack);
 
-			UpdateSelectedState();
+			if (select != PrevSelectedElement) UpdateSelectedState(select);
 		}
 
 		internal void UpdateGraphic() {
-			if (SelectedStack == null) return;
-			if (SelectedElement == null) return;
+			var select = GetSelected();
+			if (select == null) return;
 
-			var bounds = SelectedElement.PanelBounds;
-			Graphic.Position = bounds.Location;
+			Graphic.Position = select.PanelOrigin;
 			Graphic.UpdateState();
-			Graphic.UpdateSize(bounds.Size);
+			Graphic.UpdateSize(select.PanelSize);
 			Graphic.UpdateContentPositions();
 		}
 
-		private void UpdateControls(MenuControlManager c, MenuSystem parent) {
+		public void Draw(Renderer r) {
+			if (GetSelected() == null) return;
+			Graphic.Draw(r);
+		}
+
+		private void RememberSelection() {
+			if (PrevSelectedBox != null) {
+				SelectionMemory[PrevSelectedBox] = SelectionId;
+			}
+			if (SelectionMemory.TryGetValue(SelectedStack.Top, out int id)) {
+				SelectionId = id;
+			} else {
+				SelectionId = 0;
+			}
+			PrevSelectedBox = SelectedStack.Top;
+		}
+
+		private void UpdateSelectedState(MenuElement newSelection) {
+			PrevSelectedElement?.State.Remove(MenuState.Selected);
+			newSelection?.State.Add(MenuState.Selected);
+			PrevSelectedElement = newSelection;
+		}
+
+
+		//-------- Controls --------
+
+		private void UpdateControls(MenuControlManager c) {
 			if (c == null) return;
 
 			if (c.TryGet(BackKey, out var back) && back.Pressed) {
@@ -97,22 +119,22 @@ namespace Toybox.gui.select {
 		}
 
 		public bool SelectUp() {
-			SelectedBox.GetSelectionUp(SelectionId, out SelectionId, out var output);
+			SelectedStack.Top.GetSelectionUp(SelectionId, out SelectionId, out var output);
 			return output;
 		}
 
 		public bool SelectDown() {
-			SelectedBox.GetSelectionDown(SelectionId, out SelectionId, out var output);
+			SelectedStack.Top.GetSelectionDown(SelectionId, out SelectionId, out var output);
 			return output;
 		}
 
 		public bool SelectLeft() {
-			SelectedBox.GetSelectionLeft(SelectionId, out SelectionId, out var output);
+			SelectedStack.Top.GetSelectionLeft(SelectionId, out SelectionId, out var output);
 			return output;
 		}
 
 		public bool SelectRight() {
-			SelectedBox.GetSelectionRight(SelectionId, out SelectionId, out var output);
+			SelectedStack.Top.GetSelectionRight(SelectionId, out SelectionId, out var output);
 			return output;
 		}
 
@@ -120,42 +142,6 @@ namespace Toybox.gui.select {
 			if (SelectedStack.Count <= 1) return false;
 			SelectedStack.Drop();
 			return true;
-		}
-
-		private void Init(MenuSystem parent) {
-			if (parent.Content.Count == 0) return;
-			var stack = parent.Content[0];
-			if (stack.Top == null) return;
-			var box = stack.Top;
-
-			for (int id = 0; id < box.Content.Count; id++) {
-				var e = box.Content[id];
-				if (e.Selectable) {
-					SelectionId = id;
-					SelectedStack = stack;
-					SelectedBox = box;
-					return;
-				}
-			}
-		}
-
-		private void CheckIfBoxChanged() {
-			if (SelectedStack.Top == SelectedBox) return;
-
-			SelectionMemory[SelectedBox] = SelectionId;
-			SelectedBox = SelectedStack.Top;
-			if (SelectionMemory.TryGetValue(SelectedBox, out int id)) {
-				SelectionId = id;
-			} else {
-				SelectionId = 0;
-			}
-		}
-
-		private void UpdateSelectedState() {
-			if (SelectedElement == PrevSelectedElement) return;
-			PrevSelectedElement?.State.Remove(MenuState.Selected);
-			SelectedElement?.State.Add(MenuState.Selected);
-			PrevSelectedElement = SelectedElement;
 		}
 
 
