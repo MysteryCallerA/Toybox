@@ -19,9 +19,11 @@ namespace Toybox.gui.select {
 		public MenuControl BackKey = MenuControl.Back;
 
 		public MenuElement Graphic;
+		public IMenuSelectorNav Nav = new BasicSelectorNav();
 		public int SelectionId;
 		public MenuStack SelectedStack;
 		public readonly Dictionary<MenuBox, int> SelectionMemory = new();
+		public MenuSystem ParentSystem;
 
 		private MenuElement PrevSelectedElement;
 		private MenuBox PrevSelectedBox;
@@ -45,6 +47,7 @@ namespace Toybox.gui.select {
 		}
 
 		internal void UpdateFunction(MenuControlManager c, MenuSystem system) {
+			ParentSystem = system;
 			if (SelectedStack == null) {
 				if (system.Content.Count > 0) SelectedStack = system.Content[0];
 				else return;
@@ -105,38 +108,27 @@ namespace Toybox.gui.select {
 				if (Back()) back.DropPress();
 			}
 			if (c.TryGet(UpKey, out var up) && up.Pressed) {
-				if (SelectUp()) up.DropPress();
+				Nav.SelectUp(this, out var valid);
+				if (valid) up.DropPress();
 			}
 			if (c.TryGet(DownKey, out var down) && down.Pressed) {
-				if (SelectDown()) down.DropPress();
+				Nav.SelectDown(this, out var valid);
+				if (valid) down.DropPress();
 			}
 			if (c.TryGet(LeftKey, out var left) && left.Pressed) {
-				if (SelectLeft()) left.DropPress();
+				Nav.SelectLeft(this, out var valid);
+				if (valid) left.DropPress();
 			}
 			if (c.TryGet(RightKey, out var right) && right.Pressed) {
-				if (SelectRight()) right.DropPress();
+				Nav.SelectRight(this, out var valid);
+				if (valid) right.DropPress();
 			}
 		}
 
-		public bool SelectUp() {
-			SelectedStack.Top.GetSelectionUp(SelectionId, out SelectionId, out var output);
-			return output;
-		}
-
-		public bool SelectDown() {
-			SelectedStack.Top.GetSelectionDown(SelectionId, out SelectionId, out var output);
-			return output;
-		}
-
-		public bool SelectLeft() {
-			SelectedStack.Top.GetSelectionLeft(SelectionId, out SelectionId, out var output);
-			return output;
-		}
-
-		public bool SelectRight() {
-			SelectedStack.Top.GetSelectionRight(SelectionId, out SelectionId, out var output);
-			return output;
-		}
+		public void SelectUp() { Nav.SelectUp(this, out _); }
+		public void SelectDown() { Nav.SelectDown(this, out _); }
+		public void SelectLeft() { Nav.SelectLeft(this, out _); }
+		public void SelectRight() {	Nav.SelectRight(this, out _); }
 
 		public bool Back() {
 			if (SelectedStack.Count <= 1) return false;

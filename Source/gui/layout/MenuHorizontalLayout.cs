@@ -82,30 +82,38 @@ namespace Toybox.gui.layout {
 			}
 		}
 
-		public bool SelectDown(List<MenuElement> content, int selection, out int newSelection) {
+		public void SelectDown(List<MenuElement> content, int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
 			newSelection = selection;
-			return false;
+			dirPossible = false;
+			wrappedAround = false;
 		}
 
-		public bool SelectUp(List<MenuElement> content, int selection, out int newSelection) {
+		public void SelectUp(List<MenuElement> content, int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
 			newSelection = selection;
-			return false;
+			dirPossible = false;
+			wrappedAround = false;
 		}
 
-		public bool SelectLeft(List<MenuElement> content, int selection, out int newSelection) {
+		public void SelectLeft(List<MenuElement> content, int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
 			newSelection = selection + 1;
 			if (newSelection >= content.Count) {
 				newSelection = 0;
+				wrappedAround = true;
+			} else {
+				wrappedAround = false;
 			}
-			return true;
+			dirPossible = true;
 		}
 
-		public bool SelectRight(List<MenuElement> content, int selection, out int newSelection) {
+		public void SelectRight(List<MenuElement> content, int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
 			newSelection = selection - 1;
 			if (newSelection < 0) {
 				newSelection = content.Count - 1;
+				wrappedAround = true;
+			} else {
+				wrappedAround = false;
 			}
-			return true;
+			dirPossible = true;
 		}
 	}
 }

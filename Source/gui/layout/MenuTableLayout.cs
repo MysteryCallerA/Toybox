@@ -146,15 +146,16 @@ namespace Toybox.gui.layout {
 			}
 		}
 
-		public bool SelectDown(List<MenuElement> content, int selection, out int newSelection) {
+		public void SelectDown(List<MenuElement> content, int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
 			newSelection = selection + Columns;
 			if (newSelection >= content.Count) {
 				newSelection = selection % Columns;
-			}
-			return true;
+				wrappedAround = true;
+			} else wrappedAround = false;
+			dirPossible = true;
 		}
 
-		public bool SelectLeft(List<MenuElement> content, int selection, out int newSelection) {
+		public void SelectLeft(List<MenuElement> content, int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
 			newSelection = selection - 1;
 			int row = selection / Columns;
 			if (newSelection < 0 || newSelection / Columns != row) {
@@ -162,28 +163,31 @@ namespace Toybox.gui.layout {
 				if (newSelection >= content.Count) {
 					newSelection = content.Count - 1;
 				}
-			}
-			return true;
+				wrappedAround = true;
+			} else wrappedAround = false;
+			dirPossible = true;
 		}
 
-		public bool SelectRight(List<MenuElement> content, int selection, out int newSelection) {
+		public void SelectRight(List<MenuElement> content, int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
 			newSelection = selection + 1;
 			int row = selection / Columns;
 			if (newSelection >= content.Count || newSelection / Columns != row) {
 				newSelection = row * Columns;
-			}
-			return true;
+				wrappedAround = true;
+			} else wrappedAround = false;
+			dirPossible = true;
 		}
 
-		public bool SelectUp(List<MenuElement> content, int selection, out int newSelection) {
+		public void SelectUp(List<MenuElement> content, int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
 			newSelection = selection - Columns;
 			if (newSelection < 0) {
 				newSelection = ((Rows - 1) * Columns) + (selection % Columns);
 				if (newSelection >= content.Count) {
 					newSelection -= Columns;
 				}
-			}
-			return true;
+				wrappedAround = true;
+			} else wrappedAround = false;
+			dirPossible = true;
 		}
 	}
 }

@@ -77,21 +77,5 @@ namespace Toybox.gui {
 				_BackPanel.Parent = this;
 			}
 		}
-
-		internal void GetSelectionUp(int selection, out int nextSelection, out bool changed) {
-			changed = Layout.SelectUp(Content, selection, out nextSelection);
-		}
-
-		internal void GetSelectionDown(int selection, out int nextSelection, out bool changed) {
-			changed = Layout.SelectDown(Content, selection, out nextSelection);
-		}
-
-		internal void GetSelectionLeft(int selection, out int nextSelection, out bool changed) {
-			changed = Layout.SelectLeft(Content, selection, out nextSelection);
-		}
-
-		internal void GetSelectionRight(int selection, out int nextSelection, out bool changed) {
-			changed = Layout.SelectRight(Content, selection, out nextSelection);
-		}
 	}
 }
