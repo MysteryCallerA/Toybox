@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Toybox.gui.core;
 
 namespace Toybox.gui.layout {
-	public class MenuTableLayout:IMenuLayout {
+	public class MenuTableLayout:MenuLayout {
 
 		public int HSpacing = 0;
 		public int VSpacing = 0;
@@ -18,22 +18,22 @@ namespace Toybox.gui.layout {
 		private HashSet<int> FillOuterRows = new();
 		private HashSet<int> FillOuterColumns = new();
 
-		public void UpdateContentSize(List<MenuElement> content, Point contentContainerSize, out Point contentSize) {
-			if (content.Count == 0) {
+		public override void UpdateContentSize(Point contentContainerSize, out Point contentSize) {
+			if (Parent.Content.Count == 0) {
 				contentSize = Point.Zero;
 				return;
 			}
 
 			ColumnSizes.Clear();
 			RowSizes.Clear();
-			Rows = (int)Math.Ceiling((float)content.Count / Columns);
+			Rows = (int)Math.Ceiling((float)Parent.Content.Count / Columns);
 			for (int i = 0; i < Columns; i++) ColumnSizes.Add(0);
 			for (int i = 0; i < Rows; i++) RowSizes.Add(0);
 
 			//Initial minimum sizing
 			int row = 0;
 			int col = 0;
-			foreach (var e in content) {
+			foreach (var e in Parent.Content) {
 				if (e != null) {
 					e.UpdateSize(contentContainerSize);
 					var size = e.OuterSize;
@@ -61,7 +61,7 @@ namespace Toybox.gui.layout {
 			col = 0;
 			FillOuterColumns.Clear();
 			FillOuterRows.Clear();
-			foreach (var e in content) {
+			foreach (var e in Parent.Content) {
 				if (e != null) {
 					if (e.HFit == MenuElement.FitType.FillOuter) FillOuterColumns.Add(col);
 					if (e.VFit == MenuElement.FitType.FillOuter) FillOuterRows.Add(row);
@@ -95,7 +95,7 @@ namespace Toybox.gui.layout {
 			//Final updates
 			row = 0;
 			col = 0;
-			foreach (var e in content) {
+			foreach (var e in Parent.Content) {
 				if (e != null && (e.HFit == MenuElement.FitType.FillOuter || e.VFit == MenuElement.FitType.FillOuter)) {
 					e.UpdateSize(new Point(ColumnSizes[col], RowSizes[row]));
 				}
@@ -110,14 +110,14 @@ namespace Toybox.gui.layout {
 			contentSize = new Point(contentSize.X + ColumnSizes.Sum(), contentSize.Y + RowSizes.Sum());
 		}
 
-		public void UpdateContentPosition(List<MenuElement> content, MenuElement container) {
-			if (content.Count == 0) return;
+		public override void UpdateContentPosition() {
+			if (Parent.Content.Count == 0) return;
 
-			var bounds = container.ContentBounds;
+			var bounds = Parent.ContentBounds;
 			int x = bounds.X, y = bounds.Y;
 			int col = 0, row = 0;
 
-			foreach (var e in content) {
+			foreach (var e in Parent.Content) {
 				var cell = new Rectangle(x, y, ColumnSizes[col], RowSizes[row]);
 				if (e != null) {
 					if (e.HAlign == MenuElement.HAlignType.Left) {
@@ -146,43 +146,43 @@ namespace Toybox.gui.layout {
 			}
 		}
 
-		public void SelectDown(List<MenuElement> content, int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
+		public override void SelectDown(int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
 			newSelection = selection + Columns;
-			if (newSelection >= content.Count) {
+			if (newSelection >= Parent.Content.Count) {
 				newSelection = selection % Columns;
 				wrappedAround = true;
 			} else wrappedAround = false;
 			dirPossible = true;
 		}
 
-		public void SelectLeft(List<MenuElement> content, int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
+		public override void SelectLeft(int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
 			newSelection = selection - 1;
 			int row = selection / Columns;
 			if (newSelection < 0 || newSelection / Columns != row) {
 				newSelection = (row * Columns) + (Columns - 1);
-				if (newSelection >= content.Count) {
-					newSelection = content.Count - 1;
+				if (newSelection >= Parent.Content.Count) {
+					newSelection = Parent.Content.Count - 1;
 				}
 				wrappedAround = true;
 			} else wrappedAround = false;
 			dirPossible = true;
 		}
 
-		public void SelectRight(List<MenuElement> content, int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
+		public override void SelectRight(int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
 			newSelection = selection + 1;
 			int row = selection / Columns;
-			if (newSelection >= content.Count || newSelection / Columns != row) {
+			if (newSelection >= Parent.Content.Count || newSelection / Columns != row) {
 				newSelection = row * Columns;
 				wrappedAround = true;
 			} else wrappedAround = false;
 			dirPossible = true;
 		}
 
-		public void SelectUp(List<MenuElement> content, int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
+		public override void SelectUp(int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
 			newSelection = selection - Columns;
 			if (newSelection < 0) {
 				newSelection = ((Rows - 1) * Columns) + (selection % Columns);
-				if (newSelection >= content.Count) {
+				if (newSelection >= Parent.Content.Count) {
 					newSelection -= Columns;
 				}
 				wrappedAround = true;

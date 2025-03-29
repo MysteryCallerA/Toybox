@@ -60,6 +60,7 @@ namespace Toybox.gui.select {
 			if (select == null) return;
 
 			UpdateControls(c);
+			select = GetSelected();
 			select.UpdateFunction(c, system, SelectedStack);
 
 			if (select != PrevSelectedElement) UpdateSelectedState(select);
@@ -96,6 +97,9 @@ namespace Toybox.gui.select {
 			PrevSelectedElement?.State.Remove(MenuState.Selected);
 			newSelection?.State.Add(MenuState.Selected);
 			PrevSelectedElement = newSelection;
+
+			if (newSelection == null) return;
+			SelectedStack.Top.Layout.SelectionChanged(newSelection);
 		}
 
 

@@ -14,20 +14,20 @@ namespace Toybox.gui {
 
 		public ObservableList<MenuElement> Content = new();
 		private MenuElement _BackPanel;
-		public IMenuLayout Layout;
+		private MenuLayout _Layout;
 
-		public MenuBox():this(new MenuVerticalLayout()) { }
-		public MenuBox(IMenuLayout layout) {
-			Layout = layout;
+		public MenuBox():this(new MenuVerticalLayout()) {
+		}
+
+		public MenuBox(MenuLayout layout) {
 			Content.OnAdd = ElementAdded;
 			Content.OnRemove = ElementRemoved;
+			Layout = layout;
 		}
 
 		public override void Draw(Renderer r) {
 			BackPanel?.Draw(r);
-			foreach (var e in Content) {
-				e.Draw(r);
-			}
+			Layout.DrawContent(r);
 		}
 
 		public void Update() {
@@ -51,12 +51,12 @@ namespace Toybox.gui {
 		}
 
 		protected override void UpdateContentSize(Point contentContainerSize, out Point contentSize) {
-			Layout.UpdateContentSize(Content, InnerSize, out contentSize);
+			Layout.UpdateContentSize(InnerSize, out contentSize);
 			BackPanel?.UpdateSize(PanelSize);
 		}
 
 		protected internal override void UpdateContentPositions() {
-			Layout.UpdateContentPosition(Content, this);
+			Layout.UpdateContentPosition();
 			if (BackPanel != null) BackPanel.Position = PanelOrigin;
 		}
 
@@ -75,6 +75,14 @@ namespace Toybox.gui {
 			set {
 				_BackPanel = value;
 				_BackPanel.Parent = this;
+			}
+		}
+
+		public MenuLayout Layout {
+			get { return _Layout; }
+			set {
+				_Layout = value;
+				_Layout.Parent = this;
 			}
 		}
 	}

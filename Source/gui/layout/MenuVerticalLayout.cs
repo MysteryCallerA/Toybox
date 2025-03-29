@@ -7,22 +7,22 @@ using System.Threading.Tasks;
 using Toybox.gui.core;
 
 namespace Toybox.gui.layout {
-	public class MenuVerticalLayout:IMenuLayout {
+	public class MenuVerticalLayout:MenuLayout {
 
 		public int Spacing = 0;
 
-		public void UpdateContentSize(List<MenuElement> content, Point contentContainerSize, out Point contentSize) {
-			if (content.Count == 0) {
+		public override void UpdateContentSize(Point contentContainerSize, out Point contentSize) {
+			if (Parent.Content.Count == 0) {
 				contentSize = Point.Zero;
 				return;
 			}
 
 			var bounds = contentContainerSize;
-			int vsize = Spacing * (content.Count - 1);
+			int vsize = Spacing * (Parent.Content.Count - 1);
 			int hsize = 0;
 			int fitouterCount = 0;
 
-			foreach (var e in content) {
+			foreach (var e in Parent.Content) {
 				if (e.VFit == MenuElement.FitType.FillOuter) {
 					fitouterCount++;
 					continue;
@@ -39,7 +39,7 @@ namespace Toybox.gui.layout {
 			}
 
 			bounds.Y -= vsize;
-			foreach (var e in content) {
+			foreach (var e in Parent.Content) {
 				if (e.VFit != MenuElement.FitType.FillOuter) {
 					continue;
 				}
@@ -53,13 +53,13 @@ namespace Toybox.gui.layout {
 			contentSize = new Point(hsize, vsize);
 		}
 
-		public void UpdateContentPosition(List<MenuElement> content, MenuElement container) {
-			if (content.Count == 0) return;
+		public override void UpdateContentPosition() {
+			if (Parent.Content.Count == 0) return;
 
-			var bounds = container.ContentBounds;
+			var bounds = Parent.ContentBounds;
 			int y = bounds.Y;
 
-			foreach (var e in content) {
+			foreach (var e in Parent.Content) {
 				if (e.HAlign == MenuElement.HAlignType.Left) {
 					e.Position = new Point(bounds.X, y);
 				} else if (e.HAlign == MenuElement.HAlignType.Right) {
@@ -71,8 +71,8 @@ namespace Toybox.gui.layout {
 			}
 
 			y = bounds.Bottom;
-			for (int i = content.Count - 1; i >= 0; i--) {
-				var e = content[i];
+			for (int i = Parent.Content.Count - 1; i >= 0; i--) {
+				var e = Parent.Content[i];
 				if (e.VAlign == MenuElement.VAlignType.Bottom) {
 					e.Position = new Point(e.Position.X, y - e.OuterSize.Y);
 				}
@@ -81,9 +81,9 @@ namespace Toybox.gui.layout {
 			}
 		}
 
-		public void SelectDown(List<MenuElement> content, int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
+		public override void SelectDown(int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
 			newSelection = selection + 1;
-			if (newSelection >= content.Count) {
+			if (newSelection >= Parent.Content.Count) {
 				newSelection = 0;
 				wrappedAround = true;
 			} else {
@@ -92,10 +92,10 @@ namespace Toybox.gui.layout {
 			dirPossible = true;
 		}
 
-		public void SelectUp(List<MenuElement> content, int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
+		public override void SelectUp(int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
 			newSelection = selection - 1;
 			if (newSelection < 0) {
-				newSelection = content.Count - 1;
+				newSelection = Parent.Content.Count - 1;
 				wrappedAround = true;
 			} else {
 				wrappedAround = false;
@@ -103,13 +103,13 @@ namespace Toybox.gui.layout {
 			dirPossible = true;
 		}
 
-		public void SelectLeft(List<MenuElement> content, int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
+		public override void SelectLeft(int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
 			newSelection = selection;
 			dirPossible = false;
 			wrappedAround = false;
 		}
 
-		public void SelectRight(List<MenuElement> content, int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
+		public override void SelectRight(int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
 			newSelection = selection;
 			dirPossible = false;
 			wrappedAround = false;

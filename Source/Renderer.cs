@@ -15,11 +15,18 @@ namespace Toybox {
 		public SpriteBatch Batch;
 		public Texture2D Blank;
 		public TextRenderer TextRenderer;
+		public GraphicsDevice GraphicsDevice;
+		private readonly RasterizerState ScissorState;
 
-		public Renderer(SpriteBatch s, Texture2D blankTexture, TextRenderer text) {
+		public Renderer(SpriteBatch s, Texture2D blankTexture, TextRenderer text, GraphicsDevice g) {
 			Batch = s;
 			Blank = blankTexture;
 			TextRenderer = text;
+			GraphicsDevice = g;
+
+			ScissorState = new() {
+				ScissorTestEnable = true
+			};
 		}
 
 		/// <summary> Draw rectangle without any projection. </summary>
@@ -114,6 +121,19 @@ namespace Toybox {
 		public void DrawTextStatic(Point pos, Color c, string text, Camera cam, Camera.Space fromSpace) {
 			pos = cam.Project(fromSpace, Camera.Space.Pixel, pos);
 			TextRenderer.Draw(this, pos, text, c, cam.PixelScale);
+		}
+
+		public void Begin() {
+			Batch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
+		}
+
+		public void Begin(Rectangle scissorRect) {
+			GraphicsDevice.ScissorRectangle = scissorRect;
+			Batch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, ScissorState);
+		}
+
+		public void End() {
+			Batch.End();
 		}
 	
 	}

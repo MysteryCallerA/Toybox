@@ -82,7 +82,7 @@ namespace Toybox {
 			Resources.Blank.SetData(new Color[] { Color.White });
 
 			var textrenderer = new TextRenderer(GetDefaultFont());
-			Renderer = new Renderer(new SpriteBatch(GraphicsDevice), Resources.Blank, textrenderer);
+			Renderer = new Renderer(new SpriteBatch(GraphicsDevice), Resources.Blank, textrenderer, GraphicsDevice);
 
 			Init();
 

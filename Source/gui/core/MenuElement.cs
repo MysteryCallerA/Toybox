@@ -26,6 +26,7 @@ namespace Toybox.gui.core {
 		/// <summary> Only used when Fit is Static. </summary>
 		public Point TargetInnerSize;
 
+		/// <summary> Use TargetInnerSize when Static. </summary>
 		public enum FitType { Static, FitContent, FillOuter }
 		public FitType HFit = FitType.FitContent;
 		public FitType VFit = FitType.FitContent;
@@ -110,6 +111,9 @@ namespace Toybox.gui.core {
 		}
 		public Rectangle PanelBounds {
 			get { return new Rectangle(PanelOrigin, PanelSize); }
+		}
+		public Rectangle OuterBounds {
+			get { return new Rectangle(Position, OuterSize); }
 		}
 
 		// -------- Multi-Properties --------
