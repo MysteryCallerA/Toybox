@@ -48,7 +48,7 @@ namespace Toybox.gui.graphic {
 			} else {
 				ScrollbarNeeded = true;
 			}
-			FrontGraphic.UpdateSize(new Point(contentContainerSize.X, (int)(innerRatio * contentContainerSize.Y)));
+			FrontGraphic.UpdateSize(new Point(contentContainerSize.X, (int)(innerRatio * contentContainerSize.Y) + 1));
 			contentSize = Point.Zero;
 		}
 
@@ -56,7 +56,7 @@ namespace Toybox.gui.graphic {
 			BackGraphic.Position = ContentOrigin;
 
 			var posRatio = (float)Source.Scroll / Source.TotalVertical;
-			FrontGraphic.Position = new Point(BackGraphic.Position.X, (int)(posRatio * Source.VisibleVertical) + BackGraphic.Position.Y);
+			FrontGraphic.Position = new Point(BackGraphic.Position.X, (int)(posRatio * BackGraphic.InnerSize.Y) + BackGraphic.Position.Y);
 
 			BackGraphic.UpdateContentPositions();
 			FrontGraphic.UpdateContentPositions();
