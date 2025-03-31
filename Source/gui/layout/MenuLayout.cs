@@ -36,5 +36,7 @@ namespace Toybox.gui.layout
 		public virtual void SelectionChanged(MenuElement e) {
 		}
 
+		public virtual void UpdateState() { }
+
 	}
 }

@@ -6,11 +6,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Toybox.gui.core;
+using Toybox.utils.tween;
 
 namespace Toybox.gui.layout {
 	public class MenuVScrollLayout:MenuVerticalLayout {
 
-		public int Scroll = 0;
+		private int _Scroll = 0;
+
+		public Tween ScrollTween;
+		private int TweenStart;
+		private int TweenEnd;
+		private int TweenFrame;
 
 		public override void UpdateContentSize(Point contentContainerSize, out Point contentSize) {
 			if (Parent.Content.Count == 0) {
@@ -64,6 +70,27 @@ namespace Toybox.gui.layout {
 				Scroll += element.Bottom - bounds.Bottom;
 			} else if (element.Top < bounds.Top) {
 				Scroll -= bounds.Top - element.Top;
+			}
+		}
+
+		public int Scroll {
+			get { return _Scroll; }
+			set {
+				if (ScrollTween != null) {
+					if (TweenEnd == value) return;
+					TweenStart = _Scroll;
+					TweenEnd = value;
+					TweenFrame = 0;
+					return;
+				}
+				_Scroll = value;
+			}
+		}
+
+		public override void UpdateState() {
+			if (ScrollTween != null && TweenFrame < ScrollTween.Frames) {
+				TweenFrame++;
+				_Scroll = (int)(ScrollTween.Get(TweenFrame) * (TweenEnd - TweenStart)) + TweenStart;
 			}
 		}
 	}

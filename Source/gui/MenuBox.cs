@@ -48,6 +48,7 @@ namespace Toybox.gui {
 			foreach (var e in Content) {
 				e.UpdateState();
 			}
+			Layout.UpdateState();
 		}
 
 		protected override void UpdateContentSize(Point contentContainerSize, out Point contentSize) {
