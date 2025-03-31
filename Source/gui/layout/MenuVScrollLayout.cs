@@ -100,7 +100,9 @@ namespace Toybox.gui.layout {
 			if (element.Bottom > bounds.Bottom) {
 				Scroll += element.Bottom - bounds.Bottom;
 			} else if (element.Top < bounds.Top) {
-				Scroll -= bounds.Top - element.Top;
+				var next = Scroll - (bounds.Top - element.Top);
+				if (next < 0) next = 0;
+				Scroll = next;
 			}
 		}
 
