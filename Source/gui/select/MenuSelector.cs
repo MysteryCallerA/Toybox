@@ -8,6 +8,7 @@ using Toybox.gui.content;
 using Toybox.gui.core;
 using Toybox.gui.style;
 using Toybox.utils.text;
+using Toybox.utils.tween;
 
 namespace Toybox.gui.select {
 	public class MenuSelector {
@@ -17,6 +18,11 @@ namespace Toybox.gui.select {
 		public MenuControl LeftKey = MenuControl.Left;
 		public MenuControl RightKey = MenuControl.Right;
 		public MenuControl BackKey = MenuControl.Back;
+
+		public Tween MoveTween;
+		private Point TweenStart;
+		private MenuElement TweenEnd;
+		private int TweenFrame = 0;
 
 		public MenuElement Graphic;
 		public IMenuSelectorNav Nav = new BasicSelectorNav();
@@ -64,13 +70,23 @@ namespace Toybox.gui.select {
 			select.UpdateFunction(c, system, SelectedStack);
 
 			if (select != PrevSelectedElement) UpdateSelectedState(select);
+
+			if (MoveTween != null && TweenFrame < MoveTween.Frames) {
+				TweenFrame++;
+			}
 		}
 
 		internal void UpdateGraphic() {
 			var select = GetSelected();
 			if (select == null) return;
 
-			Graphic.Position = select.PanelOrigin;
+			if (MoveTween != null && TweenFrame < MoveTween.Frames) {
+				var pos = TweenEnd.PanelOrigin - TweenStart;
+				var multi = MoveTween.Get(TweenFrame);
+				Graphic.Position = new Point((int)(pos.X * multi) + TweenStart.X, (int)(pos.Y * multi) + TweenStart.Y);
+			} else {
+				Graphic.Position = select.PanelOrigin;
+			}
 			Graphic.UpdateState();
 			Graphic.UpdateSize(select.PanelSize);
 			Graphic.UpdateContentPositions();
@@ -100,6 +116,14 @@ namespace Toybox.gui.select {
 
 			if (newSelection == null) return;
 			SelectedStack.Top.Layout.SelectionChanged(newSelection);
+
+			if (MoveTween != null) StartTween(newSelection);
+		}
+
+		private void StartTween(MenuElement select) {
+			TweenStart = Graphic.Position;
+			TweenEnd = select;
+			TweenFrame = 0;
 		}
 
 
