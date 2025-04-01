@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 using Toybox.gui.core;
 
 namespace Toybox.gui.layout {
-	public class MLTable:MenuLayout {
+	public class MLTwoColumn:MenuLayout {
 
 		public int HSpacing = 0;
 		public int VSpacing = 0;
-		public int Columns = 1;
+
+		public const int Columns = 2;
 		public int Rows { get; private set; }
-		private List<int> ColumnSizes = new();
+		private readonly int[] ColumnSizes = new int[] { 0,0 };
 		private List<int> RowSizes = new();
 		private HashSet<int> FillOuterRows = new();
 		private HashSet<int> FillOuterColumns = new();
@@ -24,15 +25,16 @@ namespace Toybox.gui.layout {
 				return;
 			}
 
-			ColumnSizes.Clear();
-			RowSizes.Clear();
 			Rows = (int)Math.Ceiling((float)Parent.Content.Count / Columns);
-			for (int i = 0; i < Columns; i++) ColumnSizes.Add(0);
+			ColumnSizes[0] = 0;
+			ColumnSizes[1] = 0;
+			RowSizes.Clear();
 			for (int i = 0; i < Rows; i++) RowSizes.Add(0);
 
 			//Initial minimum sizing
-			int row = 0;
 			int col = 0;
+			int row = 0;
+
 			foreach (var e in Parent.Content) {
 				if (e != null) {
 					e.UpdateSize(contentContainerSize);
@@ -149,33 +151,22 @@ namespace Toybox.gui.layout {
 		public override void SelectDown(int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
 			newSelection = selection + Columns;
 			if (newSelection >= Parent.Content.Count) {
-				newSelection = selection % Columns;
+				newSelection = 0;
 				wrappedAround = true;
 			} else wrappedAround = false;
 			dirPossible = true;
 		}
 
 		public override void SelectLeft(int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
-			newSelection = selection - 1;
-			int row = selection / Columns;
-			if (newSelection < 0 || newSelection / Columns != row) {
-				newSelection = (row * Columns) + (Columns - 1);
-				if (newSelection >= Parent.Content.Count) {
-					newSelection = Parent.Content.Count - 1;
-				}
-				wrappedAround = true;
-			} else wrappedAround = false;
-			dirPossible = true;
+			newSelection = selection;
+			dirPossible = false;
+			wrappedAround = false;
 		}
 
 		public override void SelectRight(int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
-			newSelection = selection + 1;
-			int row = selection / Columns;
-			if (newSelection >= Parent.Content.Count || newSelection / Columns != row) {
-				newSelection = row * Columns;
-				wrappedAround = true;
-			} else wrappedAround = false;
-			dirPossible = true;
+			newSelection = selection;
+			dirPossible = false;
+			wrappedAround = false;
 		}
 
 		public override void SelectUp(int selection, out int newSelection, out bool dirPossible, out bool wrappedAround) {
