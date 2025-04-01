@@ -16,7 +16,7 @@ namespace Toybox.gui {
 		private MenuElement _BackPanel;
 		private MenuLayout _Layout;
 
-		public MenuBox():this(new MenuVerticalLayout()) {
+		public MenuBox():this(new MLVertical()) {
 		}
 
 		public MenuBox(MenuLayout layout) {
