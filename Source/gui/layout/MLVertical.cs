@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Toybox.gui.core;
 
 namespace Toybox.gui.layout {
-	public class MenuVerticalLayout:MenuLayout {
+	public class MLVertical:MenuLayout {
 
 		public int Spacing = 0;
 

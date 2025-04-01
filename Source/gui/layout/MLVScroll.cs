@@ -10,7 +10,7 @@ using Toybox.gui.graphic;
 using Toybox.utils.tween;
 
 namespace Toybox.gui.layout {
-	public class MenuVScrollLayout:MenuVerticalLayout {
+	public class MLVScroll:MLVertical {
 
 		private int _Scroll = 0;
 
@@ -23,7 +23,7 @@ namespace Toybox.gui.layout {
 		public int VisibleVertical { get; private set; }
 		public int TotalVertical { get; private set; }
 
-		public MenuVScrollLayout() {
+		public MLVScroll() {
 			Scrollbar = new VScrollbarGraphic(this);
 		}
 

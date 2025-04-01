@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Toybox.gui.core;
 
 namespace Toybox.gui.layout {
-	public class MenuTableLayout:MenuLayout {
+	public class MLTable:MenuLayout {
 
 		public int HSpacing = 0;
 		public int VSpacing = 0;

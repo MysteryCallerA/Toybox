@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Toybox.gui.core;
 
 namespace Toybox.gui.layout {
-	public class MenuHorizontalLayout:MenuLayout {
+	public class MLHorizontal:MenuLayout {
 
 		public int Spacing = 0;
 

@@ -12,18 +12,18 @@ namespace Toybox.gui.graphic {
 
 		public MenuElement FrontGraphic;
 		public MenuElement BackGraphic;
-		private readonly MenuVScrollLayout Source;
+		private readonly MLVScroll Source;
 
 		private bool ScrollbarNeeded;
 
-		public VScrollbarGraphic(MenuVScrollLayout parent) {
+		public VScrollbarGraphic(MLVScroll parent) {
 			BackGraphic = new MenuBoxGraphic() { BackColor = Color.DarkGray };
 			FrontGraphic = new MenuBoxGraphic() { BackColor = Color.White };
 			Source = parent;
 			Setup();
 		}
 
-		public VScrollbarGraphic(MenuVScrollLayout parent, MenuElement back, MenuElement front) {
+		public VScrollbarGraphic(MLVScroll parent, MenuElement back, MenuElement front) {
 			Source = parent;
 			BackGraphic = back;
 			FrontGraphic = front;
