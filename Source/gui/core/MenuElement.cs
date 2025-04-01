@@ -49,7 +49,7 @@ namespace Toybox.gui.core {
 		}
 
 		/// <summary> Anything the element does, goes here. Call UpdateFunction on any contained elements. </summary>
-		protected internal virtual void UpdateFunction(MenuControlManager c, MenuSystem system, MenuStack stack) { }
+		protected internal virtual void UpdateFunction(MenuControlManager c, MenuStack stack) { }
 
 		/// <summary> Always called once per frame. Call base.UpdateState() and then UpdateState() on any contained elements.
 		/// <br></br> Used for updating Tweens and MenuState.</summary>

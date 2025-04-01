@@ -34,7 +34,7 @@ namespace Toybox.gui.content {
 			FrontGraphic?.Draw(r);
 		}
 
-		protected internal override void UpdateFunction(MenuControlManager c, MenuSystem system, MenuStack stack) {
+		protected internal override void UpdateFunction(MenuControlManager c, MenuStack stack) {
 			if (c == null) return;
 			if (c.TryGet(LeftKey, out var left)) {
 				if (left.Pressed) {

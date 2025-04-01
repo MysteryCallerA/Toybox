@@ -29,7 +29,6 @@ namespace Toybox.gui.select {
 		public int SelectionId;
 		public MenuStack SelectedStack;
 		public readonly Dictionary<MenuBox, int> SelectionMemory = new();
-		public MenuSystem ParentSystem;
 
 		private MenuElement PrevSelectedElement;
 		private MenuBox PrevSelectedBox;
@@ -52,12 +51,8 @@ namespace Toybox.gui.select {
 			return SelectedStack.Top.Content[SelectionId];
 		}
 
-		internal void UpdateFunction(MenuControlManager c, MenuSystem system) {
-			ParentSystem = system;
-			if (SelectedStack == null) {
-				if (system.Content.Count > 0) SelectedStack = system.Content[0];
-				else return;
-			}
+		internal void UpdateFunction(MenuControlManager c, MenuStack parent) {
+			SelectedStack = parent;
 			
 			if (SelectedStack.Top != PrevSelectedBox) RememberSelection();
 			SelectionId = Math.Clamp(SelectionId, 0, SelectedStack.Top.Content.Count - 1);
@@ -67,7 +62,7 @@ namespace Toybox.gui.select {
 
 			UpdateControls(c);
 			select = GetSelected();
-			select.UpdateFunction(c, system, SelectedStack);
+			select.UpdateFunction(c, SelectedStack);
 
 			if (select != PrevSelectedElement) UpdateSelectedState(select);
 
@@ -159,7 +154,7 @@ namespace Toybox.gui.select {
 		public void SelectRight() {	Nav.SelectRight(this, out _); }
 
 		public bool Back() {
-			if (SelectedStack.Count <= 1) return false;
+			if (SelectedStack.Count == 0) return false;
 			SelectedStack.Drop();
 			return true;
 		}

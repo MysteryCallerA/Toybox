@@ -5,44 +5,61 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Toybox.gui.core;
+using Toybox.gui.select;
 
 namespace Toybox.gui {
 	public class MenuStack {
 
-		private Stack<MenuBox> Content = new();
-		public Point Position;
+		private readonly Stack<MenuBox> Content = new();
 		public MenuBox Top { get; private set; }
 
-		public void UpdateStart() {
+		public Point Position;
+		public MenuControlManager Controls = new();
+		public MenuSelector Selector;
+		public MenuBox InitialMenu;
+		public MenuControl OpenKey = MenuControl.Open;
+
+		public void Update() {
 			if (Content.Count == 0) {
 				Top = null;
+				if (Controls.TryGet(OpenKey, out var key) && key.Pressed) {
+					if (Open()) key.DropPress();
+				}
 				return;
 			}
 			Top = Content.Peek();
-		}
 
-		public void Update() {
-			if (Top == null) return;
+			Selector?.UpdateFunction(Controls, this);
 
 			Top.Position = Position;
 			Top.UpdateState();
 			Top.UpdateSize(Point.Zero);
 			Top.UpdateContentPositions();
+
+			Selector?.UpdateGraphic();
 		}
 
 		public void Draw(Renderer r) {
 			if (Top == null) return;
 
 			Top.Draw(r);
+			Selector?.Draw(r);
 		}
 
-		public void Push(MenuBox b) {
+		public virtual void Push(MenuBox b) {
 			Content.Push(b);
 		}
 
-		public void Drop() {
-			if (Content.Count == 1) return;
+		public virtual void Drop() {
 			Content.Pop();
+		}
+
+		public virtual bool Open() {
+			if (InitialMenu != null) {
+				Push(InitialMenu);
+				return true;
+			}
+			return false;
 		}
 
 		public int Count {

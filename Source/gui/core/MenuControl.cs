@@ -40,6 +40,7 @@ namespace Toybox.gui.core {
 		public static readonly MenuControl Right = new("right");
 		public static readonly MenuControl Confirm = new("confirm");
 		public static readonly MenuControl Back = new("back");
+		public static readonly MenuControl Open = new("open");
 
 	}
 }

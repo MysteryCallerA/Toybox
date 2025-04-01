@@ -22,8 +22,8 @@ namespace Toybox.gui.content {
 			Content.Draw(r);
 		}
 
-		protected internal override void UpdateFunction(MenuControlManager c, MenuSystem system, MenuStack stack) {
-			Content.UpdateFunction(c, system, stack);
+		protected internal override void UpdateFunction(MenuControlManager c, MenuStack stack) {
+			Content.UpdateFunction(c, stack);
 
 			if (c == null || stack == null) return;
 			if (c.TryGet(ConfirmKey, out var key)) {

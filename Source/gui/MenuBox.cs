@@ -31,15 +31,15 @@ namespace Toybox.gui {
 		}
 
 		public void Update() {
-			UpdateFunction(null, null, null);
+			UpdateFunction(null, null);
 			UpdateState();
 			UpdateSize(Point.Zero);
 			UpdateContentPositions();
 		}
 
-		protected internal override void UpdateFunction(MenuControlManager c, MenuSystem system, MenuStack stack) {
+		protected internal override void UpdateFunction(MenuControlManager c, MenuStack stack) {
 			foreach (var e in Content) {
-				e.UpdateFunction(c, system, stack);
+				e.UpdateFunction(c, stack);
 			}
 		}
 

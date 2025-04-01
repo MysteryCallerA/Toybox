@@ -32,7 +32,7 @@ namespace Toybox.gui.content {
 			CurrentState.Draw(r);
 		}
 
-		protected internal override void UpdateFunction(MenuControlManager c, MenuSystem system, MenuStack stack) {
+		protected internal override void UpdateFunction(MenuControlManager c, MenuStack stack) {
 			if (c == null) return;
 			if (c.TryGet(InteractKey, out var key)) {
 				if (key.Pressed) {
