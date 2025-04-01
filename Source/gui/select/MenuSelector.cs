@@ -23,6 +23,8 @@ namespace Toybox.gui.select {
 		private Point TweenStart;
 		private MenuElement TweenEnd;
 		private int TweenFrame = 0;
+		private bool WillSkipTween = false;
+		private bool Tweening = false;
 
 		public MenuElement Graphic;
 		public IMenuSelectorNav Nav = new BasicSelectorNav();
@@ -30,7 +32,7 @@ namespace Toybox.gui.select {
 		public MenuStack SelectedStack;
 		public readonly Dictionary<MenuBox, int> SelectionMemory = new();
 
-		private MenuElement PrevSelectedElement;
+		public MenuElement PrevSelectedElement { get; private set; }
 		private MenuBox PrevSelectedBox;
 
 		public MenuSelector(MenuElement graphic) {
@@ -66,8 +68,9 @@ namespace Toybox.gui.select {
 
 			if (select != PrevSelectedElement) UpdateSelectedState(select);
 
-			if (MoveTween != null && TweenFrame < MoveTween.Frames) {
+			if (Tweening) {
 				TweenFrame++;
+				if (TweenFrame >= MoveTween.Frames) Tweening = false;
 			}
 		}
 
@@ -75,7 +78,7 @@ namespace Toybox.gui.select {
 			var select = GetSelected();
 			if (select == null) return;
 
-			if (MoveTween != null && TweenFrame < MoveTween.Frames) {
+			if (Tweening) {
 				var pos = TweenEnd.PanelOrigin - TweenStart;
 				var multi = MoveTween.Get(TweenFrame);
 				Graphic.Position = new Point((int)(pos.X * multi) + TweenStart.X, (int)(pos.Y * multi) + TweenStart.Y);
@@ -105,20 +108,36 @@ namespace Toybox.gui.select {
 		}
 
 		private void UpdateSelectedState(MenuElement newSelection) {
+			if (MoveTween != null && PrevSelectedElement != null) {
+				StartTween(newSelection);
+			}
+
 			PrevSelectedElement?.State.Remove(MenuState.Selected);
 			newSelection?.State.Add(MenuState.Selected);
 			PrevSelectedElement = newSelection;
 
 			if (newSelection == null) return;
 			SelectedStack.Top.Layout.SelectionChanged(newSelection);
-
-			if (MoveTween != null) StartTween(newSelection);
 		}
 
 		private void StartTween(MenuElement select) {
+			if (WillSkipTween) {
+				WillSkipTween = false;
+				return;
+			}
 			TweenStart = Graphic.Position;
 			TweenEnd = select;
 			TweenFrame = 0;
+			Tweening = true;
+		}
+
+		public void SkipTween() {
+			if (MoveTween == null) return;
+			if (Tweening) {
+				Tweening = false;
+			} else {
+				WillSkipTween = true;
+			}
 		}
 
 
